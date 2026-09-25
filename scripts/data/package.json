@@ -8,6 +8,14 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@geosim/shared": "0.0.0"
+    "@geosim/shared": "0.0.0",
+    "d3-geo": "^3.1.1",
+    "fflate": "^0.8.3",
+    "geotiff": "^3.0.5",
+    "undici": "^7.30.0",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.1"
   }
 }

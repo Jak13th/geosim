@@ -122,3 +122,72 @@ Chaque flux est dérivé de la graine et d'un FNV-1a du nom du système. La loi 
 Ajout de `valueType` (`number | enum | bool | date | list | vector`) et de `components` (paramètres par domaine ou par poste). `min`, `max` et `step` deviennent optionnels, puisqu'ils n'ont pas de sens pour les listes et les dates.
 
 - _Raison_ : `PARAMETRES.md` contient des paramètres non scalaires (`bud.defense_domains`, `mil.overseas_bases`, `pol.next_election`…) que l'interface doit savoir afficher.
+
+## 2026-09-25 — Phase 1a (géographie et carte)
+
+### D18. Rattachement des unités Natural Earth aux entités
+
+Règle générale : une unité principale de Natural Earth (ADMIN = SOVEREIGNT) devient une entité identifiée par son code ISO 3166-1 alpha-3 ; les territoires dépendants, régions administratives spéciales et États associés sont rattachés à leur État souverain ; les cas particuliers sont listés, avec source, date et confiance, dans `data/curated/ne_units.yaml`. Résultat : 200 entités, dont 195 États (193 membres de l'ONU, Saint-Siège, Palestine) et 5 entités de facto.
+
+- Kosovo : code `XKX` (Banque mondiale, UE) ; Chypre du Nord et Somaliland : codes Natural Earth `CYN`, `SOL`.
+- Sahara occidental : entité de facto `ESH` (RASD) sur tout le territoire tracé par Natural Earth ; la zone contrôlée par le Maroc sera appliquée en phase 1b.
+- Bases louées (Guantánamo, Baïkonour) : contrôle au locataire, souveraineté au bailleur.
+- Terres neutres (propriétaire 0) : Antarctique, Bir Tawil, zone tampon de Chypre, Spratleys et récifs disputés (revendications en phase 1b).
+- Champ de glace de Patagonie : partage par proximité entre l'Argentine et le Chili (hypothèse).
+- Chagos : rattachées au Royaume-Uni ; le traité de 2025 avec Maurice n'est pas en vigueur au 25/09/2026.
+- Abkhazie, Ossétie du Sud, Transnistrie : non découpées par Natural Earth admin 0, elles arriveront avec les zones de contrôle de la phase 1b.
+- _Écartée_ : reprendre le champ TYPE de Natural Earth (« Sovereign country », « Disputed »…), qui mélange statut et dépendance.
+- _Raison_ : règle explicite, contrôlée par un test (195 États), exceptions sourcées et modifiables.
+
+### D19. Souveraineté de jure différée à la phase 1b
+
+En phase 1a, `sovereign` = `owner` (vue de facto de Natural Earth), sauf pour les bases louées. Natural Earth attribue par exemple la Crimée à la Russie dans sa vue par défaut : la souveraineté ukrainienne sera appliquée avec les fichiers curés (`control_zones.geojson`, `disputes.yaml`).
+
+- _Raison_ : ces corrections demandent une recherche datée, zone par zone, prévue en 1b ; les faire à moitié en 1a créerait des incohérences.
+
+### D20. Couches de la carte
+
+- Ajout d'une couche `unit` (Uint16) : unité Natural Earth d'origine, pour l'autonomie et le nom des territoires dépendants (Groenland, Porto Rico…).
+- `terrain` distingue la mer et les lacs (tous deux « eau » au sens de SPEC §4.1).
+- `flags` passe en Uint16 et inclut le fleuve majeur ; `infrastructure` est un champ de bits (route, route majeure, voie ferrée), les ports et aéroports étant des drapeaux.
+- Population et valeur économique par pixel : reportées en phase 1b, car leur répartition exige les totaux nationaux.
+- _Raison_ : couches statiques partagées entre états ; seul le dynamique est copié (voir D25).
+
+### D21. Lecture des données sans dépendance lourde
+
+Lecteur de shapefiles écrit à la main (format simple, cas limites maîtrisés), `fflate` pour les archives ZIP, `geotiff` pour WorldClim, `undici` 7 pour les téléchargements (suit `HTTPS_PROXY` ; la version 8 exige Node ≥ 22.19).
+
+- _Écartées_ : `shapefile` (non maintenu depuis 2017), GDAL (dépendance native, interdite par SPEC §3).
+
+### D22. Format de la carte : binaire compressé et JSON associés
+
+`map-<résolution>.bin.gz` : en-tête JSON (ASCII) et couches brutes alignées sur 8 octets, compressé en gzip (4,5 Mo à 4096 px au lieu de 131 Mo). Le décodage est pur (`packages/shared`), la décompression est faite par l'appelant (zlib ou `DecompressionStream`). Les métadonnées (`map-*.json`), voisinages et distances (`geo-*.json`) et routes (`routes-*.json`) sont des JSON portant le même `buildId`.
+
+### D23. Biomes : Köppen-Geiger simplifié et règle de steppe tempérée
+
+Biomes calculés depuis cinq variables bioclimatiques WorldClim, avec une règle supplémentaire de steppe tempérée (indice de De Martonne adapté à la saison chaude, hypothèse à calibrer) : Köppen seul classait en forêt les steppes du Kazakhstan, d'Ukraine du Sud et des Grandes Plaines.
+
+- _Écartée_ : une carte d'occupation du sol (MODIS, ESA CCI), plus fidèle aux terres agricoles actuelles mais lourde et hors des sources prévues par SPEC §4.2. À reconsidérer si les combats l'exigent.
+
+### D24. Routes maritimes : graphe grossier, portes de détroit et chenaux
+
+Graphe de blocs de 60 km découpés en composantes connexes (connexité fine préservée) avec arêtes en ligne de vue ; chaque détroit est une « porte » (ligne de terre à terre) dont les nœuds sont séparés ; canaux et détroits plus étroits qu'un pixel ont un chenal forcé navigable dans le graphe. La géométrie des 17 passages de SPEC §5.2 est créée dès la phase 1a dans `chokepoints.yaml` (trafic et statut en 1b) ; chaque porte est vérifiée à chaque build.
+
+- Ports d'une entité : ceux de son territoire contigu à la capitale ; pays enclavés : accès par voie de terre jusqu'à la côte la plus proche, pays de transit consigné.
+- Eaux polaires pénalisées (facteur 4 au-delà de 66,5°) pour le choix des routes.
+- _Écartées_ : A* sur la grille fine (5 millions de pixels de mer, trop lent pour 20 000 paires) ; graphe à maille fixe (passages fictifs à travers les isthmes étroits : Panama, Kra, Suez).
+- _Raison_ : routes plausibles (Chine–Allemagne par Malacca et Suez, 18 200 km) en 2 minutes de calcul.
+
+### D25. Mémoire par état mesurée (confirme D7)
+
+À 4096 px : 2,06 millions de pixels terrestres sur 8,17 millions. Couches dynamiques en grille pleine (owner, sovereign, flags) : 49 Mo ; couches lourdes compactées sur les pixels terrestres (population, valeur économique, fortification, dommages, retombées) : 22,7 Mo ; soit 71,7 Mo par état, contre 138,8 Mo en grille pleine.
+
+### D26. Longueur des limites selon leur orientation locale
+
+Chaque arête de pixel d'une limite compte pour |n| / (|nx| + |ny|) côté de pixel, n étant le gradient de Sobel de l'indicatrice d'une région.
+
+- _Écartée_ : correction moyenne π/4 (sous-estimait de 21 % les limites alignées sur la grille, comme le 49ᵉ parallèle).
+
+### D27. Données WorldClim : usage local
+
+WorldClim 2.1 est libre pour un usage non commercial, sans redistribution. Les données brutes (`data/raw`) et dérivées (`data/build`) restent locales et ne sont pas versionnées.

@@ -2,8 +2,8 @@
 
 Simulation géopolitique **locale** et **temps réel**, inspirée d'[OpenFront.io](https://openfront.io) et alimentée par des données réelles. Chaque paramètre du monde se modifie pendant que la simulation tourne.
 
-> **État du projet : phase 0 (fondations) terminée.**
-> Pour l'instant, l'application affiche une page d'accueil et vérifie que le moteur démarre dans son worker. La carte, les données et la simulation arriveront phase par phase (voir [`SPEC.md`](SPEC.md) §12). L'avancement détaillé est dans [`docs/PROGRESS.md`](docs/PROGRESS.md).
+> **État du projet : phase 1a (géographie et carte) terminée.**
+> `npm run data` construit la carte du monde (pays, terrain, biomes, fleuves, infrastructures, zones maritimes, voisinages, routes maritimes et détroits). L'application affiche encore une page d'accueil : la carte interactive arrive en phase 2. L'avancement détaillé est dans [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
 ## Prérequis
 
@@ -68,17 +68,18 @@ Pour l'instant, la commande lit ses arguments et affiche le premier tirage de la
 ## Données
 
 ```bash
-npm run data              # construit les données (avec cache)
-npm run data -- --refresh # force un nouveau téléchargement
+npm run data                          # construit la carte (4096 px) avec les téléchargements en cache
+npm run data -- --refresh             # force un nouveau téléchargement des sources
+npm run data -- --resolution 2048     # autre résolution : 2048 (rapide), 4096 (défaut), 8192 (expérimental)
 ```
 
-Le pipeline arrive en phase 1 ; il ne fait encore rien. Ensuite :
+- Le premier passage télécharge environ 200 Mo (Natural Earth 10m, WorldClim 2.1) dans `data/raw/` ; les suivants fonctionnent hors ligne. Chaque source est tracée dans `data/manifest.json` (URL, date d'accès, version, licence, empreinte).
+- La construction prend environ 2 min 40 à 4096 px. Elle écrit dans `data/build/map/` : la carte binaire compressée (`map-4096.bin.gz`), ses métadonnées (`map-4096.json`), les voisinages et distances (`geo-4096.json`), les routes maritimes (`routes-4096.json`), un rapport de validation (`report-4096.md`) et des aperçus PNG.
+- Les données curées à la main (rattachement des territoires, capitales, détroits) sont dans `data/curated/`, chaque valeur avec sa source, sa date et son niveau de confiance ; les sources consultées sont listées dans `data/curated/SOURCES.md`.
+- Les seuils de construction (terrain, biomes, zones maritimes, routes) sont des coefficients de `config/model.yaml` (famille `geo`), expliqués dans `docs/MODELES.md` §1.
+- `data/raw/` et `data/build/` ne sont pas versionnés (WorldClim interdit la redistribution).
 
-- les téléchargements seront mis en cache dans `data/raw/` ;
-- les fichiers générés iront dans `data/build/` (ces deux dossiers ne sont pas versionnés) ;
-- chaque source sera tracée dans `data/manifest.json` (URL, date d'accès, version, licence).
-
-Une fois les données construites, tout fonctionnera hors ligne.
+Une fois la carte construite, `npm test` vérifie aussi ses invariants (surfaces, conservation des pixels, frontières, détroits).
 
 ## Structure
 
@@ -107,8 +108,10 @@ docs/             avancement, décisions, modèles, calibration
 - **`npm install` ou `npm test` échoue à cause de la version de Node** : Vitest 5 exige Node 22.12 ou plus récent (`node --version`).
 - **`npm run dev` : port 5173 déjà utilisé** : le port est fixe. Arrête l'autre processus qui l'occupe.
 - **`npm run check:console` : Chromium ne démarre pas** : installe les bibliothèques système signalées dans le message d'erreur. Sur Ubuntu : `sudo apt-get install -y libgbm1`.
+- **`npm run check:console` avec un Chromium déjà installé** : indique son chemin dans `GEOSIM_CHROMIUM_PATH` (ex. `GEOSIM_CHROMIUM_PATH=/usr/bin/chromium npm run check:console`) au lieu de lancer `npm run setup:browser`.
+- **`npm run data` derrière un proxy d'entreprise** : les téléchargements suivent les variables `HTTPS_PROXY` et `NO_PROXY`.
 - **Ubuntu 20.04** : Playwright ne supporte plus officiellement cette version. `npm run setup:browser` installe alors la version prévue pour Ubuntu 22.04, qui fonctionne ; un avertissement s'affiche pendant l'installation.
 
 ## Crédits
 
-Les mécaniques de GeoSim sont inspirées d'OpenFront.io, mais aucun code n'en est repris (OpenFront est sous licence AGPL-3.0). Les sources de données et leurs licences seront listées dans `data/manifest.json` et `data/curated/SOURCES.md`.
+Les mécaniques de GeoSim sont inspirées d'OpenFront.io, mais aucun code n'en est repris (OpenFront est sous licence AGPL-3.0). Les sources de données et leurs licences sont listées dans `data/manifest.json` (téléchargements : Natural Earth, domaine public ; WorldClim 2.1, usage non commercial sans redistribution) et `data/curated/SOURCES.md` (données curées).
