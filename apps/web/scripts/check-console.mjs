@@ -4,6 +4,8 @@
  * ou des avertissements.
  *
  * Usage : npm run check:console [-- --timeout 20000]
+ * Variable facultative GEOSIM_CHROMIUM_PATH : chemin d'un Chromium déjà installé, à utiliser à la
+ * place de celui de Playwright (`npm run setup:browser`).
  */
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -21,7 +23,8 @@ await server.listen();
 const url = server.resolvedUrls?.local[0] ?? 'http://localhost:5174/';
 
 const problems = [];
-const browser = await chromium.launch();
+const executablePath = process.env.GEOSIM_CHROMIUM_PATH;
+const browser = await chromium.launch(executablePath ? { executablePath } : {});
 try {
   const page = await browser.newPage();
   page.on('console', (msg) => {

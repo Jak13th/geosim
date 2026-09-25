@@ -1,0 +1,232 @@
+# Détroits et passages (SPEC §5.2, liste minimale). Phase 1a : géométrie seulement.
+# Le trafic, le statut et les routes de contournement détaillées sont ajoutés en phase 1b ;
+# les pays riverains sont calculés depuis la carte.
+#
+# Pour chaque passage :
+#   gates   : une ou plusieurs lignes [lon, lat] qui coupent le passage de terre à terre ;
+#             une route qui franchit une porte « traverse » le détroit, et fermer le détroit
+#             bloque ses portes.
+#   channel : chenal forcé navigable dans le graphe des routes maritimes (canaux, détroits
+#             plus étroits qu'un pixel). La carte elle-même n'est pas modifiée.
+#   test    : deux points en mer de part et d'autre ; le pipeline vérifie que la route la plus
+#             courte entre eux franchit la porte, et qu'elle s'allonge (ou disparaît) quand la
+#             porte est fermée.
+# Coordonnées relevées pour GeoSim sur le trait de côte Natural Earth 10m et les articles
+# cités ; la cohérence de chaque porte est vérifiée à chaque construction de la carte.
+version: 1
+chokepoints:
+  - id: hormuz
+    name: Strait of Hormuz
+    nameFr: Détroit d'Ormuz
+    kind: strait
+    gates:
+      - [[56.36, 26.05], [56.36, 27.30]]
+    test: { a: [52.0, 26.5], b: [58.5, 24.8] }
+    source: https://en.wikipedia.org/wiki/Strait_of_Hormuz
+    date: 2026-09-25
+    confidence: medium
+  - id: bab_el_mandeb
+    name: Bab-el-Mandeb
+    nameFr: Bab-el-Mandeb
+    kind: strait
+    gates:
+      - [[43.05, 12.30], [43.70, 12.90]]
+    test: { a: [40.5, 16.0], b: [46.0, 12.3] }
+    source: https://en.wikipedia.org/wiki/Bab-el-Mandeb
+    date: 2026-09-25
+    confidence: medium
+  - id: suez
+    name: Suez Canal
+    nameFr: Canal de Suez
+    kind: canal
+    channel:
+      [
+        [32.32, 31.45],
+        [32.31, 31.00],
+        [32.30, 30.60],
+        [32.38, 30.40],
+        [32.47, 30.20],
+        [32.55, 29.95],
+        [32.56, 29.75],
+        [32.70, 29.35],
+        [33.05, 28.80],
+        [33.50, 28.10],
+        [33.90, 27.50],
+      ]
+    gates:
+      - [[31.90, 30.60], [32.80, 30.60]]
+    test: { a: [32.0, 32.5], b: [34.5, 27.0] }
+    source: https://en.wikipedia.org/wiki/Suez_Canal
+    note: Le chenal suit aussi le golfe de Suez, qui se ferme au pixel près aux résolutions grossières.
+    date: 2026-09-25
+    confidence: medium
+  - id: malacca
+    name: Strait of Malacca
+    nameFr: Détroit de Malacca
+    kind: strait
+    gates:
+      - [[101.95, 2.65], [101.20, 1.45]]
+    test: { a: [97.5, 5.5], b: [104.8, 1.5] }
+    source: https://en.wikipedia.org/wiki/Strait_of_Malacca
+    date: 2026-09-25
+    confidence: medium
+  - id: singapore
+    name: Singapore Strait
+    nameFr: Détroit de Singapour
+    kind: strait
+    gates:
+      - [[103.85, 1.65], [103.30, -0.50]]
+    test: { a: [102.5, 2.0], b: [105.5, 2.0] }
+    source: https://en.wikipedia.org/wiki/Singapore_Strait
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      À la résolution de la carte, les îles Riau laissent de nombreux passages : la porte va de
+      Johor à Sumatra et coupe toute la sortie sud du détroit de Malacca.
+  - id: sunda
+    name: Sunda Strait
+    nameFr: Détroit de la Sonde
+    kind: strait
+    gates:
+      - [[105.55, -5.65], [106.05, -6.25]]
+    test: { a: [106.8, -5.2], b: [104.5, -7.0] }
+    source: https://en.wikipedia.org/wiki/Sunda_Strait
+    date: 2026-09-25
+    confidence: medium
+  - id: lombok
+    name: Lombok Strait
+    nameFr: Détroit de Lombok
+    kind: strait
+    gates:
+      - [[115.40, -8.35], [116.30, -8.60]]
+    test: { a: [115.8, -7.6], b: [115.8, -9.5] }
+    source: https://en.wikipedia.org/wiki/Lombok_Strait
+    date: 2026-09-25
+    confidence: medium
+  - id: taiwan
+    name: Taiwan Strait
+    nameFr: Détroit de Taïwan
+    kind: strait
+    gates:
+      - [[119.20, 25.70], [121.05, 24.75]]
+    test: { a: [121.3, 26.2], b: [118.5, 23.0] }
+    source: https://en.wikipedia.org/wiki/Taiwan_Strait
+    date: 2026-09-25
+    confidence: medium
+  - id: luzon
+    name: Luzon Strait
+    nameFr: Détroit de Luçon
+    kind: strait
+    gates:
+      - [[120.80, 22.10], [121.00, 18.30]]
+    test: { a: [118.5, 20.0], b: [123.5, 20.0] }
+    source: https://en.wikipedia.org/wiki/Luzon_Strait
+    date: 2026-09-25
+    confidence: medium
+  - id: turkish_straits
+    name: Turkish Straits (Bosporus and Dardanelles)
+    nameFr: Détroits turcs (Bosphore et Dardanelles)
+    kind: strait
+    channel:
+      [
+        [29.15, 41.40],
+        [29.07, 41.15],
+        [29.00, 41.00],
+        [28.80, 40.85],
+        [27.50, 40.60],
+        [26.70, 40.40],
+        [26.40, 40.12],
+        [26.10, 39.95],
+        [25.90, 39.90],
+      ]
+    gates:
+      - [[28.85, 41.12], [29.25, 41.10]]
+      - [[26.28, 40.24], [26.52, 40.02]]
+    test: { a: [31.0, 43.0], b: [25.0, 39.0] }
+    source: https://en.wikipedia.org/wiki/Turkish_Straits
+    date: 2026-09-25
+    confidence: medium
+  - id: gibraltar
+    name: Strait of Gibraltar
+    nameFr: Détroit de Gibraltar
+    kind: strait
+    channel: [[-6.30, 35.95], [-5.60, 35.95], [-5.10, 36.00]]
+    gates:
+      - [[-5.60, 36.25], [-5.60, 35.65]]
+    test: { a: [-9.5, 36.0], b: [-3.0, 36.3] }
+    source: https://en.wikipedia.org/wiki/Strait_of_Gibraltar
+    date: 2026-09-25
+    confidence: medium
+  - id: danish_straits
+    name: Danish Straits
+    nameFr: Détroits danois
+    kind: strait
+    channel: [[11.00, 56.10], [10.98, 55.60], [10.97, 55.33], [11.00, 55.00], [11.00, 54.55]]
+    gates:
+      - [[10.40, 57.55], [12.05, 57.95]]
+    test: { a: [6.0, 57.0], b: [18.0, 56.0] }
+    source: https://en.wikipedia.org/wiki/Danish_straits
+    date: 2026-09-25
+    confidence: medium
+  - id: dover
+    name: Strait of Dover
+    nameFr: Pas-de-Calais
+    kind: strait
+    gates:
+      - [[1.05, 51.28], [1.80, 50.82]]
+    test: { a: [0.5, 50.3], b: [2.6, 51.7] }
+    source: https://en.wikipedia.org/wiki/Strait_of_Dover
+    date: 2026-09-25
+    confidence: medium
+  - id: panama
+    name: Panama Canal
+    nameFr: Canal de Panama
+    kind: canal
+    channel:
+      [
+        [-79.92, 9.45],
+        [-79.92, 9.25],
+        [-79.85, 9.15],
+        [-79.70, 9.07],
+        [-79.62, 9.00],
+        [-79.55, 8.90],
+        [-79.50, 8.78],
+      ]
+    gates:
+      - [[-79.76, 9.32], [-79.76, 8.93]]
+    test: { a: [-79.5, 10.5], b: [-79.5, 8.2] }
+    source: https://en.wikipedia.org/wiki/Panama_Canal
+    date: 2026-09-25
+    confidence: medium
+  - id: kerch
+    name: Kerch Strait
+    nameFr: Détroit de Kertch
+    kind: strait
+    channel: [[36.62, 45.60], [36.60, 45.35], [36.58, 45.20], [36.55, 44.95]]
+    gates:
+      - [[36.35, 45.33], [36.85, 45.33]]
+    test: { a: [36.5, 46.1], b: [35.5, 44.5] }
+    source: https://en.wikipedia.org/wiki/Kerch_Strait
+    date: 2026-09-25
+    confidence: medium
+  - id: cape_of_good_hope
+    name: Cape of Good Hope route
+    nameFr: Route du cap de Bonne-Espérance
+    kind: cape
+    gates:
+      - [[20.00, -34.45], [20.00, -71.50]]
+    test: { a: [14.0, -30.0], b: [32.0, -32.0] }
+    source: https://en.wikipedia.org/wiki/Cape_Agulhas
+    date: 2026-09-25
+    confidence: medium
+    note: Méridien du cap des Aiguilles (limite conventionnelle entre Atlantique et océan Indien), du continent à l'Antarctique.
+  - id: drake
+    name: Drake Passage
+    nameFr: Passage de Drake
+    kind: cape
+    gates:
+      - [[-66.60, -54.60], [-58.80, -63.85]]
+    test: { a: [-75.0, -58.0], b: [-55.0, -58.0] }
+    source: https://en.wikipedia.org/wiki/Drake_Passage
+    date: 2026-09-25
+    confidence: medium

@@ -1,0 +1,228 @@
+# Rattachement des unités « admin 0 » de Natural Earth 5.1.1 aux entités de GeoSim.
+# Règle générale (DECISIONS D5, D18) :
+#   - une unité principale (ADMIN = SOVEREIGNT) devient une entité, identifiée par son code
+#     ISO 3166-1 alpha-3 (ISO_A3_EH) ; c'est un État (`state`) sauf si elle figure dans `kinds` ;
+#   - les autres unités (territoires dépendants, régions administratives spéciales, États
+#     associés) sont rattachées à l'entité de leur État souverain (SOV_A3), contrôle et
+#     souveraineté compris ;
+#   - les unités particulières (bail, zone neutre, zone disputée) sont traitées dans `units`.
+# Les zones dont le contrôle de facto diffère (territoires occupés, entités séparatistes non
+# découpées par Natural Earth : Abkhazie, Ossétie du Sud, Transnistrie…) relèvent de la phase 1b
+# (control_zones.geojson).
+# Chaque entrée porte source, date (de consultation) et confiance.
+version: 1
+
+# Codes GeoSim des unités principales sans code ISO dans Natural Earth (ISO_A3_EH = -99).
+codes:
+  KOS:
+    value: XKX
+    source: https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
+    date: 2026-09-25
+    confidence: high
+    note: Code utilisé par la Banque mondiale et l'Union européenne pour le Kosovo.
+  CYN:
+    value: CYN
+    source: Natural Earth 5.1.1 (ADM0_A3)
+    date: 2026-09-25
+    confidence: high
+    note: Pas de code ISO ; on reprend le code Natural Earth.
+  SOL:
+    value: SOL
+    source: Natural Earth 5.1.1 (ADM0_A3)
+    date: 2026-09-25
+    confidence: high
+    note: Pas de code ISO ; on reprend le code Natural Earth.
+
+# Entités de facto : contrôle d'un territoire, reconnaissance limitée (DECISIONS D5).
+# Les listes d'États qui les reconnaissent sont complétées en phase 1b.
+kinds:
+  TWN:
+    value: de_facto
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: high
+    note: Reconnu par 11 États membres de l'ONU et le Saint-Siège.
+  XKX:
+    value: de_facto
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: high
+    note: Reconnu par 110 États membres de l'ONU ; non membre de l'ONU.
+  CYN:
+    value: de_facto
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: high
+    note: Reconnue par la seule Turquie.
+  SOL:
+    value: de_facto
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: high
+    note: Reconnu officiellement par Israël ; relations officieuses avec plusieurs États.
+  ESH:
+    value: de_facto
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      République arabe sahraouie démocratique, reconnue par 46 États membres de l'ONU et membre
+      de l'Union africaine. Natural Earth trace le Sahara occidental d'un seul tenant ; la partie
+      contrôlée par le Maroc (environ 80 %) sera appliquée en phase 1b (control_zones).
+
+# Unités non principales érigées en entités.
+promote:
+  PSX:
+    value: PSE
+    kind: state
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: high
+    note: >-
+      État observateur non membre de l'ONU, reconnu par 157 États membres. Natural Earth le
+      rattache à Israël (SOV_A3 IS1) ; le contrôle de facto sera précisé en phase 1b.
+
+# Unités particulières : contrôle de facto (owner) et souveraineté de jure (sovereign).
+# owner: null → terre neutre, sans propriétaire ni acteur. split → partage des pixels entre
+# les entités listées, chaque pixel allant à la plus proche.
+units:
+  USG:
+    owner: USA
+    sovereign: CUB
+    source: Natural Earth 5.1.1 (NOTE_BRK « Leased to U.S.A. by Cuba ; Claimed by Cuba »)
+    date: 2026-09-25
+    confidence: high
+    note: Base navale de Guantánamo, louée aux États-Unis depuis 1903.
+  KAB:
+    owner: RUS
+    sovereign: KAZ
+    source: Natural Earth 5.1.1 (NOTE_BRK « Leased to Russia by Kazakhstan »)
+    date: 2026-09-25
+    confidence: high
+    note: Cosmodrome de Baïkonour, loué à la Russie jusqu'en 2050.
+  KAS:
+    owner: IND
+    sovereign: IND
+    source: https://en.wikipedia.org/wiki/Siachen_conflict
+    date: 2026-09-25
+    confidence: high
+    note: Glacier de Siachen, tenu par l'Inde depuis 1984 et revendiqué par le Pakistan (revendication en phase 1b).
+  BRI:
+    owner: BRA
+    sovereign: BRA
+    source: https://en.wikipedia.org/wiki/Brazilian_Island
+    date: 2026-09-25
+    confidence: high
+    note: Île administrée par le Brésil, revendiquée par l'Uruguay.
+  SPI:
+    split: [ARG, CHL]
+    source: https://en.wikipedia.org/wiki/Southern_Patagonian_Ice_Field_dispute
+    date: 2026-09-25
+    confidence: assumption
+    note: >-
+      Section de frontière non délimitée (accord de 1998) ; chaque partie administre son versant.
+      Hypothèse : partage par proximité entre l'Argentine et le Chili.
+  BRT:
+    owner: null
+    source: https://en.wikipedia.org/wiki/Bir_Tawil
+    date: 2026-09-25
+    confidence: high
+    note: Bir Tawil, revendiqué ni par l'Égypte ni par le Soudan.
+  CNM:
+    owner: null
+    source: https://en.wikipedia.org/wiki/United_Nations_Buffer_Zone_in_Cyprus
+    date: 2026-09-25
+    confidence: high
+    note: Zone tampon des Nations unies à Chypre (UNFICYP).
+  ATA:
+    owner: null
+    source: SPEC §4.3 ; Traité sur l'Antarctique (1959)
+    date: 2026-09-25
+    confidence: high
+    note: Terre neutre, non conquérable (paramétrable plus tard).
+  PGA:
+    owner: null
+    source: Natural Earth 5.1.1 (NOTE_BRK « Claimed by China, Taiwan, Malaysia, the Philippines, and Brunei »)
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      Îles Spratleys, occupées en partie par la Chine, Taïwan, le Viêt Nam, les Philippines et la
+      Malaisie. Neutres sur la carte ; revendications et occupations en phase 1b (disputes.yaml).
+  SCR:
+    owner: null
+    source: Natural Earth 5.1.1 (TYPE « Indeterminate »)
+    date: 2026-09-25
+    confidence: medium
+    note: Récif de Scarborough, sous contrôle chinois de fait depuis 2012, revendiqué par les Philippines ; traité en phase 1b.
+  BJN:
+    owner: null
+    source: Natural Earth 5.1.1 (NOTE_BRK « Claimed by Colombia, Jamaica, Nicaragua and the United States »)
+    date: 2026-09-25
+    confidence: medium
+    note: Banc de Bajo Nuevo, récif inhabité ; revendications en phase 1b.
+  SER:
+    owner: null
+    source: Natural Earth 5.1.1 (NOTE_BRK « Claimed by Colombia, Honduras, Nicaragua, and the United States »)
+    date: 2026-09-25
+    confidence: medium
+    note: Banc de Serranilla, administré par la Colombie ; revendications en phase 1b.
+  IOT:
+    owner: GBR
+    sovereign: GBR
+    source: https://en.wikipedia.org/wiki/Chagos_Archipelago_sovereignty_dispute ; https://www.chathamhouse.org/2026/01/uk-ratification-chagos-archipelago-treaty-will-not-violate-international-law
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      Traité de transfert de souveraineté à Maurice signé le 22/05/2025, non ratifié ni entré en
+      vigueur au 25/09/2026 : le Royaume-Uni administre toujours l'archipel.
+
+# Capitales : Natural Earth marque la capitale (ADM0CAP) de chaque pays ; quand il en marque
+# plusieurs ou aucune, on retient le siège effectif de l'exécutif.
+capitals:
+  ZAF:
+    value: Pretoria
+    source: https://en.wikipedia.org/wiki/Capital_of_South_Africa
+    date: 2026-09-25
+    confidence: high
+    note: Siège de l'exécutif (Union Buildings) ; Le Cap et Bloemfontein sont capitales législative et judiciaire.
+  BOL:
+    value: La Paz
+    source: https://en.wikipedia.org/wiki/La_Paz
+    date: 2026-09-25
+    confidence: high
+    note: Siège du gouvernement ; Sucre est la capitale constitutionnelle.
+  CIV:
+    value: Abidjan
+    source: https://en.wikipedia.org/wiki/Abidjan
+    date: 2026-09-25
+    confidence: medium
+    note: Siège de fait de la plupart des institutions ; Yamoussoukro est la capitale officielle.
+  PSE:
+    value: Ramallah
+    source: https://en.wikipedia.org/wiki/Ramallah
+    date: 2026-09-25
+    confidence: high
+    note: Siège administratif de l'Autorité palestinienne.
+  CYN:
+    value: North Nicosia
+    lonlat: [33.36361, 35.19]
+    source: https://en.wikipedia.org/wiki/North_Nicosia
+    date: 2026-09-25
+    confidence: high
+    note: Capitale de fait de Chypre du Nord ; absente de Natural Earth (seule Nicosie y figure).
+  ESH:
+    value: Tifariti
+    lonlat: [-10.567, 26.158]
+    source: https://en.wikipedia.org/wiki/Tifariti
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      Capitale provisoire déclarée de la RASD, à l'est du mur marocain. Le centre administratif
+      de fait est le camp de Rabouni (Tindouf, Algérie), hors du territoire.
+  NRU:
+    value: Yaren
+    lonlat: [166.925, -0.54556]
+    source: https://en.wikipedia.org/wiki/Yaren_District
+    date: 2026-09-25
+    confidence: high
+    note: Capitale de fait de Nauru (pas de capitale officielle) ; absente de Natural Earth.

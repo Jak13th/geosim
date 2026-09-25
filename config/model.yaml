@@ -11,7 +11,148 @@
 # Les valeurs par défaut sont des points de départ à calibrer (docs/CALIBRATION.md), jamais des vérités.
 # Les familles se remplissent au fil des phases, avec le système qui les utilise.
 version: 1
-geo: {}
+geo:
+  # Seuils utilisés par le pipeline de la carte (npm run data). Modifier une valeur demande de
+  # reconstruire la carte. Équations et sources : docs/MODELES.md §1.
+  terrain:
+    relief_radius_cells:
+      value: 1
+      range: [1, 3]
+      unit: 'cellules WorldClim (5′)'
+      description: "Rayon de la fenêtre où l'on mesure le relief local (altitude max − min). 1 = fenêtre 3×3, environ 28 km."
+    hills_min_relief:
+      value: 200
+      range: [50, 800]
+      unit: 'm'
+      description: 'Relief local à partir duquel un pixel est classé en collines.'
+    mountain_min_relief:
+      value: 600
+      range: [200, 2000]
+      unit: 'm'
+      description: 'Relief local à partir duquel un pixel est classé en montagne.'
+    high_mountain_min_elevation:
+      value: 3000
+      range: [1500, 5000]
+      unit: 'm'
+      description: 'Altitude à partir de laquelle un pixel est classé en haute montagne, quel que soit son relief (hauts plateaux compris).'
+  biome:
+    tundra_max_warm_quarter_temp:
+      value: 10
+      range: [0, 15]
+      unit: '°C'
+      description: 'Température moyenne du trimestre le plus chaud (bio10) sous laquelle la forêt cède la place à la toundra (limite des arbres, climat E de Köppen).'
+    arid_threshold_slope:
+      value: 2
+      range: [0, 5]
+      unit: 'mm/°C'
+      description: "Pente du seuil d'aridité de Köppen-Geiger : Pseuil = pente × Tannuelle + ordonnée (Kottek et al., 2006)."
+    arid_threshold_intercept:
+      value: 14
+      range: [0, 50]
+      unit: 'mm'
+      description: "Ordonnée du seuil d'aridité de Köppen-Geiger (précipitations réparties sur l'année)."
+    desert_factor:
+      value: 5
+      range: [1, 10]
+      unit: ''
+      description: 'Désert si Pannuelle < facteur × Pseuil (climat BW de Köppen).'
+    steppe_factor:
+      value: 10
+      range: [5, 20]
+      unit: ''
+      description: 'Steppe si Pannuelle < facteur × Pseuil (climat BS de Köppen).'
+    tropical_min_cold_quarter_temp:
+      value: 18
+      range: [10, 25]
+      unit: '°C'
+      description: 'Température moyenne du trimestre le plus froid (bio11) au-dessus de laquelle le climat est tropical (climat A de Köppen).'
+    rainforest_min_driest_month:
+      value: 60
+      range: [0, 150]
+      unit: 'mm'
+      description: 'Précipitations du mois le plus sec (bio14) au-dessus desquelles un climat tropical porte une forêt (Af de Köppen).'
+    monsoon_intercept:
+      value: 100
+      range: [0, 200]
+      unit: 'mm'
+      description: 'Forêt de mousson (Am) si le mois le plus sec reçoit au moins ordonnée − Pannuelle / diviseur ; sinon savane (Aw).'
+    monsoon_divisor:
+      value: 25
+      range: [5, 100]
+      unit: ''
+      description: 'Diviseur de la règle de mousson de Köppen (voir monsoon_intercept).'
+    temperate_steppe_max_index:
+      value: 18
+      range: [0, 40]
+      unit: 'mm/°C'
+      description: "Hypothèse à calibrer. En climat tempéré ou continental, steppe si Pannuelle / (T du trimestre le plus chaud + 10) est inférieur à ce seuil (indice d'aridité de De Martonne adapté à la saison de croissance). Rattrape les steppes que Köppen classe en climat humide (Kazakhstan, Ukraine du Sud, Grandes Plaines)."
+    temperate_steppe_min_annual_temp:
+      value: 0
+      range: [-15, 15]
+      unit: '°C'
+      description: "Température annuelle en dessous de laquelle la règle de steppe tempérée ne s'applique pas : l'évaporation est trop faible, la taïga domine malgré des précipitations faibles (Iakoutie)."
+  rivers:
+    max_scalerank:
+      value: 6
+      range: [0, 12]
+      unit: 'rang Natural Earth'
+      description: "Rang maximal (0 = le plus important) d'un fleuve Natural Earth pour être marqué « fleuve majeur » (Dniepr : 4, Don : 6)."
+  urban:
+    supersampling:
+      value: 4
+      range: [1, 8]
+      unit: 'sous-pixels par côté'
+      description: 'Sur-échantillonnage utilisé pour estimer la part urbanisée de chaque pixel (0–255).'
+  cities:
+    major_min_population:
+      value: 1000000
+      range: [100000, 10000000]
+      unit: 'habitants'
+      description: 'Population (agglomération, Natural Earth POP_MAX) à partir de laquelle une ville est « majeure ».'
+    list_min_population:
+      value: 50000
+      range: [0, 1000000]
+      unit: 'habitants'
+      description: "Population minimale d'une ville pour figurer dans la liste exportée (noyaux de population en phase 1b). Les capitales y figurent toujours."
+  ports:
+    snap_radius_km:
+      value: 30
+      range: [5, 100]
+      unit: 'km'
+      description: 'Distance maximale entre un port Natural Earth et le pixel côtier auquel on le rattache.'
+  sea_zones:
+    min_area_km2:
+      value: 40000
+      range: [0, 500000]
+      unit: 'km²'
+      description: "Surface minimale d'une mer, d'un golfe ou d'un détroit nommé pour former sa propre zone maritime ; les plus petits sont fondus dans la zone voisine."
+    ocean_grid_deg:
+      value: 30
+      range: [10, 90]
+      unit: '°'
+      description: 'Pas de la grille (longitude et latitude) qui découpe les océans en zones maritimes.'
+  maritime:
+    boundary_km:
+      value: 370.4
+      range: [0, 1000]
+      unit: 'km'
+      description: "Portée de l'espace maritime d'un pays (200 milles marins, ZEE) pour le calcul des voisinages maritimes par équidistance."
+  routing:
+    cell_km:
+      value: 60
+      range: [20, 200]
+      unit: 'km'
+      description: 'Côté des cellules du graphe océanique grossier (routes maritimes). La connexité est préservée au pixel près.'
+    polar_min_lat:
+      value: 66.5
+      range: [50, 90]
+      unit: '°'
+      description: 'Latitude (nord ou sud) au-delà de laquelle la navigation est pénalisée : glaces, navigation saisonnière (route du Nord, passage du Nord-Ouest).'
+    polar_cost_factor:
+      value: 4
+      range: [1, 20]
+      unit: ''
+      description: 'Multiplicateur du coût des trajets au-delà de polar_min_lat pour le choix des routes. La longueur rapportée reste la distance réelle.'
 demography: {}
 economy: {}
 trade: {}
