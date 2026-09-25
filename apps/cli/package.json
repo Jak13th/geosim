@@ -1,0 +1,14 @@
+{
+  "name": "@geosim/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sim": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@geosim/engine": "0.0.0",
+    "@geosim/shared": "0.0.0"
+  }
+}

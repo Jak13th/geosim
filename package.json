@@ -1,0 +1,44 @@
+{
+  "name": "geosim",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Simulation géopolitique locale et temps réel, alimentée par des données réelles.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "workspaces": [
+    "packages/shared",
+    "packages/engine",
+    "apps/web",
+    "apps/cli",
+    "scripts/data"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @geosim/web",
+    "build": "npm run build -w @geosim/web",
+    "data": "npm run data -w @geosim/data --",
+    "sim": "npm run sim -w @geosim/cli --",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json && npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:console": "npm run check:console -w @geosim/web --",
+    "setup:browser": "node scripts/setup-browser.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.4",
+    "eslint": "^10.11.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.12.0",
+    "playwright": "^1.63.0",
+    "prettier": "^3.9.9",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vitest": "^5.0.2"
+  }
+}

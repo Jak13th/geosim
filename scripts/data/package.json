@@ -1,0 +1,13 @@
+{
+  "name": "@geosim/data",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "data": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@geosim/shared": "0.0.0"
+  }
+}

@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+data/raw
+data/build
+results
+package-lock.json
+# Documents de référence rédigés à la main : ne pas reformater
+SPEC.md
+PARAMETRES.md
+CLAUDE.md

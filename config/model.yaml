@@ -1,0 +1,24 @@
+# Coefficients des modèles (SPEC §6.4, PARAMETRES.md §19).
+# Rechargés à chaud (appliqués au tick suivant) et éditables dans l'onglet « Modèle ».
+#
+# Format de chaque coefficient :
+#   nom:
+#     value: 0.35
+#     range: [0, 1]
+#     unit: ""
+#     description: "Explication en français."
+#
+# Les valeurs par défaut sont des points de départ à calibrer (docs/CALIBRATION.md), jamais des vérités.
+# Les familles se remplissent au fil des phases, avec le système qui les utilise.
+version: 1
+geo: {}
+demography: {}
+economy: {}
+trade: {}
+markets: {}
+politics: {}
+diplomacy: {}
+military: {}
+combat: {}
+nuclear: {}
+ai: {}

@@ -1,0 +1,5 @@
+# Bibliothèque d'événements (SPEC §8.10), remplie en phase 6.
+# Chaque événement : id, catégorie, conditions, probabilité quotidienne de base et modificateurs,
+# effets (paramètres touchés, durée, décroissance), texte en français, gravité.
+version: 1
+events: []

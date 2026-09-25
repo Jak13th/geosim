@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "description": "Sources téléchargées par `npm run data` : URL, date d'accès, version et licence. Tenu à jour par le pipeline.",
+  "sources": []
+}
