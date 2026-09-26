@@ -46,6 +46,7 @@ export const WB_INDICATORS = {
   'BX.TRF.PWKR.DT.GD.ZS': 'Transferts des émigrés',
   'DT.ODA.ODAT.GN.ZS': 'APD reçue',
   'GC.REV.XGRT.GD.ZS': 'Recettes publiques hors dons',
+  'GC.XPN.INTP.RV.ZS': 'Intérêts versés (% des recettes)',
   'MS.MIL.XPND.GD.ZS': 'Dépenses militaires (% PIB)',
   'MS.MIL.XPND.CD': 'Dépenses militaires ($ courants)',
   'SH.XPD.GHED.GD.ZS': 'Dépenses publiques de santé',

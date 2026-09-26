@@ -123,9 +123,9 @@ export const REGIME_TYPES = [
 export const CATALOG: readonly ParamDef[] = [
   // 1. Démographie et société
   p('demo.population', 'Population', 'S', 'habitants', [0, 2e9], 'WB:SP.POP.TOTL', ['demography', 'economy', 'military'], 'Population résidente totale (estimation des Nations unies reprise par la Banque mondiale).', LOG),
-  p('demo.birth_rate', 'Natalité', 'I', '‰/an', [0, 60], 'WB:SP.DYN.CBRT.IN', ['demography'], 'Naissances vivantes par an pour 1 000 habitants.'),
+  p('demo.birth_rate', 'Natalité', 'D', '‰/an', [0, 60], 'WB:SP.DYN.CBRT.IN', ['demography'], 'Naissances vivantes par an pour 1 000 habitants.'),
   p('demo.death_rate', 'Mortalité', 'S', '‰/an', [0, 40], 'WB:SP.DYN.CDRT.IN', ['demography'], 'Décès par an pour 1 000 habitants, hors guerre et catastrophes simulées.'),
-  p('demo.fertility', 'Fécondité', 'I', 'enfants/femme', [0.5, 8], 'WB:SP.DYN.TFRT.IN', ['demography'], 'Indicateur conjoncturel de fécondité.', { step: 0.01 }),
+  p('demo.fertility', 'Fécondité', 'S', 'enfants/femme', [0.5, 8], 'WB:SP.DYN.TFRT.IN', ['demography'], 'Indicateur conjoncturel de fécondité.', { step: 0.01 }),
   p('demo.life_expectancy', 'Espérance de vie', 'S', 'ans', [30, 95], 'WB:SP.DYN.LE00.IN', ['demography', 'health'], 'Espérance de vie à la naissance.'),
   p('demo.share_0_14', 'Part des 0–14 ans', 'S', '%', [0, 60], 'WB:SP.POP.0014.TO.ZS', ['demography'], 'Part de la population âgée de 0 à 14 ans.'),
   p('demo.share_15_64', 'Part des 15–64 ans', 'S', '%', [30, 85], 'WB:SP.POP.1564.TO.ZS', ['demography', 'economy'], 'Part de la population en âge de travailler.'),
@@ -145,22 +145,28 @@ export const CATALOG: readonly ParamDef[] = [
   p('demo.hdi', 'Indice de développement humain', 'D', 'indice', UNIT, 'UNDP', ['demography', 'politics'], 'Indice du PNUD (santé, éducation, revenu), initialisé par le rapport sur le développement humain puis recalculé.', { step: 0.001 }),
 
   // 2. Économie et finances
-  p('eco.gdp_nominal', 'PIB nominal', 'S', 'Md$', [0, 1e5], 'IMF:NGDPD', ['economy', 'trade', 'military'], 'Produit intérieur brut en dollars courants (FMI, année en cours ; repli Banque mondiale).', LOG),
-  p('eco.gdp_ppp', "PIB en parité de pouvoir d'achat", 'S', 'Md$ internationaux', [0, 1e5], 'WB:NY.GDP.MKTP.PP.CD', ['economy', 'military'], 'PIB en dollars internationaux (parité de pouvoir d’achat) ; sert à corriger le coût des équipements militaires.', LOG),
+  p('eco.gdp_nominal', 'PIB nominal', 'S', 'Md$', [0, 1e6], 'IMF:NGDPD', ['economy', 'trade', 'military'], 'Produit intérieur brut en dollars courants (FMI, année en cours ; repli Banque mondiale).', LOG),
+  p('eco.gdp_ppp', "PIB en parité de pouvoir d'achat", 'S', 'Md$ internationaux', [0, 1e6], 'WB:NY.GDP.MKTP.PP.CD', ['economy', 'military'], 'PIB en dollars internationaux (parité de pouvoir d’achat) ; sert à corriger le coût des équipements militaires.', LOG),
   p('eco.gdp_per_capita', 'PIB par habitant', 'D', '$', [0, 3e5], 'DER', ['economy', 'politics'], 'PIB nominal divisé par la population.', LOG),
-  p('eco.potential_growth', 'Croissance potentielle', 'I', '%/an', [-10, 20], 'IMF:NGDP_RPCH', ['economy'], 'Croissance tendancielle hors chocs : moyenne des projections du FMI à 1–5 ans (repli : moyenne sur 10 ans de la croissance observée).', { step: 0.1 }),
+  p('eco.potential_growth', 'Croissance potentielle', 'S', '%/an', [-10, 20], 'IMF:NGDP_RPCH', ['economy'], 'Croissance tendancielle hors chocs : part de la moyenne des projections du FMI à 1–5 ans (repli : moyenne sur 10 ans de la croissance observée), puis converge lentement vers la croissance de long terme.', { step: 0.1 }),
+  p('eco.long_run_growth', 'Croissance de long terme', 'D', '%/an', [-10, 20], 'DER', ['economy'], 'Croissance vers laquelle converge la croissance potentielle : progrès de la frontière technologique, rattrapage conditionné par les institutions, croissance de la population en âge de travailler.', { step: 0.1 }),
   p('eco.growth', 'Croissance réelle', 'D', '%/an', [-50, 50], 'DER', ['economy', 'politics'], 'Croissance du PIB en volume, calculée chaque mois par le modèle économique.', { step: 0.1 }),
+  p('eco.output_gap', 'Écart de production', 'D', '% du PIB potentiel', [-50, 50], 'DER', ['economy', 'markets'], 'Écart entre le PIB en volume et le PIB potentiel (croissance potentielle cumulée depuis le départ).', { step: 0.1 }),
   p('eco.inflation', 'Inflation', 'S', '%/an', [-10, 1000], 'IMF:PCPIPCH', ['economy', 'politics'], 'Hausse annuelle moyenne des prix à la consommation.', { scale: 'log', step: 0.1 }),
   p('eco.inflation_target', "Cible d'inflation", 'I', '%', [0, 10], 'CUR', ['economy'], 'Cible ou fourchette médiane de la banque centrale ; sert d’ancrage aux anticipations.', { step: 0.1 }),
   p('eco.cb_independence', 'Indépendance de la banque centrale', 'I', 'indice', UNIT, 'CUR', ['economy'], 'Indépendance de jure de la banque centrale (0 = aucune, 1 = totale) ; pondère l’ancrage de l’inflation.', { step: 0.01 }),
   p('eco.unemployment', 'Chômage', 'S', '%', [0, 70], 'IMF:LUR', ['economy', 'politics'], 'Part de la population active sans emploi et en recherche d’emploi.', { step: 0.1 }),
   p('eco.public_debt', 'Dette publique brute', 'S', '% PIB', [0, 400], 'IMF:GGXWDG_NGDP', ['economy', 'budget'], 'Dette brute des administrations publiques.', { step: 0.1 }),
   p('eco.debt_maturity', 'Maturité moyenne de la dette', 'I', 'ans', [0.5, 20], 'HYP', ['economy'], 'Durée moyenne de la dette ; règle la vitesse à laquelle le taux moyen suit le taux de marché.', { step: 0.1 }),
+  p('eco.debt_avg_rate', 'Taux moyen apparent de la dette', 'S', '%', [0, 100], 'WB:GC.XPN.INTP.RV.ZS', ['economy', 'budget'], 'Intérêts versés rapportés à la dette publique (intérêts en % des recettes de l’administration centrale × recettes / dette) ; converge vers le taux de marché au rythme du renouvellement de la dette.', { step: 0.01 }),
   p('eco.foreign_held_debt', "Part de la dette détenue par l'étranger", 'I', '%', PCT, 'HYP', ['economy'], 'Part de la dette publique détenue par des non-résidents : exposition aux sanctions financières et aux fuites de capitaux.'),
   p('eco.sovereign_rate', "Taux d'emprunt souverain", 'D', '%', [-2, 100], 'DER', ['economy', 'budget'], 'Taux de marché de la dette publique : taux directeur mondial + prime de risque − privilège de monnaie de réserve.', { step: 0.01 }),
   p('eco.credit_rating', 'Notation souveraine', 'S', 'cran', [0, 20], 'CUR', ['economy'], 'Notation à long terme en devises (0 = défaut, 20 = AAA), convertie depuis l’échelle de S&P.', { step: 1 }),
-  p('eco.reserves', 'Réserves de change (or inclus)', 'S', 'Md$', [0, 5000], 'WB:FI.RES.TOTL.CD', ['economy'], 'Réserves officielles, or compris.', LOG),
+  p('eco.default_probability', 'Probabilité de défaut souverain', 'D', '%/an', PCT, 'DER', ['economy'], 'Probabilité annuelle de défaut de paiement, fonction de la notation (fréquences historiques de défaut par notation).', { step: 0.01 }),
+  p('eco.in_default', 'Défaut de paiement en cours', 'S', '', null, 'DER', ['economy', 'budget'], 'Le pays est en défaut sur sa dette souveraine (notation D ou SD au départ, ou défaut simulé) jusqu’à la restructuration.', BOOL),
+  p('eco.reserves', 'Réserves de change (or inclus)', 'S', 'Md$', [0, 1e5], 'WB:FI.RES.TOTL.CD', ['economy'], 'Réserves officielles, or compris.', LOG),
   p('eco.reserves_frozen', 'Part des réserves gelées', 'S', '%', PCT, 'CUR', ['economy', 'diplomacy'], 'Part des réserves immobilisées par des sanctions.'),
+  p('eco.reserves_months', "Réserves en mois d'importations", 'D', 'mois', [0, 240], 'DER', ['economy'], 'Réserves utilisables (hors réserves gelées) rapportées aux importations mensuelles ; sous un seuil, crise de balance des paiements.', { step: 0.1 }),
   p('eco.current_account', 'Solde courant', 'S', '% PIB', [-50, 50], 'IMF:BCA_NGDPD', ['economy', 'trade'], 'Solde des transactions courantes avec le reste du monde.', { step: 0.1 }),
   p('eco.reserve_currency', 'Statut de monnaie de réserve', 'I', 'part', UNIT, 'CUR', ['economy'], 'Part de la monnaie du pays dans les réserves mondiales allouées (COFER du FMI) ; commune à tous les membres d’une union monétaire.', { step: 0.001 }),
   p('eco.exchange_regime', 'Régime de change', 'I', '', null, 'CUR', ['economy'], 'Régime de change de fait (classification du FMI simplifiée).', enumOf('floating', 'managed', 'fixed', 'monetary_union', 'dollarized')),
@@ -174,12 +180,12 @@ export const CATALOG: readonly ParamDef[] = [
   p('eco.remittances', 'Transferts des émigrés reçus', 'S', '% PIB', [0, 70], 'WB:BX.TRF.PWKR.DT.GD.ZS', ['economy'], 'Envois de fonds des travailleurs émigrés.', { step: 0.1 }),
   p('eco.aid_received', 'Aide publique au développement reçue', 'S', '% RNB', [-5, 120], 'WB:DT.ODA.ODAT.GN.ZS', ['economy', 'diplomacy'], 'Aide publique au développement nette reçue.', { step: 0.1 }),
   p('eco.financial_integration', 'Intégration financière (dollar, SWIFT, marchés)', 'I', 'indice', UNIT, 'HYP', ['economy', 'diplomacy'], 'Dépendance au système financier occidental ; amplifie l’effet des sanctions financières.', { step: 0.01 }),
-  p('eco.sovereign_fund', 'Fonds souverain', 'S', 'Md$', [0, 3000], 'CUR', ['economy'], 'Actifs des fonds souverains, mobilisables en cas de choc.', LOG),
+  p('eco.sovereign_fund', 'Fonds souverain', 'S', 'Md$', [0, 1e5], 'CUR', ['economy'], 'Actifs des fonds souverains, mobilisables en cas de choc.', LOG),
   p('eco.industrial_capacity', 'Capacité industrielle mobilisable', 'D', 'indice', [0, 1000], 'DER', ['military', 'economy'], 'Capacité industrielle convertible en effort de guerre (valeur ajoutée manufacturière × facteurs).'),
   p('eco.misery_index', 'Indice de misère', 'D', 'points', [0, 1000], 'DER', ['politics'], 'Inflation + chômage.'),
 
   // 3. Budget de l'État
-  p('bud.revenue', 'Recettes publiques', 'I', '% PIB', [0, 120], 'WB:GC.REV.XGRT.GD.ZS', ['budget'], 'Recettes des administrations publiques hors dons (repli : recettes fiscales).', { step: 0.1 }),
+  p('bud.revenue', 'Recettes publiques', 'I', '% PIB', [0, 120], 'IMF:rev', ['budget'], 'Recettes des administrations publiques (FMI, Public Finances in Modern History ; repli : recettes de l’administration centrale hors dons, Banque mondiale).', { step: 0.1 }),
   p('bud.tax_efficiency', 'Efficacité de collecte', 'I', 'indice', UNIT, 'DER', ['budget'], 'Part des prélèvements théoriques effectivement collectée ; calculée depuis la corruption et l’efficacité gouvernementale.', { step: 0.01 }),
   p('bud.defense', 'Défense', 'I', '% PIB', [0, 40], 'WB:MS.MIL.XPND.GD.ZS', ['budget', 'military'], 'Dépenses militaires (définition du SIPRI).', { step: 0.1 }),
   p('bud.defense_procurement', "Part de l'équipement et des munitions dans la défense", 'I', '%', [5, 70], 'HYP', ['military'], 'Part du budget de défense consacrée aux équipements et munitions (le reste : personnel, fonctionnement).'),
@@ -193,6 +199,9 @@ export const CATALOG: readonly ParamDef[] = [
   p('bud.security', 'Sécurité intérieure et renseignement', 'I', '% PIB', [0, 5], 'HYP', ['budget', 'politics'], 'Police, sécurité intérieure et renseignement.', { step: 0.1 }),
   p('bud.foreign_aid', 'Aide extérieure versée (dont militaire)', 'I', '% RNB', [0, 3], 'CUR', ['budget', 'diplomacy'], 'Aide publique au développement et aide militaire versées.', { step: 0.01 }),
   p('bud.monetization', 'Part du déficit monétisée', 'I', '%', PCT, 'HYP', ['budget', 'economy'], 'Part du déficit financée par création monétaire (source d’inflation).'),
+  p('bud.other_spending', 'Autres dépenses et écart de calage', 'I', '% PIB', [-60, 60], 'DER', ['budget'], 'Dépenses non ventilées (fonctionnement, transferts, investissement hors infrastructures) calculées au départ pour reproduire le solde du FMI ; négatives si les postes supposés dépassent les dépenses totales.', { step: 0.1 }),
+  p('bud.fiscal_adjustment', 'Ajustement budgétaire automatique', 'S', '% PIB', [-20, 20], 'DER', ['budget'], 'Réduction (+) ou hausse (−) des dépenses décidée par la règle de réaction à la dette, en attendant les décisions des pays (phase 7) ; verrouiller à 0 la désactive.', { step: 0.1 }),
+  p('bud.interest', "Charge d'intérêts", 'D', '% PIB', [0, 60], 'DER', ['budget', 'economy'], 'Intérêts de la dette publique : taux moyen apparent × dette.', { step: 0.01 }),
   p('bud.balance', 'Solde budgétaire', 'D', '% PIB', [-60, 60], 'IMF:GGXCNL_NGDP', ['budget', 'economy'], 'Capacité (+) ou besoin (−) de financement des administrations publiques ; initialisé par le FMI puis calculé.', { step: 0.1 }),
 
   // 4. Commerce et dépendances
@@ -208,13 +217,13 @@ export const CATALOG: readonly ParamDef[] = [
   p('trade.logistics', 'Performance logistique', 'I', 'score', [1, 5], 'WB:LP.LPI.OVRL.XQ', ['trade', 'military'], 'Indice de performance logistique de la Banque mondiale.', { step: 0.01 }),
 
   // 5. Énergie
-  p('energy.primary_consumption', "Consommation d'énergie primaire", 'S', 'TWh/an', [0, 5e4], 'OWID:primary_energy_consumption', ['energy', 'markets'], 'Consommation d’énergie primaire (méthode de substitution).', LOG),
-  p('energy.oil_production', 'Production de pétrole', 'S', 'TWh/an', [0, 2e4], 'OWID:oil_production', ['energy', 'markets'], 'Production de pétrole brut et de liquides.', LOG),
-  p('energy.oil_consumption', 'Consommation de pétrole', 'S', 'TWh/an', [0, 2e4], 'OWID:oil_consumption', ['energy', 'markets'], 'Consommation de pétrole.', LOG),
-  p('energy.gas_production', 'Production de gaz', 'S', 'TWh/an', [0, 2e4], 'OWID:gas_production', ['energy', 'markets'], 'Production de gaz naturel.', LOG),
-  p('energy.gas_consumption', 'Consommation de gaz', 'S', 'TWh/an', [0, 2e4], 'OWID:gas_consumption', ['energy', 'markets'], 'Consommation de gaz naturel.', LOG),
-  p('energy.coal_production', 'Production de charbon', 'S', 'TWh/an', [0, 3e4], 'OWID:coal_production', ['energy', 'markets'], 'Production de charbon.', LOG),
-  p('energy.coal_consumption', 'Consommation de charbon', 'S', 'TWh/an', [0, 3e4], 'OWID:coal_consumption', ['energy', 'markets'], 'Consommation de charbon.', LOG),
+  p('energy.primary_consumption', "Consommation d'énergie primaire", 'S', 'TWh/an', [0, 2e5], 'OWID:primary_energy_consumption', ['energy', 'markets'], 'Consommation d’énergie primaire (méthode de substitution).', LOG),
+  p('energy.oil_production', 'Production de pétrole', 'S', 'TWh/an', [0, 1e5], 'OWID:oil_production', ['energy', 'markets'], 'Production de pétrole brut et de liquides.', LOG),
+  p('energy.oil_consumption', 'Consommation de pétrole', 'S', 'TWh/an', [0, 1e5], 'OWID:oil_consumption', ['energy', 'markets'], 'Consommation de pétrole.', LOG),
+  p('energy.gas_production', 'Production de gaz', 'S', 'TWh/an', [0, 1e5], 'OWID:gas_production', ['energy', 'markets'], 'Production de gaz naturel.', LOG),
+  p('energy.gas_consumption', 'Consommation de gaz', 'S', 'TWh/an', [0, 1e5], 'OWID:gas_consumption', ['energy', 'markets'], 'Consommation de gaz naturel.', LOG),
+  p('energy.coal_production', 'Production de charbon', 'S', 'TWh/an', [0, 1e5], 'OWID:coal_production', ['energy', 'markets'], 'Production de charbon.', LOG),
+  p('energy.coal_consumption', 'Consommation de charbon', 'S', 'TWh/an', [0, 1e5], 'OWID:coal_consumption', ['energy', 'markets'], 'Consommation de charbon.', LOG),
   p('energy.nuclear_share_elec', "Part du nucléaire dans l'électricité", 'S', '%', PCT, 'OWID:nuclear_share_elec', ['energy'], 'Part du nucléaire dans la production d’électricité.', { step: 0.1 }),
   p('energy.renewables_share', "Part des renouvelables dans l'énergie", 'S', '%', PCT, 'OWID:renewables_share_energy', ['energy', 'climate'], 'Part des renouvelables dans l’énergie primaire.', { step: 0.1 }),
   p('energy.oil_reserves', 'Réserves prouvées de pétrole', 'I', 'milliards de barils', [0, 400], 'CUR', ['energy', 'markets'], 'Réserves prouvées de pétrole brut.', { step: 0.1 }),
@@ -240,7 +249,7 @@ export const CATALOG: readonly ParamDef[] = [
   p('res.export_restrictions', "Restrictions d'exportation actives (minerais, céréales, énergie)", 'S', 'liste + intensité', null, 'CUR', ['markets', 'trade'], 'Produits soumis à restriction d’exportation, avec leur intensité (0–1).', LIST),
 
   // 7. Forces armées
-  p('mil.budget', 'Budget de défense', 'D', 'Md$', [0, 2000], 'WB:MS.MIL.XPND.CD', ['military'], 'Dépenses militaires en dollars courants ; initialisées par le SIPRI puis calculées (PIB × part défense).', LOG),
+  p('mil.budget', 'Budget de défense', 'D', 'Md$', [0, 1e4], 'WB:MS.MIL.XPND.CD', ['military'], 'Dépenses militaires en dollars courants ; initialisées par le SIPRI puis calculées (PIB × part défense).', LOG),
   p('mil.active', "Militaires d'active", 'S', 'personnes', [0, 5e6], 'CUR', ['military', 'combat'], 'Effectifs d’active (IISS, The Military Balance).', LOG),
   p('mil.reserves', 'Réservistes', 'S', 'personnes', [0, 2e7], 'CUR', ['military'], 'Réserves militaires.', LOG),
   p('mil.paramilitary', 'Paramilitaires', 'S', 'personnes', [0, 1e7], 'CUR', ['military', 'politics'], 'Forces paramilitaires (gendarmeries, gardes nationales, garde-frontières).', LOG),
@@ -320,7 +329,7 @@ export const CATALOG: readonly ParamDef[] = [
   p('dip.soft_power', 'Soft power', 'I', 'indice', PCT, 'HYP', ['diplomacy'], 'Influence culturelle et diplomatique.'),
   p('dip.commitment_credibility', 'Crédibilité de ses engagements', 'S', 'indice', UNIT, 'HYP', ['diplomacy'], 'Crédibilité des engagements, mise à jour par l’historique des actes.', { step: 0.01 }),
   p('dip.mediation_capacity', 'Capacité de médiation', 'I', 'indice', PCT, 'HYP', ['diplomacy'], 'Aptitude à servir de médiateur.'),
-  p('dip.aid_given', 'Aide versée', 'D', 'Md$/an', [0, 200], 'DER', ['diplomacy'], 'Aide versée (bud.foreign_aid × RNB).', { step: 0.01 }),
+  p('dip.aid_given', 'Aide versée', 'D', 'Md$/an', [0, 1000], 'DER', ['diplomacy'], 'Aide versée (bud.foreign_aid × RNB).', { step: 0.01 }),
   p('dip.debt_leverage', "Créances sur d'autres États (levier)", 'S', 'Md$ par débiteur', null, 'HYP', ['diplomacy', 'economy'], 'Prêts bilatéraux aux autres États, source de levier.', { valueType: 'vector' }),
 
   // 11. Technologie et information

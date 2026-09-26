@@ -1,36 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Dataset } from './data/dataset.ts';
 import { loadData } from './data/load.ts';
-import { startEngine } from './engineClient.ts';
 import { formatNumber } from './format.ts';
-import { LAYERS, buildLayer } from './map/layers.ts';
+import { LAYERS, buildLayer, liveSource } from './map/layers.ts';
 import { MapView } from './map/MapView.tsx';
+import { run, startSimulation } from './sim/client.ts';
+import { useSim } from './sim/store.ts';
 import { useApp } from './store.ts';
+import { BottomPanel } from './ui/BottomPanel.tsx';
 import { Inspector } from './ui/Inspector.tsx';
 import { Legend } from './ui/Legend.tsx';
+import { Notices } from './ui/Notices.tsx';
 import { SearchDialog } from './ui/SearchDialog.tsx';
 import { Tooltip } from './ui/Tooltip.tsx';
-import { TopBar, type EngineStatus } from './ui/TopBar.tsx';
+import { TopBar, nextSpeed, redo, togglePlay, undo } from './ui/TopBar.tsx';
 import { WorldPanel } from './ui/WorldPanel.tsx';
-
-function useEngine(): EngineStatus {
-  const [engine, setEngine] = useState<EngineStatus>({ state: 'loading' });
-  useEffect(() => {
-    let cancelled = false;
-    startEngine()
-      .hello(1)
-      .then((r) => {
-        if (!cancelled) setEngine({ state: 'ready', version: r.version });
-      })
-      .catch((e: unknown) => {
-        if (!cancelled) setEngine({ state: 'error', message: String(e) });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-  return engine;
-}
 
 function useDataLoading(): void {
   const setLoad = useApp((s) => s.setLoad);
@@ -55,22 +39,47 @@ function useDataLoading(): void {
   }, [setLoad, setData]);
 }
 
-/** Raccourcis clavier (SPEC §9.10) : 1–9 et 0 pour les couches, Ctrl+K, Échap. */
+/** Le moteur démarre une fois les données de la carte chargées (mêmes fichiers, même build). */
+function useSimulation(data: Dataset | null): void {
+  useEffect(() => {
+    if (data !== null) void startSimulation(data.raw.status.resolution);
+  }, [data]);
+}
+
+function isTyping(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  return (
+    el !== null &&
+    (el.tagName === 'INPUT' ||
+      el.tagName === 'SELECT' ||
+      el.tagName === 'TEXTAREA' ||
+      el.isContentEditable)
+  );
+}
+
+/**
+ * Raccourcis clavier (SPEC §9.10) : espace (lecture, pause), + et − (vitesse), Ctrl+Z et
+ * Ctrl+Y (annuler, rétablir), 1–9 et 0 (couches), Ctrl+K ou / (recherche), Échap.
+ */
 function useShortcuts(): void {
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       const app = useApp.getState();
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      const sim = useSim.getState();
+      const ready = sim.status.state === 'ready';
+      const key = e.key.toLowerCase();
+      if ((e.ctrlKey || e.metaKey) && key === 'k') {
         e.preventDefault();
         if (app.data) app.setSearchOpen(!app.searchOpen);
         return;
       }
-      const target = e.target as HTMLElement | null;
-      if (
-        target &&
-        (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.isContentEditable)
-      )
+      if (isTyping(e.target)) return;
+      if ((e.ctrlKey || e.metaKey) && ready && (key === 'z' || key === 'y')) {
+        e.preventDefault();
+        if (key === 'y' || e.shiftKey) redo();
+        else undo();
         return;
+      }
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key === 'Escape') {
         if (app.searchOpen) app.setSearchOpen(false);
@@ -80,6 +89,17 @@ function useShortcuts(): void {
       if (e.key === '/' && app.data) {
         e.preventDefault();
         app.setSearchOpen(true);
+        return;
+      }
+      if (ready && e.key === ' ') {
+        e.preventDefault();
+        togglePlay(sim.clock);
+        return;
+      }
+      if (ready && sim.clock && (e.key === '+' || e.key === '-' || e.key === '=')) {
+        e.preventDefault();
+        const days = nextSpeed(sim.clock.speed, e.key === '-' ? -1 : 1);
+        void run((api) => api.setSpeed(days));
         return;
       }
       const layer = LAYERS.find((l) => l.key === e.key);
@@ -128,11 +148,14 @@ function LoadScreen() {
   );
 }
 
+/** Couches qui lisent des valeurs simulées (redessinées quand elles changent). */
+const LIVE_LAYERS = new Set(['indicator', 'relations', 'blocs', 'sanctions']);
+
 export function App() {
-  const engine = useEngine();
   useDataLoading();
   useShortcuts();
   const data = useApp((s) => s.data);
+  useSimulation(data);
   const load = useApp((s) => s.load);
   const layer = useApp((s) => s.layer);
   const indicator = useApp((s) => s.indicator);
@@ -140,11 +163,28 @@ export function App() {
   const selected = useApp((s) => s.selected);
   const searchOpen = useApp((s) => s.searchOpen);
   const worldOpen = useApp((s) => s.worldOpen);
+  const bottomOpen = useApp((s) => s.bottomOpen);
+  const live = useSim((s) => (s.status.state === 'ready' ? s.live : null));
+  const liveLayer = LIVE_LAYERS.has(layer);
+  // Version des valeurs lues par la couche affichée (0 : couche sans valeurs simulées).
+  const stateVersion = useSim((s) => (liveLayer ? s.stateVersion : 0));
+  const pairVersion = useSim((s) => (liveLayer ? s.pairVersion : 0));
   // Seules les couches « relations » et « sanctions » dépendent de la sélection.
   const layerSelected = layer === 'relations' || layer === 'sanctions' ? selected : 0;
   const layerView = useMemo(
-    () => (data ? buildLayer(data, { layer, indicator, bloc, selected: layerSelected }) : null),
-    [data, layer, indicator, bloc, layerSelected],
+    () =>
+      data
+        ? buildLayer(data, {
+            layer,
+            indicator,
+            bloc,
+            selected: layerSelected,
+            ...(live && liveLayer ? { values: liveSource(data, live) } : {}),
+          })
+        : null,
+    // Les compteurs de version signalent un nouvel état du miroir (mutable).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data, layer, indicator, bloc, layerSelected, live, liveLayer, stateVersion, pairVersion],
   );
   const tooltip = useRef<HTMLDivElement>(null);
   const onPointer = useCallback((x: number, y: number, inside: boolean) => {
@@ -159,8 +199,11 @@ export function App() {
 
   return (
     <div className="app">
-      <TopBar data={data} engine={engine} />
-      <main className="stage" data-map-state={load.state}>
+      <TopBar data={data} />
+      <main
+        className={`stage${bottomOpen && data ? ' with-bottom' : ''}`}
+        data-map-state={load.state}
+      >
         {data && layerView && (
           <>
             <MapView data={data} layerView={layerView} onPointer={onPointer} />
@@ -170,10 +213,12 @@ export function App() {
             {worldOpen && <WorldPanel data={data} />}
             <Legend layerView={layerView} />
             {selected !== 0 && <Inspector data={data} />}
+            {bottomOpen && <BottomPanel data={data} />}
             {searchOpen && <SearchDialog data={data} />}
           </>
         )}
         <LoadScreen />
+        <Notices />
       </main>
     </div>
   );

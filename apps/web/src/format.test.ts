@@ -42,6 +42,8 @@ describe('mise en forme des valeurs', () => {
     expect(plain(formatQuantity(2.5e6, 'personnes'))).toBe('2,5 millions de personnes');
     expect(formatQuantity(48.2, 'indice')).toBe('48,2');
     expect(plain(formatQuantity(1, 'multiplicateur'))).toBe('× 1');
+    expect(plain(formatQuantity(12, 'cran'))).toBe('12 crans');
+    expect(plain(formatQuantity(1, 'cran'))).toBe('1 cran');
   });
 
   it('écrit les dates en toutes lettres', () => {

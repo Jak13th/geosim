@@ -87,6 +87,17 @@ describe.skipIf(!built)('données pays construites', () => {
     expect(total).toBeLessThan(8.5e9);
   });
 
+  it('une entité rattachée à un pays (faction, entité de facto) est plus petite que lui', () => {
+    // Garde-fou contre les collisions de codes (agrégat « OSS » de la Banque mondiale).
+    for (const e of countries.entities.filter((x) => x.parent !== null)) {
+      for (const id of ['demo.population', 'eco.gdp_nominal']) {
+        const own = param(id, e.id)?.value as number;
+        const parent = param(id, e.parent ?? '')?.value as number;
+        expect(own, `${e.id}.${id}`).toBeLessThan(parent);
+      }
+    }
+  });
+
   it('valeurs clés plausibles (sources automatisées)', () => {
     expect(param('demo.population', 'CHN')?.method).toBe('source');
     expect(param('eco.gdp_nominal', 'USA')?.value as number).toBeGreaterThan(25_000);

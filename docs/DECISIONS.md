@@ -316,3 +316,101 @@ Le script attend la carte, parcourt les dix couches, zoome, déplace, ouvre la r
 ### D47. État de l'interface : Zustand
 
 Couche, indicateur, bloc, survol, sélection et panneaux sont dans un magasin Zustand (SPEC §3). L'état de la simulation vivra dans le moteur (phase 3), pas dans ce magasin.
+
+## 2026-09-26 — Phase 3 (moteur et temps réel)
+
+### D48. État vectorisé en trois couches, tick quotidien, systèmes mensuels
+
+Paramètres pays numériques dans des `Float64Array` P × N (colonne par paramètre) : donnée réelle (`base`), valeur courante (surcharges et évolution simulée), valeur effective (modificateurs). Un tick = un jour ; marchés, démographie, économie et budget tournent le 1er de chaque mois ; les valeurs dérivées (soldes, taux, ratios) sont recalculées après chaque pas et chaque commande, sans aléa.
+
+- _Écartées_ : un objet par pays (lent à 208 entités × 200 paramètres, difficile à hacher) ; systèmes quotidiens (inutile pour des grandeurs mensuelles et 30 fois plus coûteux).
+- _Raison_ : un pas mensuel coûte ≈ 8 ms pour 208 entités ; 20 ans se simulent en ≈ 2 s ; un curseur modifié se voit aussitôt dans les dérivés.
+
+### D49. Calage sur la situation initiale : le modèle simule des écarts
+
+Les niveaux viennent des données (projections du FMI pour la croissance potentielle, taux moyen apparent de la dette, solde budgétaire, prix au jour des données). Les termes de choc (stabilité, dette, prix de l'énergie, primes de risque, inflation anticipée) sont mesurés par rapport au départ, et les références de calage sont recalculées avec les coefficients courants : modifier un coefficient en cours de partie ne crée pas de saut artificiel (même résultat qu'en le modifiant avant le départ, vérifié sur 30 coefficients).
+
+- _Écartée_ : modèle structurel en niveaux, calé globalement.
+- _Raison_ : sans calage, chaque pays dériverait dès le premier mois (les projections du FMI intègrent déjà dette, instabilité ou rente) ; le calage garantit « sans intervention, le monde continue sur sa lancée ».
+
+### D50. Numéraire : le dollar ; prix d'ancrage en dollars constants
+
+Les grandeurs en dollars courants (PIB, prix) suivent l'inflation des États-Unis. Les prix des matières premières reviennent à long terme vers leur prix au jour des données, en termes réels.
+
+- _Raison_ : les données (FMI, Banque mondiale, cours) sont en dollars ; un ancrage nominal ferait baisser les prix réels de 2 à 3 % par an.
+
+### D51. Aléa en nombre fixe par mois (nombres aléatoires communs)
+
+Chaque système tire le même nombre de valeurs chaque mois, quel que soit l'état (un choc par pays, un tirage de défaut par pays, un choc par prix). Deux trajectoires de même graine partagent donc leurs chocs : l'effet d'une modification se lit directement (test « un curseur modifié infléchit la trajectoire »).
+
+### D52. Solde migratoire : moyenne sur dix ans
+
+`demo.net_migration` = moyenne des soldes des dix dernières années (Banque mondiale, en ‰ de la population de chaque année), au lieu de la dernière année.
+
+- _Raison_ : la dernière année reprend des projections ponctuelles (retours de réfugiés estimés par l'ONU en 2025) : l'Allemagne perdait 17 % de sa population en 20 ans. Avec la moyenne, 83,1 millions en 2046 (projection de l'ONU : ≈ 83 millions).
+
+### D53. Taux moyen apparent de la dette : Banque mondiale (le FMI est inaccessible)
+
+`eco.debt_avg_rate` = intérêts versés (% des recettes, WB:GC.XPN.INTP.RV.ZS) × recettes (% du PIB) / dette brute (FMI), même année. L'indicateur d'intérêts du FMI n'a pas pu être téléchargé : l'API DataMapper renvoie 403 (protection Akamai) pour les nouvelles séries depuis le conteneur, le 26/09/2026. Les pays sans donnée reçoivent la médiane régionale (confiance `low`) ; les valeurs de la Banque mondiale gardent leur confiance selon leur ancienneté.
+
+### D54. Natures de paramètres alignées sur le moteur
+
+`eco.potential_growth` devient un état (il converge vers la croissance de long terme), `demo.fertility` un état (il converge vers la fécondité de long terme), `demo.birth_rate` un dérivé (fécondité × poids des âges féconds). Nouveaux paramètres : croissance de long terme, écart de production, taux moyen de la dette, probabilité de défaut, défaut en cours, réserves en mois d'importations, autres dépenses (calage du solde du FMI), ajustement budgétaire, intérêts. Plages élargies aux trajectoires simulées (PIB, réserves, fonds souverains, énergie, budget militaire, aide versée).
+
+- _Raison_ : avec la sémantique des commandes (un levier saisi est conservé, un dérivé saisi est forcé), un levier que le moteur réécrit chaque mois perdrait la saisie de l'utilisateur sans prévenir.
+
+### D55. Crises de balance des paiements : changes administrés, fixes ou dollarisés
+
+Une crise (dévaluation, soutien extérieur, dégradation) se déclenche quand les réserves passent sous 1,5 mois d'importations, seulement pour les régimes qui défendent une parité. Les réserves suivent le PIB nominal (le déficit courant initial est financé par les entrées de capitaux) ; seuls les écarts du solde courant à son niveau initial les font varier.
+
+- _Raison_ : sans ces deux règles, 627 crises en 20 ans, dont les États-Unis (monnaie flottante, réserves faibles par construction).
+
+### D56. Défaut souverain : probabilité par notation, restructuration à 24 mois
+
+Probabilité annuelle de 0,1 % pour BBB, multipliée par e^0,43 à chaque cran perdu (≈ 2 % pour B−, 3 % pour CCC+, 11 % pour C, plafond 30 %), tirée chaque mois ; restructuration au bout de 24 mois avec une décote de 30 %, notation CCC+ et nouveaux coupons (taux moyen ramené au taux de marché). Un pays en défaut au départ (Venezuela, Liban…) paie la prime d'après restructuration. Résultat : 30 à 40 défauts en 20 ans (5 graines), soit 1,5 à 2 par an, l'ordre de grandeur des décennies récentes.
+
+- _Écartée_ : seuil de dette fixe (défauts déterministes, aveugles à la notation et à la monnaie de réserve).
+
+### D57. Règle budgétaire provisoire (Bohn) et fonds souverains
+
+En attendant les décisions des pays (phase 7), le solde primaire se rapproche du solde qui stabilise la dette plus une réaction à la hausse de la dette (Bohn, 1998) ; ajustement borné à ±20 points de PIB ; austérité en défaut. Un déficit est d'abord couvert par le fonds souverain au prorata de sa taille (Norvège, pays du Golfe).
+
+- _Raison_ : sans règle, la dette dérivait vers 400 % du PIB pour l'Irak, la Libye, le Timor-Oriental ou Bahreïn, dont le budget dépend des rentes.
+
+### D58. Worker : boucle par tranches, images à 5 Hz, tableaux transférés
+
+La boucle du worker avance par tranches de 20 ms (50 ms pour « avancer jusqu'à ») et publie une image à 5 Hz au plus, et aussitôt après chaque commande. Les images sont postées directement (`postMessage` avec transfert des tableaux) à côté des appels RPC de Comlink ; l'interface garde un miroir de l'état qu'elle lit de façon synchrone. Les paramètres bilatéraux ne sont renvoyés que lorsqu'ils changent ; les valeurs non numériques, par différences.
+
+- _Écartées_ : rappels Comlink (un canal de plus, sans gain) ; requêtes de l'interface à chaque rendu (latence et complexité).
+
+### D59. Vitesses : 1, 7, 30 et 90 jours par seconde
+
+« 1 mois/s » = 30 jours, « 3 mois/s » = 90 jours (plage de `sim.speed`, 0–90). Le pas-à-pas « mois » avance jusqu'au premier jour du mois suivant, c'est-à-dire exactement un pas mensuel des systèmes.
+
+### D60. `config/model.yaml` : rechargement à chaud journalisé, enregistrement ciblé
+
+Le serveur surveille le fichier et prévient l'interface (événement HMR `geosim:model`) ; l'interface relit l'arbre et l'applique par une commande `setModel` journalisée (la relecture reste exacte), ignorée si rien ne change ; un fichier invalide est signalé et le modèle en cours conservé. L'onglet Modèle modifie les coefficients en direct (`setCoefficient`, annulable) ; « Enregistrer » édite le document YAML en place (commentaires, ordre, guillemets conservés) puis applique Prettier : seules les lignes `value:` concernées changent.
+
+- _Écartée_ : réécrire le fichier depuis l'arbre (commentaires et mise en forme perdus).
+
+### D61. Captures : en mémoire et dans `captures/` (hors git)
+
+Une capture (état complet, journal, historique) se garde en mémoire dans le worker, ou s'enregistre dans `captures/<nom>.json` par l'API locale (noms filtrés, écriture atomique). Les requêtes d'écriture de l'API exigent un en-tête propre à l'interface et, si le navigateur l'indique, une origine locale : une page d'un autre site ne peut pas écrire sur le disque. La relecture d'une capture chargée depuis un fichier n'est pas vérifiable (état initial inconnu). Le format de scénario versionné viendra en phase 8.
+
+### D62. Graphiques : uPlot
+
+Séries temporelles avec uPlot (licence MIT, ≈ 50 ko) : rapide sur de longues séries, légende au survol, zoom. Mini-graphes de l'inspecteur en SVG, sans dépendance.
+
+- _Écartées_ : Chart.js et ECharts (plus lourds), graphiques faits main (zoom et légende à réécrire).
+
+### D63. Couches de la carte en direct, échelles calées sur le départ
+
+Les couches « indicateurs », « relations », « blocs » et « sanctions » lisent les valeurs simulées. L'échelle de couleur d'un indicateur est calée sur les valeurs de départ (2ᵉ et 98ᵉ centiles) : une évolution simulée se voit comme un changement de couleur, au lieu d'être absorbée par une échelle recalculée à chaque image.
+
+### D64. Édition : une commande par geste
+
+Un curseur envoie sa commande au relâchement (et un champ à la validation) : un geste = une entrée du journal = une annulation. L'édition groupée envoie une seule commande pour tous les pays visés (bloc, région, tous).
+
+### D65. Valeurs au départ gardées par le moteur
+
+Le moteur conserve les valeurs après calage (tick 0), incluses dans les captures. L'interface distingue ainsi une valeur **simulée** (qui a bougé depuis le départ) d'une valeur **calculée** dès le départ par le moteur (budget de défense = PIB × part de la défense, différent du chiffre du SIPRI), et d'une valeur **modifiée** par l'utilisateur.

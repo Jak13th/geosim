@@ -13,8 +13,10 @@ import {
   paramById,
   type BiomeId,
   type ParamDef,
+  type ParamValue,
 } from '@geosim/shared';
 import type { Dataset, EntityView } from '../data/dataset.ts';
+import type { LiveSim } from '../sim/mirror.ts';
 import { formatDataDate, formatQuantity, formatShort } from '../format.ts';
 import {
   CATEGORICAL,
@@ -135,22 +137,79 @@ export const DEFAULT_INDICATOR = 'pol.stability';
 export const DEFAULT_BLOC = 'military';
 
 /**
- * Indicateurs proposés en tête de liste (SPEC §9.2). Croissance, puissance militaire et
- * dépendance énergétique sont calculées par le moteur à partir de la phase 3 ; en attendant,
- * la croissance potentielle et le budget de défense sont proposés.
+ * Indicateurs proposés en tête de liste (SPEC §9.2). La puissance militaire arrive avec les
+ * forces armées (phase 5) ; en attendant, le budget de défense est proposé.
  */
 export const INDICATOR_PRESETS = [
   'pol.stability',
   'eco.gdp_per_capita',
-  'eco.potential_growth',
+  'eco.growth',
   'eco.inflation',
+  'eco.unemployment',
   'eco.public_debt',
+  'bud.balance',
+  'eco.sovereign_rate',
   'mil.budget',
-  'bud.defense',
+  'energy.import_dependence',
   'demo.hdi',
+  'demo.population',
   'pol.regime_type',
-  'energy.oil_production',
 ] as const;
+
+/**
+ * Valeurs lues par les couches : données de départ (moteur pas encore prêt) ou état simulé
+ * (miroir du moteur). Les échelles de couleur restent calées sur les valeurs de départ : une
+ * évolution simulée se voit comme un changement de couleur.
+ */
+export interface ValueSource {
+  number(e: EntityView, id: string): number | null;
+  value(e: EntityView, id: string): ParamValue;
+  /** Valeurs de départ de toutes les entités (bornes de l'échelle de couleur). */
+  scaleValues(id: string): number[];
+  pair(id: string, from: string, to: string): ParamValue;
+  pairEntries(id: string): readonly (readonly [string, string, ParamValue])[];
+  /** Date de la donnée affichée, ou null pour une valeur simulée. */
+  dateOf(e: EntityView, id: string): string | null;
+}
+
+export function datasetSource(data: Dataset): ValueSource {
+  return {
+    number: (e, id) => data.numeric(e, id),
+    value: (e, id) => {
+      const r = data.param(e, id);
+      return r.state === 'value' ? r.value.value : null;
+    },
+    scaleValues: (id) =>
+      data.list.map((e) => data.numeric(e, id)).filter((v): v is number => v !== null),
+    pair: (id, from, to) => data.pair(id, from, to)?.value ?? null,
+    pairEntries: (id) => data.pairEntries(id).map(([a, b, v]) => [a, b, v] as const),
+    dateOf: (e, id) => {
+      const r = data.param(e, id);
+      return r.state === 'value' ? r.value.date : null;
+    },
+  };
+}
+
+export function liveSource(data: Dataset, live: LiveSim): ValueSource {
+  const fallback = datasetSource(data);
+  return {
+    number: (e, id) => (live.hasNumeric(id) ? live.number(e.id, id) : fallback.number(e, id)),
+    value: (e, id) => live.countryValue(e.id, id),
+    scaleValues: (id) => {
+      const column = live.baseColumn(id);
+      if (column === null) return fallback.scaleValues(id);
+      return Array.from(column).filter((v) => Number.isFinite(v));
+    },
+    pair: (id, from, to) => live.pairValue(id, from, to),
+    pairEntries: (id) => live.pairEntries(id),
+    dateOf: (e, id) => {
+      const slot = { scope: 'country', param: id, entity: e.id } as const;
+      const base = live.baseValue(slot);
+      if (live.changed(slot, base) || live.computedAtStart(slot, base)) return null;
+      return fallback.dateOf(e, id);
+    },
+  };
+}
 
 export type LegendItem =
   | {
@@ -188,6 +247,8 @@ export interface LayerContext {
   indicator: string;
   bloc: string;
   selected: number;
+  /** Valeurs affichées (défaut : données de départ). */
+  values?: ValueSource;
 }
 
 /** Alpha de palette qui signale une valeur estimée (motif pointillé dans le shader). */
@@ -246,7 +307,11 @@ function politicalLayer(data: Dataset, sovereign: boolean): LayerView {
 const WAR_COLOR = hex('#6a0f1d');
 const CEASEFIRE_COLOR = hex('#8a63b8');
 
-function relationsLayer(data: Dataset, selected: EntityView | undefined): LayerView {
+function relationsLayer(
+  data: Dataset,
+  src: ValueSource,
+  selected: EntityView | undefined,
+): LayerView {
   const palette = new PaletteBuffer(data.maxIndex + 1);
   palette.fill(NO_DATA);
   const legendItems: LegendItem[] = [];
@@ -270,9 +335,9 @@ function relationsLayer(data: Dataset, selected: EntityView | undefined): LayerV
       palette.set(e.index, STYLE.selection);
       continue;
     }
-    const war = data.pair('pair.war_state', selected.id, e.id)?.value;
-    const rel = data.pair('pair.relation', selected.id, e.id);
-    const value = typeof rel?.value === 'number' ? rel.value : null;
+    const war = src.pair('pair.war_state', selected.id, e.id);
+    const rel = src.pair('pair.relation', selected.id, e.id);
+    const value = typeof rel === 'number' ? rel : null;
     const relText =
       value === null ? 'relation non renseignée' : `relation ${value > 0 ? '+' : ''}${value}`;
     if (war === 'war') {
@@ -317,7 +382,7 @@ function relationsLayer(data: Dataset, selected: EntityView | undefined): LayerV
 
 const MUTUAL_DEFENSE_TREATY = hex('#a58fd0');
 
-function blocsLayer(data: Dataset, blocId: string): LayerView {
+function blocsLayer(data: Dataset, src: ValueSource, blocId: string): LayerView {
   const palette = new PaletteBuffer(data.maxIndex + 1);
   palette.fill(NO_DATA);
   const texts = new Map<number, string>();
@@ -339,7 +404,7 @@ function blocsLayer(data: Dataset, blocId: string): LayerView {
     });
     // Traités bilatéraux de défense mutuelle hors des blocs (ex. Japon–États-Unis).
     const partners = new Map<string, Set<string>>();
-    for (const [a, b, v] of data.pairEntries('pair.treaty')) {
+    for (const [a, b, v] of src.pairEntries('pair.treaty')) {
       if (v !== 'mutual_defense') continue;
       if (!partners.has(a)) partners.set(a, new Set());
       partners.get(a)?.add(b);
@@ -376,7 +441,7 @@ function blocsLayer(data: Dataset, blocId: string): LayerView {
     };
   }
   const bloc = blocs.find((b) => b.id === blocId);
-  if (bloc === undefined) return blocsLayer(data, DEFAULT_BLOC);
+  if (bloc === undefined) return blocsLayer(data, src, DEFAULT_BLOC);
   const roles: [string, readonly string[] | undefined, Rgb][] = [
     ['Membre', bloc.members, CATEGORICAL[0] as Rgb],
     ['Partenaire', bloc.partners, hex('#6fb3a8')],
@@ -409,43 +474,44 @@ function blocsLayer(data: Dataset, blocId: string): LayerView {
   };
 }
 
-/** Paramètres pays affichables en choroplèthe (nombre, catégorie, booléen) ayant des valeurs. */
-export function indicatorOptions(data: Dataset): ParamDef[] {
+/**
+ * Paramètres pays affichables en choroplèthe (nombre, catégorie, booléen) ayant des valeurs :
+ * dans les données de départ, ou calculées par le moteur (croissance, solde budgétaire…).
+ */
+export function indicatorOptions(
+  data: Dataset,
+  src: ValueSource = datasetSource(data),
+): ParamDef[] {
   return CATALOG.filter(
     (d) =>
       d.scope === 'country' &&
       (d.valueType === 'number' || d.valueType === 'enum' || d.valueType === 'bool') &&
-      data.list.some((e) => {
-        const r = data.param(e, d.id);
-        return r.state === 'value' && r.value.value !== null;
-      }),
+      data.list.some((e) => src.value(e, d.id) !== null),
   );
 }
 
-function indicatorLayer(data: Dataset, id: string): LayerView {
+function indicatorLayer(data: Dataset, src: ValueSource, id: string): LayerView {
   const def = paramById(id);
   const palette = new PaletteBuffer(data.maxIndex + 1);
   palette.fill(NO_DATA);
-  if (def === undefined) return indicatorLayer(data, DEFAULT_INDICATOR);
+  if (def === undefined) return indicatorLayer(data, src, DEFAULT_INDICATOR);
   const items: LegendItem[] = [];
   const texts = new Map<number, string>();
   const describeValue = (e: EntityView, text: string): void => {
-    const r = data.param(e, id);
-    const date = r.state === 'value' ? ` (${formatDataDate(r.value.date)})` : '';
-    texts.set(e.index, `${def.label} : ${text}${date}`);
+    const date = src.dateOf(e, id);
+    texts.set(
+      e.index,
+      `${def.label} : ${text}${date ? ` (${formatDataDate(date)})` : ' (simulé)'}`,
+    );
   };
   let estimated = 0;
   let missing = 0;
 
   if (def.valueType === 'number') {
-    const values: number[] = [];
+    // Échelle calée sur les valeurs de départ : une évolution simulée change la couleur.
+    const scale = makeScale(src.scaleValues(id), def.scale === 'log');
     for (const e of data.list) {
-      const v = data.numeric(e, id);
-      if (v !== null) values.push(v);
-    }
-    const scale = makeScale(values, def.scale === 'log');
-    for (const e of data.list) {
-      const v = data.numeric(e, id);
+      const v = src.number(e, id);
       if (v === null) {
         missing++;
         texts.set(e.index, `${def.label} : pas de valeur`);
@@ -461,14 +527,13 @@ function indicatorLayer(data: Dataset, id: string): LayerView {
       kind: 'gradient',
       colors: sampleRamp(SEQUENTIAL),
       ticks: scaleTicks(scale).map((v) => ({ at: at(v), label: formatShort(v) })),
-      caption: `${def.unit || 'indice'}${scale.kind === 'log' ? ' · échelle logarithmique' : ''} · bornes : 2ᵉ et 98ᵉ centiles`,
+      caption: `${def.unit || 'indice'}${scale.kind === 'log' ? ' · échelle logarithmique' : ''} · bornes : 2ᵉ et 98ᵉ centiles des valeurs de départ`,
     });
   } else {
     const categories = def.valueType === 'bool' ? ['true', 'false'] : [...(def.enumValues ?? [])];
     const counts = new Map<string, number>();
     for (const e of data.list) {
-      const r = data.param(e, id);
-      const v = r.state === 'value' ? r.value.value : null;
+      const v = src.value(e, id);
       if (v === null || (typeof v !== 'string' && typeof v !== 'boolean')) {
         missing++;
         texts.set(e.index, `${def.label} : pas de valeur`);
@@ -531,11 +596,15 @@ function sanctionTracks(v: unknown): string[] {
     .map(([k]) => k);
 }
 
-function sanctionsLayer(data: Dataset, selected: EntityView | undefined): LayerView {
+function sanctionsLayer(
+  data: Dataset,
+  src: ValueSource,
+  selected: EntityView | undefined,
+): LayerView {
   const palette = new PaletteBuffer(data.maxIndex + 1);
   palette.fill(NO_DATA);
   const texts = new Map<number, string>();
-  const entries = data
+  const entries = src
     .pairEntries('pair.sanctions')
     .filter(([, , v]) => sanctionTracks(v).length > 0);
   if (selected === undefined) {
@@ -785,19 +854,20 @@ function physicalLayer(data: Dataset, mode: Exclude<RenderMode, 'entity'>): Laye
 /** Construit la couche demandée. */
 export function buildLayer(data: Dataset, ctx: LayerContext): LayerView {
   const selected = ctx.selected ? data.byIndex[ctx.selected] : undefined;
+  const src = ctx.values ?? datasetSource(data);
   switch (ctx.layer) {
     case 'political':
       return politicalLayer(data, false);
     case 'sovereign':
       return politicalLayer(data, true);
     case 'relations':
-      return relationsLayer(data, selected);
+      return relationsLayer(data, src, selected);
     case 'blocs':
-      return blocsLayer(data, ctx.bloc);
+      return blocsLayer(data, src, ctx.bloc);
     case 'indicator':
-      return indicatorLayer(data, ctx.indicator);
+      return indicatorLayer(data, src, ctx.indicator);
     case 'sanctions':
-      return sanctionsLayer(data, selected);
+      return sanctionsLayer(data, src, selected);
     default:
       return physicalLayer(data, layerDef(ctx.layer).mode as Exclude<RenderMode, 'entity'>);
   }

@@ -4,6 +4,7 @@ coverage
 data/raw
 data/build
 results
+captures
 package-lock.json
 # Documents de référence rédigés à la main : ne pas reformater
 SPEC.md

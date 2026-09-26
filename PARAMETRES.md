@@ -26,9 +26,9 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | ID | Paramètre | Unité · plage | Type | Source initiale |
 |---|---|---|---|---|
 | `demo.population` | Population | habitants · échelle log | S | WB:SP.POP.TOTL |
-| `demo.birth_rate` | Natalité | ‰/an · 0–60 | I | WB:SP.DYN.CBRT.IN |
+| `demo.birth_rate` | Natalité | ‰/an · 0–60 | D | WB:SP.DYN.CBRT.IN |
 | `demo.death_rate` | Mortalité | ‰/an · 0–40 | S | WB:SP.DYN.CDRT.IN |
-| `demo.fertility` | Fécondité | enfants/femme · 0,5–8 | I | WB:SP.DYN.TFRT.IN |
+| `demo.fertility` | Fécondité | enfants/femme · 0,5–8 | S | WB:SP.DYN.TFRT.IN |
 | `demo.life_expectancy` | Espérance de vie | ans · 30–95 | S | WB:SP.DYN.LE00.IN |
 | `demo.share_0_14` | Part des 0–14 ans | % · 0–60 | S | WB:SP.POP.0014.TO.ZS |
 | `demo.share_15_64` | Part des 15–64 ans | % · 30–85 | S | WB:SP.POP.1564.TO.ZS |
@@ -54,19 +54,25 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `eco.gdp_nominal` | PIB nominal | Md$ · échelle log | S | WB:NY.GDP.MKTP.CD / IMF:NGDPD |
 | `eco.gdp_ppp` | PIB en parité de pouvoir d'achat | Md$ internationaux · log | S | WB:NY.GDP.MKTP.PP.CD |
 | `eco.gdp_per_capita` | PIB par habitant | $ | D | DER |
-| `eco.potential_growth` | Croissance potentielle | %/an · −10–20 | I | IMF:NGDP_RPCH (projections à moyen terme) ; repli : moyenne 10 ans de WB:NY.GDP.MKTP.KD.ZG |
+| `eco.potential_growth` | Croissance potentielle | %/an · −10–20 | S | IMF:NGDP_RPCH (projections à moyen terme) ; repli : moyenne 10 ans de WB:NY.GDP.MKTP.KD.ZG ; converge ensuite vers `eco.long_run_growth` |
+| `eco.long_run_growth` | Croissance de long terme | %/an · −10–20 | D | DER (population en âge de travailler, rattrapage, institutions) |
 | `eco.growth` | Croissance réelle | %/an | D | DER |
+| `eco.output_gap` | Écart de production | % du PIB potentiel · −50–50 | D | DER |
 | `eco.inflation` | Inflation | %/an · −10–1000 (log) | S | IMF:PCPIPCH / WB:FP.CPI.TOTL.ZG |
 | `eco.inflation_target` | Cible d'inflation | % · 0–10 | I | CUR (défaut 2–4 %) |
 | `eco.cb_independence` | Indépendance de la banque centrale | 0–1 | I | CUR (indices publiés) |
 | `eco.unemployment` | Chômage | % · 0–70 | S | IMF:LUR / WB:SL.UEM.TOTL.ZS |
 | `eco.public_debt` | Dette publique brute | % PIB · 0–400 | S | IMF:GGXWDG_NGDP (repli : WB:GC.DOD.TOTL.GD.ZS) |
 | `eco.debt_maturity` | Maturité moyenne de la dette | ans · 0,5–20 | I | HYP (défaut 6) |
+| `eco.debt_avg_rate` | Taux moyen apparent de la dette | % · 0–100 | S | WB:GC.XPN.INTP.RV.ZS (intérêts en % des recettes × recettes / dette) |
 | `eco.foreign_held_debt` | Part de la dette détenue par l'étranger | % · 0–100 | I | CUR / HYP |
 | `eco.sovereign_rate` | Taux d'emprunt souverain | % | D | DER |
 | `eco.credit_rating` | Notation souveraine | 0 (défaut) – 20 (AAA) | S | CUR |
+| `eco.default_probability` | Probabilité de défaut souverain | %/an · 0–100 | D | DER (notation) |
+| `eco.in_default` | Défaut de paiement en cours | oui / non | S | DER (notation initiale) |
 | `eco.reserves` | Réserves de change (or inclus) | Md$ | S | WB:FI.RES.TOTL.CD |
 | `eco.reserves_frozen` | Part des réserves gelées | % · 0–100 | S | CUR |
+| `eco.reserves_months` | Réserves en mois d'importations | mois · 0–240 | D | DER |
 | `eco.current_account` | Solde courant | % PIB · −50–50 | S | IMF:BCA_NGDPD / WB:BN.CAB.XOKA.GD.ZS |
 | `eco.reserve_currency` | Statut de monnaie de réserve | 0–1 | I | CUR (parts COFER du FMI) |
 | `eco.exchange_regime` | Régime de change | flottant / géré / fixe / union monétaire / dollarisé | I | CUR |
@@ -88,7 +94,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 
 | ID | Paramètre | Unité · plage | Type | Source initiale |
 |---|---|---|---|---|
-| `bud.revenue` | Recettes publiques | % PIB · 0–120 | I | WB:GC.REV.XGRT.GD.ZS (repli : WB:GC.TAX.TOTL.GD.ZS) |
+| `bud.revenue` | Recettes publiques | % PIB · 0–120 | I | IMF:rev (administrations publiques ; repli : WB:GC.REV.XGRT.GD.ZS) |
 | `bud.tax_efficiency` | Efficacité de collecte | 0–1 | I | DER (corruption, efficacité gouvernementale) |
 | `bud.defense` | Défense | % PIB · 0–40 | I | WB:MS.MIL.XPND.GD.ZS |
 | `bud.defense_procurement` | Part de l'équipement et des munitions dans la défense | % · 5–70 | I | HYP (défaut 25–35 %) |
@@ -102,6 +108,9 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `bud.security` | Sécurité intérieure et renseignement | % PIB · 0–5 | I | HYP |
 | `bud.foreign_aid` | Aide extérieure versée (dont militaire) | % RNB · 0–3 | I | CUR (OCDE-CAD, suivis de l'aide) |
 | `bud.monetization` | Part du déficit monétisée | % · 0–100 | I | HYP (défaut 0) |
+| `bud.other_spending` | Autres dépenses et écart de calage | % PIB · −60–60 | I | DER (calage sur le solde initial du FMI) |
+| `bud.fiscal_adjustment` | Ajustement budgétaire automatique | % PIB · −20–20 | S | DER (règle de réaction à la dette) |
+| `bud.interest` | Charge d'intérêts | % PIB · 0–60 | D | DER |
 | `bud.balance` | Solde budgétaire | % PIB · −60–60 | D | DER (initialisation : IMF:GGXCNL_NGDP) |
 
 ## 4. Commerce et dépendances — `trade.*`

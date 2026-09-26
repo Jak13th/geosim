@@ -10,7 +10,7 @@
  * - valeur économique = PIB × population du pixel × (1 + prime urbaine × part urbaine du pixel),
  *   normalisée.
  * Les totaux par unité sont conservés exactement (à l'arrondi flottant près).
- * Coefficients : `config/model.yaml`, famille `geo.population` ; équations : docs/MODELES.md §1.9.
+ * Coefficients : `config/model.yaml`, famille `geo.population` ; équations : docs/MODELES.md §1.10.
  */
 import { Biome, MapFlag, Terrain, isLand } from '@geosim/shared';
 import type { ModelConfig } from '../config.ts';

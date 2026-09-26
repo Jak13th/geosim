@@ -2,8 +2,8 @@
 
 Simulation géopolitique **locale** et **temps réel**, inspirée d'[OpenFront.io](https://openfront.io) et alimentée par des données réelles. Chaque paramètre du monde se modifie pendant que la simulation tourne.
 
-> **État du projet : phase 2 (carte interactive en lecture seule) terminée, en attente de validation.**
-> `npm run data` construit la carte du monde et les données de 208 entités (paramètres pays, bilatéraux et mondiaux, avec leur provenance) ; l'application les affiche sur une carte interactive, avec dix couches, un inspecteur de pays et un panneau bilatéral où chaque valeur montre sa source et son année. La simulation arrive en phase 3. L'avancement détaillé est dans [`docs/PROGRESS.md`](docs/PROGRESS.md).
+> **État du projet : phase 3 (moteur et temps réel) terminée, en attente de validation.**
+> `npm run data` construit la carte du monde et les données de 208 entités (paramètres pays, bilatéraux et mondiaux, avec leur provenance). L'application les simule en temps réel (démographie, économie, budget et dette, inflation, chômage, marchés de l'énergie, des céréales et des métaux) : chaque paramètre se modifie pendant que la simulation tourne, chaque modification entre au journal (annuler, rétablir, relecture exacte), et les coefficients des modèles se règlent en direct. Guerres, diplomatie et IA des pays arrivent aux phases 4 à 7. L'avancement détaillé est dans [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
 ## Prérequis
 
@@ -44,6 +44,23 @@ Ouvre ensuite http://localhost:5173. La carte s'affiche après quelques secondes
 
 Dans l'inspecteur, un clic sur un paramètre affiche sa provenance complète (source, date, confiance, méthode, note). Ajoute `?debug` à l'adresse pour afficher le temps GPU et la cadence d'images.
 
+### Faire tourner et modifier la simulation
+
+| Action                             | Effet                                                                                                                      |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `Espace` · bouton ▶                | Lecture et pause                                                                                                           |
+| `+` / `−` · boutons de vitesse     | 1 jour, 1 semaine, 1 mois ou 3 mois par seconde                                                                            |
+| `+1 j` · `+1 sem` · `+1 mois`      | Pas-à-pas (le pas « mois » avance au premier jour du mois suivant)                                                         |
+| Date + « Aller »                   | Avancer à vitesse maximale jusqu'à une date                                                                                |
+| `Ctrl+Z` · `Ctrl+Y` · boutons ↶ ↷  | Annuler, rétablir la dernière modification                                                                                 |
+| Clic sur un paramètre (inspecteur) | Curseur et champ, réinitialiser, verrouiller, effet temporaire (durée, décroissance), édition groupée (bloc, région, tous) |
+| Panneau « Monde »                  | Paramètres mondiaux (prix, taux directeur…) et statut des détroits, modifiables                                            |
+| Panneau « Modèle »                 | Coefficients de `config/model.yaml` en direct ; « Enregistrer dans le fichier » ; le fichier est rechargé à chaud          |
+| Panneau « Simulation »             | Graine, nouvelle simulation, captures (mémoire et dossier `captures/`), vérification de la relecture du journal            |
+| « Journal » · « Graphiques »       | Événements et modifications avec leur « Pourquoi ? » ; séries des pays et du monde (export CSV)                            |
+
+Un paramètre modifié porte le badge « modifiée » ; une valeur que la simulation a fait évoluer, « simulée » ; filtre « Modifiés » dans l'inspecteur. Les couches de la carte (indicateurs, relations, sanctions) suivent les valeurs simulées.
+
 Pour tester le build de production :
 
 ```bash
@@ -53,14 +70,14 @@ npm run preview -w @geosim/web   # http://localhost:4173
 
 ## Tester
 
-| Commande                | Rôle                                                                                                                                                                                                                                              |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm test`              | Tests unitaires (Vitest)                                                                                                                                                                                                                          |
-| `npm run test:watch`    | Tests en continu pendant le développement                                                                                                                                                                                                         |
-| `npm run typecheck`     | Vérification TypeScript de chaque workspace                                                                                                                                                                                                       |
-| `npm run lint`          | ESLint, dont les règles d'architecture du moteur                                                                                                                                                                                                  |
-| `npm run format:check`  | Vérifie le formatage (Prettier) ; `npm run format` le corrige                                                                                                                                                                                     |
-| `npm run check:console` | Lance l'application dans Chromium headless, parcourt l'interface (couches, zoom, recherche, inspecteur, panneaux) et échoue au moindre message d'erreur ou d'avertissement dans la console ; `-- --screenshots <dossier>` enregistre des captures |
+| Commande                | Rôle                                                                                                                                                                                                                                                                                                                     |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm test`              | Tests unitaires (Vitest)                                                                                                                                                                                                                                                                                                 |
+| `npm run test:watch`    | Tests en continu pendant le développement                                                                                                                                                                                                                                                                                |
+| `npm run typecheck`     | Vérification TypeScript de chaque workspace                                                                                                                                                                                                                                                                              |
+| `npm run lint`          | ESLint, dont les règles d'architecture du moteur                                                                                                                                                                                                                                                                         |
+| `npm run format:check`  | Vérifie le formatage (Prettier) ; `npm run format` le corrige                                                                                                                                                                                                                                                            |
+| `npm run check:console` | Lance l'application dans Chromium headless, parcourt l'interface (couches, zoom, recherche, inspecteur, panneaux, temps réel, édition, modèle, captures, relecture, journal, graphiques) et échoue au moindre message d'erreur ou d'avertissement dans la console ; `-- --screenshots <dossier>` enregistre des captures |
 
 Vérification complète, celle de chaque fin de phase :
 
@@ -76,7 +93,7 @@ Le moteur (`packages/engine`) doit rester pur et déterministe : il tourne à l'
 npm run sim -- --scenario <nom> --years <n> --runs <n> --seed <n> --out <dossier>
 ```
 
-Pour l'instant, la commande lit ses arguments et affiche le premier tirage de la graine. La boucle de simulation arrive en phase 3, le Monte Carlo en phase 8.
+Exemple : `npm run sim -- --years 20 --runs 5 --seed 1 --out results/essai`. Chaque run part des données construites et de `config/model.yaml`, avec la graine `seed + numéro du run`, et écrit dans `<dossier>/run-NNN/` les séries mensuelles par pays (`countries.csv`) et mondiales (`world.csv`) et le journal des événements (`journal.json`), plus un résumé (`summary.json` : empreinte d'état, invariants, croissance mondiale par an, événements, pays clés). Seul le scénario `monde` (situation au jour des données) existe ; les autres scénarios et le Monte Carlo parallèle arrivent en phase 8.
 
 ## Données
 
@@ -106,6 +123,8 @@ scripts/data      pipeline de données
 config/           coefficients des modèles (model.yaml) et événements (events.yaml)
 data/             données curées et sourcées, manifeste des sources
 docs/             avancement, décisions, modèles, calibration
+captures/         captures enregistrées depuis l'interface (non versionnées)
+results/          sorties de npm run sim (non versionnées)
 ```
 
 ## Documentation

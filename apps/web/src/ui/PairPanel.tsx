@@ -1,7 +1,8 @@
 /**
- * Panneau bilatéral A ↔ B (SPEC §9.4), en lecture seule : chaque paramètre bilatéral du
- * catalogue dans les deux sens, avec sa source et son année.
+ * Panneau bilatéral A ↔ B (SPEC §9.4) : chaque paramètre bilatéral du catalogue dans les deux
+ * sens, avec sa source et son année ; valeurs en direct et éditables (commande du moteur).
  */
+import type { Slot } from '@geosim/engine';
 import {
   CATALOG,
   CONFIDENCE_LABELS,
@@ -13,8 +14,11 @@ import {
 import { useMemo, useState } from 'react';
 import type { Dataset, EntityView, PairLookup } from '../data/dataset.ts';
 import { formatDataDate, formatNumber, formatQuantity, type ValueContext } from '../format.ts';
+import type { LiveSim } from '../sim/mirror.ts';
 import { useApp } from '../store.ts';
+import { laterPhase, useLive } from './live.ts';
 import { namesFor } from './names.ts';
+import { ParamEditor } from './ParamEditor.tsx';
 import { Linkified, SourceBadge } from './ParamRow.tsx';
 
 const PAIR_PARAMS = CATALOG.filter((d) => d.scope === 'pair');
@@ -42,6 +46,8 @@ function Direction({
   runtime,
   names,
   open,
+  live,
+  data,
 }: {
   def: ParamDef;
   from: EntityView;
@@ -50,22 +56,37 @@ function Direction({
   runtime: boolean;
   names: ValueContext;
   open: boolean;
+  live: LiveSim | null;
+  data: Dataset;
 }) {
   const p = lookup?.provenance ?? null;
+  const slot: Slot = { scope: 'pair', param: def.id, from: from.id, to: to.id };
+  const base = lookup?.value ?? null;
+  const value = live !== null ? live.value(slot) : base;
+  const overridden = (live?.layers(slot, base).override ?? null) !== null;
+  const locked = live?.isLocked(slot) ?? false;
   return (
     <div className="pair-dir">
       <span className="pair-arrow muted small">
         {from.id} → {to.id}
       </span>
       <span className="param-value">
-        {lookup ? formatPairValue(def, lookup.value, names) : '—'}
+        {locked && <span title="Verrouillée">🔒 </span>}
+        {formatPairValue(def, value, names)}
       </span>
-      {p ? (
+      {overridden ? (
+        <span className="src conf-user">modifiée</span>
+      ) : p ? (
         <SourceBadge value={p} />
       ) : (
         <span className="src conf-none">
-          {runtime ? 'moteur (phase 3+)' : lookup ? 'par défaut' : 'absent'}
+          {runtime ? `phase ${laterPhase(def)}` : lookup ? 'par défaut' : 'absent'}
         </span>
+      )}
+      {open && live !== null && (
+        <div className="pair-editor">
+          <ParamEditor def={def} slot={slot} live={live} base={base} names={names} data={data} />
+        </div>
       )}
       {open && (
         <dl className="provenance">
@@ -110,12 +131,14 @@ function PairRow({
   a,
   b,
   names,
+  live,
 }: {
   data: Dataset;
   def: ParamDef;
   a: EntityView;
   b: EntityView;
   names: ValueContext;
+  live: LiveSim | null;
 }) {
   const [open, setOpen] = useState(false);
   const runtime = data.raw.pairs.runtimeParams.includes(def.id);
@@ -139,6 +162,8 @@ function PairRow({
         runtime={runtime}
         names={names}
         open={open}
+        live={live}
+        data={data}
       />
       <Direction
         def={def}
@@ -148,6 +173,8 @@ function PairRow({
         runtime={runtime}
         names={names}
         open={open}
+        live={live}
+        data={data}
       />
       {open && <p className="muted small">{def.description}</p>}
     </div>
@@ -157,6 +184,7 @@ function PairRow({
 export function PairPanel({ data, a, b }: { data: Dataset; a: EntityView; b: EntityView }) {
   const names = useMemo(() => namesFor(data), [data]);
   const swap = useApp((s) => s.swapPair);
+  const live = useLive();
   return (
     <div className="params">
       <p className="muted small">
@@ -166,7 +194,7 @@ export function PairPanel({ data, a, b }: { data: Dataset; a: EntityView; b: Ent
         </button>
       </p>
       {PAIR_PARAMS.map((def) => (
-        <PairRow key={def.id} data={data} def={def} a={a} b={b} names={names} />
+        <PairRow key={def.id} data={data} def={def} a={a} b={b} names={names} live={live} />
       ))}
     </div>
   );
