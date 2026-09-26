@@ -139,6 +139,42 @@ export function lockedPairs(state: State, param: string): Set<number> {
   return out;
 }
 
+const distanceCache = new WeakMap<
+  State,
+  Map<string, { source: ReadonlyMap<number, ParamValue>; version: number; grid: Float64Array }>
+>();
+
+/**
+ * Composante du paramètre `pair.distance` (km, −1 si inconnue) en tableau N × N ; recalculée
+ * seulement si le paramètre a été modifié.
+ */
+export function pairDistance(
+  state: State,
+  component: 'great_circle' | 'land' | 'sea',
+): Float64Array {
+  const source = state.pairGen.get('pair.distance') ?? new Map<number, ParamValue>();
+  const version = state.pairVersionOf('pair.distance');
+  let byComponent = distanceCache.get(state);
+  if (byComponent === undefined) {
+    byComponent = new Map();
+    distanceCache.set(state, byComponent);
+  }
+  const cached = byComponent.get(component);
+  if (cached && cached.source === source && cached.version === version) return cached.grid;
+  const grid = new Float64Array(state.n * state.n).fill(-1);
+  for (const [k, v] of source) {
+    const d = vectorOf(v)?.[component];
+    if (typeof d === 'number' && Number.isFinite(d)) grid[k] = d;
+  }
+  byComponent.set(component, { source, version, grid });
+  return grid;
+}
+
+/** Distance orthodromique entre capitales (km, −1 si inconnue), en tableau N × N. */
+export function greatCircle(state: State): Float64Array {
+  return pairDistance(state, 'great_circle');
+}
+
 /** Liste de codes (blocs, pays) d'un paramètre pays de type liste. */
 export function listOf(v: ParamValue): string[] {
   return Array.isArray(v) ? v : [];

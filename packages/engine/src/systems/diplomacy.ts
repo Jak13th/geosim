@@ -36,6 +36,7 @@ import {
   WAR,
   currentSanctionGrid,
   currentWarGrid,
+  greatCircle,
   listOf,
   lockedPairs,
   vectorValue,
@@ -171,6 +172,8 @@ interface AffinityInputs {
   budget: Float64Array;
   region: string[];
   blocs: Uint8Array[];
+  /** Indices des blocs de chaque pays (listes courtes : boucle sur les blocs de i seulement). */
+  blocLists: number[][];
   blocWeights: Float64Array;
   trade: Float64Array;
   relation: Float64Array;
@@ -182,8 +185,75 @@ interface AffinityInputs {
   war: Uint8Array;
   sanctions: Float32Array;
   treaty: Uint8Array;
+  /** Ennemis de chaque pays (relation sous le seuil) : listes et matrice N × N. */
   enemies: number[][];
-  distance: (i: number, j: number) => number;
+  enemy: Uint8Array;
+  /** Distance orthodromique entre capitales (km ; −1 si inconnue). */
+  distance: Float64Array;
+  /** Coefficients lus une fois par calcul (boucle N × N). */
+  w: AffinityWeights;
+}
+
+interface AffinityWeights {
+  regime: number;
+  blocs: number;
+  interdependence: number;
+  tradeReference: number;
+  enemies: number;
+  grievances: number;
+  claims: number;
+  culture: number;
+  sameRegion: number;
+  votes: number;
+  aid: number;
+  aidReference: number;
+  threat: number;
+  threatDistance: number;
+  war: number;
+  /** Poids de chaque état de la relation (indice : code de `pair.war_state`). */
+  warWeights: Float64Array;
+  sanctions: number;
+  treaty: number;
+  /** Poids de chaque niveau de traité (aucun, non-agression, partenariat, défense mutuelle). */
+  treatyWeights: Float64Array;
+  revisionism: number;
+}
+
+function affinityWeights(m: SystemContext['model']): AffinityWeights {
+  const warWeights = new Float64Array(6);
+  warWeights[WAR.war] = 1;
+  warWeights[WAR.blockade] = m.get(K.warBlockade);
+  warWeights[WAR.crisis] = m.get(K.warCrisis);
+  warWeights[WAR.ceasefire] = m.get(K.warCeasefire);
+  warWeights[WAR.tension] = m.get(K.warTension);
+  return {
+    regime: m.get(K.regime),
+    blocs: m.get(K.blocs),
+    interdependence: m.get(K.interdependence),
+    tradeReference: Math.max(1e-6, m.get(K.tradeReference) / 100),
+    enemies: m.get(K.enemies),
+    grievances: m.get(K.grievances),
+    claims: m.get(K.claims),
+    culture: m.get(K.culture),
+    sameRegion: m.get(K.sameRegion),
+    votes: m.get(K.votes),
+    aid: m.get(K.aid),
+    aidReference: Math.max(1e-6, m.get(K.aidReference)),
+    threat: m.get(K.threat),
+    threatDistance: Math.max(1, m.get(K.threatDistance)),
+    war: m.get(K.war),
+    warWeights,
+    sanctions: m.get(K.sanctions),
+    treaty: m.get(K.treaty),
+    // La défense mutuelle vaut 1 ; les autres traités, une part.
+    treatyWeights: Float64Array.from([
+      0,
+      m.get(K.treatyNonAggression),
+      m.get(K.treatyPartnership),
+      1,
+    ]),
+    revisionism: m.get(K.revisionism),
+  };
 }
 
 function affinityInputs(ctx: Pick<SystemContext, 'model' | 'state'>): AffinityInputs {
@@ -196,12 +266,17 @@ function affinityInputs(ctx: Pick<SystemContext, 'model' | 'state'>): AffinityIn
   const blocList = S.data.world.blocs;
   const lists = memberships(S);
   const blocIndex = new Map(blocList.map((b, k) => [b.id, k]));
-  const blocs = lists.map((list) => {
-    const bits = new Uint8Array(blocList.length);
+  const blocLists = lists.map((list) => {
+    const out: number[] = [];
     for (const id of list) {
       const k = blocIndex.get(id);
-      if (k !== undefined) bits[k] = 1;
+      if (k !== undefined) out.push(k);
     }
+    return out;
+  });
+  const blocs = blocLists.map((list) => {
+    const bits = new Uint8Array(blocList.length);
+    for (const k of list) bits[k] = 1;
     return bits;
   });
   const claims = new Float64Array(n2);
@@ -225,9 +300,15 @@ function affinityInputs(ctx: Pick<SystemContext, 'model' | 'state'>): AffinityIn
   const relation = S.pairMatrix('pair.relation');
   const threshold = m.get(K.enemyThreshold);
   const enemies: number[][] = [];
+  const enemy = new Uint8Array(n2);
   for (let i = 0; i < n; i++) {
     const list: number[] = [];
-    for (let j = 0; j < n; j++) if ((relation[i * n + j] as number) < threshold) list.push(j);
+    for (let j = 0; j < n; j++) {
+      if ((relation[i * n + j] as number) < threshold) {
+        list.push(j);
+        enemy[i * n + j] = 1;
+      }
+    }
     enemies.push(list);
   }
   const sanctionGrid = currentSanctionGrid(S);
@@ -249,6 +330,7 @@ function affinityInputs(ctx: Pick<SystemContext, 'model' | 'state'>): AffinityIn
     budget: col01(C.budget),
     region: S.entities.map((e) => e.region),
     blocs,
+    blocLists,
     blocWeights: Float64Array.from(blocList, (b) => blocWeight(m, b)),
     trade: S.pairMatrix('pair.trade'),
     relation,
@@ -261,100 +343,69 @@ function affinityInputs(ctx: Pick<SystemContext, 'model' | 'state'>): AffinityIn
     sanctions,
     treaty,
     enemies,
-    distance: (i, j) => vectorValue(S.pairValue('pair.distance', i, j)).great_circle ?? -1,
+    enemy,
+    distance: greatCircle(S),
+    w: affinityWeights(m),
   };
 }
 
-/** Poids de l'état de la relation dans le facteur guerre (la guerre vaut 1). */
-function warWeight(m: SystemContext['model'], code: number): number {
-  switch (code) {
-    case WAR.war:
-      return 1;
-    case WAR.blockade:
-      return m.get(K.warBlockade);
-    case WAR.crisis:
-      return m.get(K.warCrisis);
-    case WAR.ceasefire:
-      return m.get(K.warCeasefire);
-    case WAR.tension:
-      return m.get(K.warTension);
-    default:
-      return 0;
-  }
-}
-
-/** Poids du traité dans le facteur traité (la défense mutuelle vaut 1). */
-function treatyWeight(m: SystemContext['model'], level: number): number {
-  switch (level) {
-    case 3:
-      return 1;
-    case 2:
-      return m.get(K.treatyPartnership);
-    case 1:
-      return m.get(K.treatyNonAggression);
-    default:
-      return 0;
-  }
-}
-
 /** Contributions de chaque facteur à l'affinité de i envers j ; renvoie leur somme bornée. */
-function affinityTerms(
-  m: SystemContext['model'],
-  inp: AffinityInputs,
-  i: number,
-  j: number,
-  out: Float64Array,
-): number {
+function affinityTerms(inp: AffinityInputs, i: number, j: number, out: Float64Array): number {
   const n = inp.n;
+  const w = inp.w;
   const k = i * n + j;
   const kr = j * n + i;
   const ed = 1 - 2 * Math.abs((inp.ed[i] as number) - (inp.ed[j] as number));
-  out[0] = m.get(K.regime) * clamp(ed, -1, 1) * (0.5 + (inp.ideology[i] as number));
+  out[0] = w.regime * clamp(ed, -1, 1) * (0.5 + (inp.ideology[i] as number));
   let shared = 0;
-  const bi = inp.blocs[i] as Uint8Array;
+  const li = inp.blocLists[i] as number[];
   const bj = inp.blocs[j] as Uint8Array;
-  for (let b = 0; b < bi.length; b++) if (bi[b] && bj[b]) shared += inp.blocWeights[b] as number;
-  out[1] = m.get(K.blocs) * Math.min(1, shared);
+  for (let x = 0; x < li.length; x++) {
+    const b = li[x] as number;
+    if (bj[b]) shared += inp.blocWeights[b] as number;
+  }
+  out[1] = w.blocs * Math.min(1, shared);
   const gdp = inp.gdp[i] as number;
   const flows =
     Math.max(0, fin(inp.trade[k] as number)) + Math.max(0, fin(inp.trade[kr] as number));
-  const intensity = gdp > 0 ? flows / gdp / Math.max(1e-6, m.get(K.tradeReference) / 100) : 0;
-  out[2] = m.get(K.interdependence) * Math.min(1, intensity);
+  const intensity = gdp > 0 ? flows / gdp / w.tradeReference : 0;
+  out[2] = w.interdependence * Math.min(1, intensity);
   let common = 0;
-  const ej = new Set(inp.enemies[j]);
-  for (const x of inp.enemies[i] ?? []) if (x !== j && ej.has(x)) common++;
-  out[3] = m.get(K.enemies) * Math.min(1, common / 2);
-  out[4] = (-m.get(K.grievances) * clamp(fin(inp.grievance[k] as number), 0, 100)) / 100;
+  const enemiesI = inp.enemies[i] as number[];
+  const rowJ = j * n;
+  for (let x = 0; x < enemiesI.length && common < 2; x++) {
+    const e = enemiesI[x] as number;
+    if (e !== j && inp.enemy[rowJ + e] === 1) common++;
+  }
+  out[3] = w.enemies * Math.min(1, common / 2);
+  out[4] = (-w.grievances * clamp(fin(inp.grievance[k] as number), 0, 100)) / 100;
   const claim = Math.max(inp.claims[k] as number, inp.claims[kr] as number);
-  out[5] = (-m.get(K.claims) * clamp(claim, 0, 100)) / 100;
+  out[5] = (-w.claims * clamp(claim, 0, 100)) / 100;
   let culture = inp.culture[k] as number;
-  if (!Number.isFinite(culture))
-    culture = inp.region[i] === inp.region[j] ? m.get(K.sameRegion) : 0;
-  out[6] = (m.get(K.culture) * clamp(culture, 0, 100)) / 100;
+  if (!Number.isFinite(culture)) culture = inp.region[i] === inp.region[j] ? w.sameRegion : 0;
+  out[6] = (w.culture * clamp(culture, 0, 100)) / 100;
   const votes = 1 - Math.abs((inp.alignment[i] as number) - (inp.alignment[j] as number)) / 100;
-  out[7] = m.get(K.votes) * clamp(votes, -1, 1);
-  const aid =
-    gdp > 0 ? (100 * (inp.aid[kr] as number)) / gdp / Math.max(1e-6, m.get(K.aidReference)) : 0;
-  out[8] = m.get(K.aid) * Math.min(1, aid);
-  const bI = Math.max(0, inp.budget[i] as number);
-  const bJ = Math.max(0, inp.budget[j] as number);
-  const share = bI + bJ > 0 ? bJ / (bI + bJ) : 0;
-  const d = inp.distance(i, j);
-  const proximity =
-    (inp.border[k] as number) > 0
-      ? 1
-      : d >= 0
-        ? Math.exp(-d / Math.max(1, m.get(K.threatDistance)))
-        : 0;
+  out[7] = w.votes * clamp(votes, -1, 1);
+  const aid = gdp > 0 ? (100 * (inp.aid[kr] as number)) / gdp / w.aidReference : 0;
+  out[8] = w.aid * Math.min(1, aid);
   const hostility = Math.max(0, -fin(inp.relation[kr] as number)) / 100;
-  out[9] = -m.get(K.threat) * share * proximity * hostility;
-  out[10] = -m.get(K.war) * warWeight(m, inp.war[k] as number);
-  out[11] = -m.get(K.sanctions) * Math.max(inp.sanctions[k] as number, inp.sanctions[kr] as number);
+  if (hostility > 0) {
+    const bI = Math.max(0, inp.budget[i] as number);
+    const bJ = Math.max(0, inp.budget[j] as number);
+    const share = bI + bJ > 0 ? bJ / (bI + bJ) : 0;
+    const d = inp.distance[k] as number;
+    const proximity =
+      (inp.border[k] as number) > 0 ? 1 : d >= 0 ? Math.exp(-d / w.threatDistance) : 0;
+    out[9] = -w.threat * share * proximity * hostility;
+  } else {
+    out[9] = 0;
+  }
+  out[10] = -w.war * (w.warWeights[inp.war[k] as number] ?? 0);
+  out[11] = -w.sanctions * Math.max(inp.sanctions[k] as number, inp.sanctions[kr] as number);
   out[12] =
-    m.get(K.treaty) * treatyWeight(m, inp.treaty[k] as number) * (0.5 + (inp.loyalty[i] as number));
+    w.treaty * (w.treatyWeights[inp.treaty[k] as number] ?? 0) * (0.5 + (inp.loyalty[i] as number));
   out[13] =
-    -m.get(K.revisionism) *
-    Math.abs((inp.revisionism[i] as number) - (inp.revisionism[j] as number));
+    -w.revisionism * Math.abs((inp.revisionism[i] as number) - (inp.revisionism[j] as number));
   let a = 0;
   for (let f = 0; f < AFFINITY_FACTORS.length; f++) a += out[f] as number;
   return clamp(a, -100, 100);
@@ -369,7 +420,7 @@ function affinities(ctx: Pick<SystemContext, 'model' | 'state'>): Float64Array {
   const terms = new Float64Array(AFFINITY_FACTORS.length);
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
-      if (i !== j) out[i * n + j] = affinityTerms(ctx.model, inp, i, j, terms);
+      if (i !== j) out[i * n + j] = affinityTerms(inp, i, j, terms);
     }
   }
   return out;
@@ -389,7 +440,7 @@ export function affinityFactors(
   }
   const inp = affinityInputs(ctx);
   const terms = new Float64Array(AFFINITY_FACTORS.length);
-  const affinity = affinityTerms(ctx.model, inp, i, j, terms);
+  const affinity = affinityTerms(inp, i, j, terms);
   const k = i * S.n + j;
   return {
     affinity,

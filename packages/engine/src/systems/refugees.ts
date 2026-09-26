@@ -7,7 +7,8 @@
  *     + w_famine · surmortalité de famine + w_effondrement · max(0, seuil − stabilité)/seuil
  * exposition à une guerre : part militaire de l'ennemi le plus fort parmi les voisins terrestres
  * en guerre avec le pays (le plus faible subit les combats sur son territoire).
- * Stock visé de nouveaux réfugiés = population · k · max(0, D − D₀) ; les départs (ou les retours)
+ * Stock visé de nouveaux réfugiés = population · k · max(0, D − D₀ − seuil) (une hausse modérée
+ * de la pression déplace surtout à l'intérieur du pays) ; les départs (ou les retours)
  * le rejoignent avec un délai. Destinations : pondérées par la population du pays d'accueil (effet
  * de masse), la proximité (voisins, puis distance), l'attractivité (revenu relatif, stabilité),
  * l'ouverture migratoire et la relation (un pays hostile attire moins ; aucun départ vers un pays
@@ -19,7 +20,7 @@
  */
 import { col, type State } from '../state.ts';
 import type { System, SystemContext } from '../system.ts';
-import { WAR, currentWarGrid, vectorValue } from './pairs.ts';
+import { WAR, currentWarGrid, greatCircle } from './pairs.ts';
 import { RESOURCES_OUT } from './resources.ts';
 
 const C = {
@@ -43,6 +44,7 @@ const K = {
   collapse: 'demography.refugees.collapse_weight',
   collapseThreshold: 'demography.refugees.collapse_threshold',
   displacement: 'demography.refugees.displacement',
+  deadZone: 'demography.refugees.pressure_threshold',
   outflowMonths: 'demography.refugees.outflow_months',
   returnMonths: 'demography.refugees.return_months',
   distance: 'demography.refugees.distance_km',
@@ -133,6 +135,7 @@ function destinations(ctx: SystemContext, i: number, war: Uint8Array): Float64Ar
   const m = ctx.model;
   const border = S.pairMatrix('pair.border_length');
   const relation = S.pairMatrix('pair.relation');
+  const distance = greatCircle(S);
   const L = Math.max(1, m.get(K.distance));
   const popI = S.e(C.pop)[i] as number;
   const gdpI = S.e(C.gdp)[i] as number;
@@ -146,7 +149,7 @@ function destinations(ctx: SystemContext, i: number, war: Uint8Array): Float64Ar
     const popJ = S.e(C.pop)[j] as number;
     const gdpJ = S.e(C.gdp)[j] as number;
     if (!(popJ > 0) || !(gdpJ > 0)) continue;
-    const d = vectorValue(S.pairValue('pair.distance', i, j)).great_circle ?? -1;
+    const d = distance[i * n + j] as number;
     const proximity = (border[i * n + j] as number) > 0 ? 1 : d >= 0 ? Math.exp(-d / L) : 0;
     if (!(proximity > 1e-4)) continue;
     const pcJ = gdpJ / popJ;
@@ -230,10 +233,12 @@ function monthly(ctx: SystemContext): void {
   for (let i = 0; i < n; i++) {
     const e = S.entities[i];
     if (!e || e.kind === 'faction') continue;
+    // Une hausse modérée de la pression déplace surtout à l'intérieur du pays : seuls les
+    // départs au-delà du seuil franchissent les frontières.
     const target =
       pop0(i) *
       m.get(K.displacement) *
-      Math.max(0, (total[i] as number) - (pressure0[i] as number));
+      Math.max(0, (total[i] as number) - (pressure0[i] as number) - m.get(K.deadZone));
     const stock = newAbroad[i] as number;
     const delta = target > stock ? (target - stock) * outRate : (target - stock) * backRate;
     const pop = S.v(C.pop)[i] as number;

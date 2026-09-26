@@ -336,10 +336,15 @@ demography:
       unit: 'indice'
       description: "Stabilité sous laquelle l'effondrement de l'État pousse au départ."
     displacement:
-      value: 0.2
+      value: 0.15
       range: [0, 1]
       unit: ''
       description: 'Nouveaux réfugiés visés par unité de pression de départ au-delà du départ, en part de la population.'
+    pressure_threshold:
+      value: 0.1
+      range: [0, 1]
+      unit: ''
+      description: "Hausse de la pression de départ en deçà de laquelle les déplacements restent internes (pas de réfugiés à l'étranger) ; seuls les départs au-delà franchissent les frontières."
     outflow_months:
       value: 4
       range: [1, 60]
@@ -452,7 +457,7 @@ economy:
       value: 1.0
       range: [0, 3]
       unit: ''
-      description: "Effet sur le PIB d'une variation des volumes d'hydrocarbures produits, en proportion des rentes (% du PIB)."
+      description: "Effet sur le niveau du PIB d'une variation des volumes d'hydrocarbures produits, en proportion des rentes (% du PIB) : la production est de la valeur ajoutée ; l'effet dure autant que la variation (fermeture d'un détroit, quotas)."
     stability_threshold:
       value: 50
       range: [0, 100]
@@ -804,7 +809,7 @@ trade:
       value: 0.8
       range: [0, 1]
       unit: ''
-      description: 'Part des échanges entre pays voisins (frontière terrestre commune) qui passe par la terre (route, rail, oléoducs et gazoducs).'
+      description: "Part des échanges entre pays voisins (frontière terrestre commune) qui passe par la terre (route, rail, oléoducs et gazoducs) ; aussi part minimale entre pays reliés par la terre quand l'un des deux est enclavé."
     land_share_connected:
       value: 0.6
       range: [0, 1]
@@ -983,7 +988,7 @@ trade:
 markets:
   oil:
     price_elasticity:
-      value: 0.2
+      value: 0.31
       range: [0.02, 2]
       unit: ''
       description: "Élasticité totale (demande + offre) du marché du pétrole : un déficit de 1 % de l'offre fait monter le prix d'environ 1 / élasticité %."
@@ -1362,8 +1367,18 @@ markets:
       unit: 'MWh/t'
       description: "Contenu énergétique d'une tonne de charbon thermique de référence (6 000 kcal/kg, Newcastle)."
   shortage:
+    reliance_months:
+      value: 3
+      range: [1, 24]
+      unit: 'mois'
+      description: "Délai avec lequel un importateur compte de nouveau sur un fournisseur revenu (réouverture d'une route, levée de sanctions) : les flux établis rejoignent les flux courants."
+    adaptation_months:
+      value: 24
+      range: [1, 240]
+      unit: 'mois'
+      description: "Délai au bout duquel une perte d'approvisionnement durable devient la nouvelle normale (le remplacement n'est plus compté comme un manque)."
     replacement_months:
-      value: 2
+      value: 3
       range: [1, 24]
       unit: 'mois'
       description: "Délai de remplacement des importations d'énergie perdues par d'autres fournisseurs."
@@ -1393,11 +1408,11 @@ markets:
       unit: '%'
       description: 'Pénurie (part de la consommation) à partir de laquelle elle est consignée au journal.'
   food:
-    grain_per_capita:
-      value: 0.34
-      range: [0.1, 1]
+    wheat_per_capita:
+      value: 0.1
+      range: [0.02, 0.5]
       unit: 't/habitant/an'
-      description: "Utilisation de céréales par habitant (FAO : ≈ 2,8 Gt pour 8,2 milliards d'habitants), pour la facture céréalière."
+      description: "Consommation de blé par habitant (FAO : ≈ 800 Mt pour 8,2 milliards d'habitants), pour la facture du blé des importateurs nets (l'autosuffisance céréalière donne la part produite localement)."
     stress_base_weight:
       value: 0.3
       range: [0, 1]

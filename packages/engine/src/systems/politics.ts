@@ -1361,6 +1361,10 @@ export const politics: System = {
     'pol.insurgency',
     'pol.coup_risk',
     'pol.leader_tenure',
+    // Changements de gouvernement (alternance, coup d'État, révolution).
+    'pol.electoral_democracy',
+    'pol.liberal_democracy',
+    ...PROFILE_IDS,
   ],
   init,
   monthly,

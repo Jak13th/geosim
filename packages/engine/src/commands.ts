@@ -255,6 +255,7 @@ function writeSlot(state: State, slot: Slot, value: ParamValue): void {
     case 'pair': {
       const i = state.byId.get(slot.from) as number;
       const j = state.byId.get(slot.to) as number;
+      state.touchPair(slot.param);
       const m = state.pairNum.get(slot.param);
       if (m !== undefined) {
         m[i * state.n + j] = typeof value === 'number' ? value : Number.NaN;

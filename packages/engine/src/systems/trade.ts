@@ -7,10 +7,11 @@
  * sinon un coefficient), fermé 0 — en un mois à la fermeture, plus lentement à la réouverture.
  *
  * Routes : une paire échange une part L par voie de terre (voisins : L_voisins ; reliés par la
- * terre : L_reliés · e^(−km/décroissance)) et 1 − L par mer. La route principale passe si tous ses
- * détroits passent (produit des capacités p_c) ; le reste se reporte sur l'alternative (produit des
- * capacités de ses détroits) en perdant (km_principale / km_alternative)^γ du volume (détour) ;
- * sans alternative, il est coupé :
+ * terre : L_reliés · e^(−km/décroissance), au moins L_voisins si l'un des deux est enclavé : rail,
+ * route et oléoducs plutôt qu'un détour par un port étranger) et 1 − L par mer. La route
+ * principale passe si tous ses détroits passent (produit des capacités p_c) ; le reste se reporte
+ * sur l'alternative (produit des capacités de ses détroits) en perdant (km_principale /
+ * km_alternative)^γ du volume (détour) ; sans alternative, il est coupé :
  *   ρ_ij = L + (1 − L) · [p_principale + (1 − p_principale) · p_alternative · (km_p / km_a)^γ]
  *
  * Échanges de biens (exportations de i vers j) :
@@ -42,6 +43,7 @@ import {
   currentWarGrid,
   lockedPairs,
   pairBase,
+  pairDistance,
   vectorValue,
 } from './pairs.ts';
 
@@ -196,13 +198,7 @@ export function landShare(
   i: number,
   j: number,
 ): number {
-  const m = ctx.model;
-  const border = state.pairMatrix('pair.border_length')[i * state.n + j] as number;
-  if (border > 0) return m.get(K.landNeighbors);
-  const d = vectorValue(state.pairValue('pair.distance', i, j));
-  const land = d.land ?? -1;
-  if (!(land >= 0)) return 0;
-  return m.get(K.landConnected) * Math.exp(-land / Math.max(1, m.get(K.landDecay)));
+  return landShareGrid(ctx, state)[i * state.n + j] as number;
 }
 
 /**
@@ -216,12 +212,13 @@ export function routeAccessGrid(
 ): Float64Array {
   const n = state.n;
   const table = routeTable(state);
+  const land = landShareGrid(ctx, state);
   const out = new Float64Array(n * n).fill(1);
   for (let i = 0; i < n; i++) {
     for (let j = i + 1; j < n; j++) {
       const r = table.index[i * n + j] as number;
       if (r < 0) continue;
-      const L = landShareCached(ctx, state, i, j);
+      const L = land[i * n + j] as number;
       const rho = L + (1 - L) * (sea[r] as number);
       out[i * n + j] = rho;
       out[j * n + i] = rho;
@@ -268,28 +265,26 @@ type Weights = ReturnType<typeof goodsWeights>;
 
 /** Part bloquée d'un flux par des sanctions (volets pondérés par la structure des exportations). */
 function blocked(
-  m: SystemContext['model'],
+  c: FrictionCoefs,
   grid: Float32Array,
   n2: number,
   k: number,
   w: Weights,
   sea: number,
 ): number {
-  const s = (track: keyof typeof TRACK_INDEX): number =>
-    grid[TRACK_INDEX[track] * n2 + k] as number;
-  const trade = s('trade');
-  const tech = s('technology');
+  const trade = grid[TRACK_INDEX.trade * n2 + k] as number;
+  const tech = grid[TRACK_INDEX.technology * n2 + k] as number;
   const goods =
-    w.energy * s('energy') +
+    w.energy * (grid[TRACK_INDEX.energy * n2 + k] as number) +
     (w.food + w.minerals) * trade +
     w.chips * tech +
-    w.manufactured * Math.max(trade, m.get(K.manufacturedTech) * tech);
+    w.manufactured * Math.max(trade, c.manufacturedTech * tech);
   const b =
     1 -
     (1 - Math.min(1, goods)) *
-      (1 - m.get(K.financeBlock) * s('finance')) *
-      (1 - m.get(K.transportBlock) * s('transport') * sea);
-  return Math.min(m.get(K.blockMax), Math.max(0, b));
+      (1 - c.financeBlock * (grid[TRACK_INDEX.finance * n2 + k] as number)) *
+      (1 - c.transportBlock * (grid[TRACK_INDEX.transport * n2 + k] as number) * sea);
+  return Math.min(c.blockMax, Math.max(0, b));
 }
 
 /** Part du commerce coupée selon l'état de la relation. */
@@ -308,6 +303,36 @@ function warCut(m: SystemContext['model'], code: number): number {
     default:
       return 0;
   }
+}
+
+/** Coefficients des frictions, lus une fois par pas (boucle N × N). */
+interface FrictionCoefs {
+  manufacturedTech: number;
+  financeBlock: number;
+  transportBlock: number;
+  blockMax: number;
+  tariffElasticity: number;
+  bloc: number;
+  relation: number;
+  fragmentation: number;
+  /** log(1 − coupure) de chaque état de la relation (indice : code de `pair.war_state`). */
+  logWar: Float64Array;
+}
+
+function frictionCoefs(m: SystemContext['model']): FrictionCoefs {
+  return {
+    manufacturedTech: m.get(K.manufacturedTech),
+    financeBlock: m.get(K.financeBlock),
+    transportBlock: m.get(K.transportBlock),
+    blockMax: m.get(K.blockMax),
+    tariffElasticity: m.get(K.tariffElasticity),
+    bloc: m.get(K.bloc),
+    relation: m.get(K.relation),
+    fragmentation: m.get(K.fragmentation),
+    logWar: Float64Array.from({ length: 6 }, (_, code) =>
+      Math.log(Math.max(1e-6, 1 - warCut(m, code))),
+    ),
+  };
 }
 
 /** Entrées des frictions à un instant (courant ou départ). */
@@ -335,7 +360,7 @@ const FRICTIONS = [
 type Friction = (typeof FRICTIONS)[number];
 
 function frictions(
-  m: SystemContext['model'],
+  c: FrictionCoefs,
   inp: FrictionInputs,
   n: number,
   i: number,
@@ -349,16 +374,16 @@ function frictions(
   const n2 = n * n;
   const tariff =
     Math.max(0, fin(inp.tariffLevel[j] as number)) + Math.max(0, fin(inp.tariffs[kr] as number));
-  out[0] = -m.get(K.tariffElasticity) * Math.log(1 + tariff / 100);
+  out[0] = -c.tariffElasticity * Math.log(1 + tariff / 100);
   // Sanctions de j contre i (i exporte vers un pays qui le sanctionne) et de i contre j.
-  out[1] = Math.log(1 - blocked(m, inp.sanctions, n2, kr, w, sea));
-  out[2] = Math.log(1 - blocked(m, inp.sanctions, n2, k, w, sea));
-  out[3] = Math.log(Math.max(1e-6, 1 - warCut(m, inp.war[k] as number)));
-  out[4] = m.get(K.bloc) * (inp.tradeBloc[k] as number);
+  out[1] = Math.log(1 - blocked(c, inp.sanctions, n2, kr, w, sea));
+  out[2] = Math.log(1 - blocked(c, inp.sanctions, n2, k, w, sea));
+  out[3] = c.logWar[inp.war[k] as number] ?? 0;
+  out[4] = c.bloc * (inp.tradeBloc[k] as number);
   const r = (fin(inp.relation[k] as number) + fin(inp.relation[kr] as number)) / 200;
-  out[5] = m.get(K.relation) * r;
+  out[5] = c.relation * r;
   const gap = Math.abs(fin(inp.alignment[i] as number) - fin(inp.alignment[j] as number)) / 200;
-  out[6] = -m.get(K.fragmentation) * (inp.fragmentation / 100) * gap;
+  out[6] = -c.fragmentation * (inp.fragmentation / 100) * gap;
 }
 
 const fin = (x: number): number => (Number.isFinite(x) ? x : 0);
@@ -438,19 +463,27 @@ function gdpScale(state: State): { ratio: Float64Array; world: number } {
   return { ratio, world: before > 0 ? now / before : 1 };
 }
 
-/** Échanges de référence (sans chocs) : gravité sur les PIB nominaux. */
-function referenceScale(
-  ctx: SystemContext,
-  scale: ReturnType<typeof gdpScale>,
-  i: number,
-  j: number,
-): number {
+/** Facteurs de gravité précalculés : (Y_i/Y_i⁰)^α, (Y_j/Y_j⁰)^β et (Y_w/Y_w⁰)^(α+β−1). */
+interface GravityScale {
+  exporter: Float64Array;
+  importer: Float64Array;
+  world: number;
+}
+
+function gravityScale(ctx: Pick<SystemContext, 'model'>, state: State): GravityScale {
+  const scale = gdpScale(state);
   const a = ctx.model.get(K.exporterGdp);
   const b = ctx.model.get(K.importerGdp);
-  return (
-    (Math.pow(scale.ratio[i] as number, a) * Math.pow(scale.ratio[j] as number, b)) /
-    Math.pow(scale.world, a + b - 1)
-  );
+  return {
+    exporter: Float64Array.from(scale.ratio, (x) => Math.pow(x, a)),
+    importer: Float64Array.from(scale.ratio, (x) => Math.pow(x, b)),
+    world: Math.pow(scale.world, a + b - 1),
+  };
+}
+
+/** Échanges de référence (sans chocs) : gravité sur les PIB nominaux. */
+function referenceScale(g: GravityScale, i: number, j: number): number {
+  return ((g.exporter[i] as number) * (g.importer[j] as number)) / g.world;
 }
 
 /** Mise à jour des capacités de passage des détroits selon leur statut. */
@@ -558,8 +591,10 @@ function step(ctx: SystemContext, rho: Float64Array, initial: boolean): Aggregat
   const phi = S.internalArray('trade.phi', 1, n2);
   const written = S.internalArray('trade.written', Number.NaN, n2);
   const trade = S.pairMatrix('pair.trade');
-  const scale = gdpScale(S);
+  const scale = gravityScale(ctx, S);
   const locked = lockedPairs(S, 'pair.trade');
+  const land = landShareGrid(ctx, S);
+  const coefs = frictionCoefs(m);
 
   // Modifications de l'utilisateur depuis le mois précédent : nouvelle base de la paire.
   if (!initial) {
@@ -569,7 +604,7 @@ function step(ctx: SystemContext, rho: Float64Array, initial: boolean): Aggregat
       if (Number.isNaN(w) || !(Math.abs(t - w) > 1e-9 * Math.max(1, Math.abs(w)))) continue;
       const i = Math.floor(k / n);
       const j = k % n;
-      const ref = referenceScale(ctx, scale, i, j) * (phi[k] as number);
+      const ref = referenceScale(scale, i, j) * (phi[k] as number);
       base[k] = ref > 0 ? Math.max(0, t) / ref : Math.max(0, t);
       if (!(ref > 0)) phi[k] = 1;
     }
@@ -627,10 +662,10 @@ function step(ctx: SystemContext, rho: Float64Array, initial: boolean): Aggregat
         written[k] = trade[k] as number;
         continue;
       }
-      const ref = t0 * referenceScale(ctx, scale, i, j);
-      const L = landShareCached(ctx, S, i, j);
-      frictions(m, now, n, i, j, wi, 1 - L, fNow);
-      frictions(m, start, n, i, j, wi, 1 - L, fStart);
+      const ref = t0 * referenceScale(scale, i, j);
+      const L = land[k] as number;
+      frictions(coefs, now, n, i, j, wi, 1 - L, fNow);
+      frictions(coefs, start, n, i, j, wi, 1 - L, fStart);
       let logTarget = Math.log(Math.max(1e-9, rho[k] as number));
       let negTotal = Math.max(0, -logTarget);
       for (let f = 0; f < FRICTIONS.length; f++) {
@@ -700,37 +735,57 @@ function step(ctx: SystemContext, rho: Float64Array, initial: boolean): Aggregat
   return { lossX, lossM, cost, levelRaw, xAll, mAll };
 }
 
-/** Part terrestre d'une paire, mise en cache pour le pas en cours (symétrique). */
-let landMemo: { state: State; tick: number; version: string; values: Float64Array } | null = null;
-function landShareCached(
-  ctx: Pick<SystemContext, 'model'>,
-  state: State,
-  i: number,
-  j: number,
-): number {
+/** Parts terrestres par jeu d'entrées (coefficients, frontières, distances, enclavement). */
+const landCache = new WeakMap<
+  State,
+  {
+    version: string;
+    border: Float64Array;
+    land: Float64Array;
+    landlocked: Uint8Array;
+    values: Float64Array;
+  }
+>();
+
+/** Pays enclavés (`geo.landlocked`). */
+function landlockedFlags(state: State): Uint8Array {
+  return Uint8Array.from({ length: state.n }, (_, i) =>
+    state.genericValue('geo.landlocked', i) === true ? 1 : 0,
+  );
+}
+
+/** Part terrestre des échanges de chaque paire (N × N), recalculée si ses entrées changent. */
+export function landShareGrid(ctx: Pick<SystemContext, 'model'>, state: State): Float64Array {
   const m = ctx.model;
-  const version = `${m.get(K.landNeighbors)}|${m.get(K.landConnected)}|${m.get(K.landDecay)}`;
+  const n = state.n;
+  const neighbors = m.get(K.landNeighbors);
+  const connected = m.get(K.landConnected);
+  const decay = Math.max(1, m.get(K.landDecay));
+  const border = state.pairMatrix('pair.border_length');
+  const land = pairDistance(state, 'land');
+  const landlocked = landlockedFlags(state);
+  const version = `${neighbors}|${connected}|${decay}|${state.pairVersionOf('pair.border_length')}`;
+  const cached = landCache.get(state);
   if (
-    landMemo === null ||
-    landMemo.state !== state ||
-    landMemo.tick !== state.tick ||
-    landMemo.version !== version
+    cached &&
+    cached.version === version &&
+    cached.border === border &&
+    cached.land === land &&
+    cached.landlocked.every((x, i) => x === landlocked[i])
   ) {
-    landMemo = {
-      state,
-      tick: state.tick,
-      version,
-      values: new Float64Array(state.n * state.n).fill(Number.NaN),
-    };
+    return cached.values;
   }
-  const k = i * state.n + j;
-  let v = landMemo.values[k] as number;
-  if (Number.isNaN(v)) {
-    v = landShare(ctx, state, i, j);
-    landMemo.values[k] = v;
-    landMemo.values[j * state.n + i] = v;
+  const values = new Float64Array(n * n);
+  for (let k = 0; k < values.length; k++) {
+    const d = land[k] as number;
+    if ((border[k] as number) > 0) values[k] = neighbors;
+    else if (d >= 0) {
+      const enclave = landlocked[Math.floor(k / n)] === 1 || landlocked[k % n] === 1;
+      values[k] = Math.max(connected * Math.exp(-d / decay), enclave ? neighbors : 0);
+    }
   }
-  return v;
+  landCache.set(state, { version, border, land, landlocked, values });
+  return values;
 }
 
 function writeAggregates(ctx: SystemContext, agg: Aggregates): void {
@@ -857,7 +912,8 @@ function derive(ctx: SystemContext): void {
   const now = seaAccess(table, capacities(S, table, false), detour);
   const trade = S.pairMatrix('pair.trade');
   const base = S.internalArray('trade.base', 0, n * n);
-  const scale = gdpScale(S);
+  const scale = gravityScale(ctx, S);
+  const land = landShareGrid(ctx, S);
   const flows = new Float64Array(table.chokepoints.length);
   const normal = new Float64Array(table.chokepoints.length);
   for (let i = 0; i < n; i++) {
@@ -871,11 +927,11 @@ function derive(ctx: SystemContext): void {
       const kr = j * n + i;
       const v = Math.max(0, trade[k] as number) + Math.max(0, trade[kr] as number);
       const vRef =
-        (base[k] as number) * referenceScale(ctx, scale, i, j) +
-        (base[kr] as number) * referenceScale(ctx, scale, j, i);
+        (base[k] as number) * referenceScale(scale, i, j) +
+        (base[kr] as number) * referenceScale(scale, j, i);
       if (!(v > 0) && !(vRef > 0)) continue;
       const r = table.index[k] as number;
-      const L = landShareCached(ctx, S, i, j);
+      const L = land[k] as number;
       const seaAccessK = r >= 0 ? (now.access[r] as number) : 1;
       volume += v;
       sea += v * (1 - L);

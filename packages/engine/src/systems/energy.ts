@@ -5,12 +5,16 @@
  * (`pair.energy_dependence`, chapitre 27 du SH). Le flux i → j passe selon l'accès de la route
  * (détroits), les sanctions sur l'énergie (dans un sens ou dans l'autre) et l'état de guerre :
  *   f_ij = ρ_ij · (1 − sanctions_énergie) · (1 − coupure_guerre)
- * Manque d'approvisionnement (part des importations de départ perdue) :
- *   manque_j = Σ_i dép_ji · max(0, f_ij(0) − f_ij(t)) / Σ_i dép_ji · f_ij(0)
+ * Manque d'approvisionnement, par rapport aux flux établis E_ij (ceux sur lesquels l'importateur
+ * compte : flux de départ, qui suivent ensuite les flux courants — vite quand un fournisseur revient,
+ * lentement quand une perte dure et devient la nouvelle normale) :
+ *   manque_j = Σ_i dép_ji · max(0, E_ij − f_ij(t)) / Σ_i dép_ji · E_ij
  * Il est remplacé par d'autres fournisseurs avec un délai (achats au prix mondial, qui monte avec
  * la perte d'offre) ; le reste est couvert par les stocks stratégiques (`trade.oil_stocks`, en jours
- * de consommation), puis rationné :
- *   pénurie (% de la consommation) = (manque − remplacé) · dépendance aux importations − stocks
+ * de consommation de pétrole, soit jours × part du pétrole dans l'énergie primaire en jours de
+ * consommation d'énergie), puis rationné :
+ *   pénurie (% de la consommation d'énergie) = (manque − remplacé) · dépendance aux importations
+ *                                               − prélèvement sur les stocks
  * Les stocks se reconstituent quand l'approvisionnement revient. Les prélèvements réduisent les
  * achats sur le marché mondial du pétrole (libération coordonnée des stocks). La pénurie freine
  * l'activité (écart de production) et la stabilité (politique intérieure).
@@ -33,9 +37,12 @@ const C = {
   gap: col('energy.supply_gap'),
   stocks: col('trade.oil_stocks'),
   oilCons: col('energy.oil_consumption'),
+  primary: col('energy.primary_consumption'),
 };
 
 const K = {
+  relianceMonths: 'markets.shortage.reliance_months',
+  adaptationMonths: 'markets.shortage.adaptation_months',
   replaceMonths: 'markets.shortage.replacement_months',
   refillMonths: 'markets.shortage.refill_months',
   releaseShare: 'markets.shortage.stock_release_share',
@@ -80,18 +87,27 @@ export function energyFlows(
   return out;
 }
 
-/** Manque d'approvisionnement de chaque importateur (part de ses importations de départ). */
+/** Flux établis (référence des manques) : flux de départ tant qu'ils n'ont pas été mis à jour. */
+function established(ctx: Pick<SystemContext, 'model'>, state: State): Float64Array {
+  const n2 = state.n * state.n;
+  if (!state.internal.has('energy.established')) {
+    state.internalArray('energy.established', 0, n2).set(energyFlows(ctx, state, true));
+  }
+  return state.internalArray('energy.established', 0, n2);
+}
+
+/** Manque d'approvisionnement de chaque importateur (part de ses importations établies). */
 export function shortfalls(
   ctx: Pick<SystemContext, 'model'>,
   state: State,
+  now: Float64Array = energyFlows(ctx, state, false),
 ): {
   shortfall: Float64Array;
   /** Principaux fournisseurs perdus de chaque importateur : [fournisseur, part perdue]. */
   lost: [number, number][][];
 } {
   const n = state.n;
-  const now = energyFlows(ctx, state, false);
-  const start = energyFlows(ctx, state, true);
+  const start = established(ctx, state);
   const dep = state.pairMatrix('pair.energy_dependence');
   const shortfall = new Float64Array(n);
   const lost: [number, number][][] = [];
@@ -122,6 +138,7 @@ export function shortfalls(
 
 function init(ctx: SystemContext): void {
   const S = ctx.state;
+  S.internalArray('energy.established', 0, S.n * S.n).set(energyFlows(ctx, S, true));
   S.internalArray(ENERGY_OUT.impulse, 0);
   S.internalArray(ENERGY_OUT.shortfall, 0);
   S.internalArray(ENERGY_OUT.replaced, 0);
@@ -135,7 +152,18 @@ function monthly(ctx: SystemContext): void {
   const S = ctx.state;
   const m = ctx.model;
   const n = S.n;
-  const { shortfall, lost } = shortfalls(ctx, S);
+  const flows = energyFlows(ctx, S, false);
+  const { shortfall, lost } = shortfalls(ctx, S, flows);
+  // Les flux établis suivent les flux courants : vite au retour d'un fournisseur, lentement quand
+  // une perte dure (le remplacement devient la nouvelle normale).
+  const E = established(ctx, S);
+  const up = 1 / Math.max(1, m.get(K.relianceMonths));
+  const down = 1 / Math.max(1, m.get(K.adaptationMonths));
+  for (let k = 0; k < E.length; k++) {
+    const f = flows[k] as number;
+    const e = E[k] as number;
+    E[k] = e + (f - e) * (f > e ? up : down);
+  }
   const replaced = S.internalArray(ENERGY_OUT.replaced, 0);
   const shortfallOut = S.internalArray(ENERGY_OUT.shortfall, 0);
   const gapPrev = S.internalArray('energy.gapPrev', 0);
@@ -157,13 +185,18 @@ function monthly(ctx: SystemContext): void {
     const dependence = Math.min(1, Math.max(0, (S.e(C.dependence)[j] as number) / 100));
     const needDays = missing * dependence * DAYS_PER_MONTH;
     const stock = Math.max(0, S.v(C.stocks)[j] as number);
-    const draw = Math.min(stock, needDays * release);
+    // Les stocks sont du pétrole : un jour de pétrole couvre « part du pétrole » jour d'énergie.
+    const oilNow = S.e(C.oilCons)[j] as number;
+    const primary = S.e(C.primary)[j] as number;
+    const oilShare = oilNow > 0 && primary > 0 ? Math.min(1, oilNow / primary) : 1;
+    const drawEnergy = Math.min(stock * oilShare, needDays * release);
+    const draw = oilShare > 0 ? drawEnergy / oilShare : 0;
     const stock0 = S.base[C.stocks * n + j] as number;
     let next = stock - draw;
     if (missing === 0 && Number.isFinite(stock0) && next < stock0)
       next += (stock0 - next) * refillRate;
     if (Number.isFinite(stock)) S.write(C.stocks, j, next);
-    const unmet = Math.max(0, needDays - draw) / DAYS_PER_MONTH;
+    const unmet = Math.max(0, needDays - drawEnergy) / DAYS_PER_MONTH;
     const gap = 100 * Math.min(1, unmet);
     S.write(C.gap, j, gap);
     const oil = S.e(C.oilCons)[j] as number;
@@ -185,7 +218,7 @@ function monthly(ctx: SystemContext): void {
         },
         {
           id: 'energy.shortfall',
-          label: 'Importations de départ perdues',
+          label: 'Importations établies perdues',
           value: 100 * s,
           unit: '%',
         },

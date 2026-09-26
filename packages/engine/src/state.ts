@@ -135,6 +135,8 @@ export class State {
   readonly pairNum = new Map<string, Float64Array>();
   /** Paires non numériques : valeurs différentes du défaut, indexées par i × N + j. */
   readonly pairGen = new Map<string, Map<number, ParamValue>>();
+  /** Nombre de modifications de chaque paramètre bilatéral par commande (invalide les caches). */
+  private readonly pairEdits = new Map<string, number>();
   readonly pairDefault = new Map<string, ParamValue>();
 
   readonly world = new Map<string, ParamValue>();
@@ -340,6 +342,15 @@ export class State {
     const m = this.pairNum.get(id);
     if (m === undefined) throw new Error(`Paramètre bilatéral numérique inconnu : ${id}`);
     return m;
+  }
+
+  /** Révision d'un paramètre bilatéral : change à chaque modification par une commande. */
+  pairVersionOf(id: string): number {
+    return this.pairEdits.get(id) ?? 0;
+  }
+
+  touchPair(id: string): void {
+    this.pairEdits.set(id, (this.pairEdits.get(id) ?? 0) + 1);
   }
 
   pairValue(id: string, i: number, j: number): ParamValue {

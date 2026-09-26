@@ -11,8 +11,10 @@
  *   g_structurelle = g_pot − e_stab·[pénalité(S) − pénalité(S₀)] − e_debt·[excès(d)·prime − excès(d₀)·prime₀]
  *                  + e_inv·(investissement public − initial)
  *   écart x (en % du PIB potentiel) : x(t+1) = φ·x(t) + (1 − φ)·e_trade·Σ_j (exportations i→j / PIB_i)·x_j
- *                  + impulsion énergie + ε,   ε ~ N(0, σ_pays)
- *   PIB en volume = PIB potentiel · (1 + x) ; le PIB potentiel croît au rythme g_structurelle.
+ *                  + impulsion énergie (termes de l'échange) + ε,   ε ~ N(0, σ_pays)
+ *   PIB en volume = PIB potentiel · niveau commercial · niveau des hydrocarbures · (1 + x) ; le PIB
+ *   potentiel croît au rythme g_structurelle ; niveau des hydrocarbures = 1 + e_vol · Σ rentes₀ ·
+ *   (production / production de référence − 1) (la production est de la valeur ajoutée).
  *   La croissance affichée est le glissement sur douze mois.
  * La croissance potentielle converge vers la croissance de long terme :
  *   g_LT = progrès de la frontière + β·ln(frontière / revenu)·institutions + α·croissance des 15–64 ans
@@ -22,7 +24,7 @@
  * Chômage : loi d'Okun sur l'écart de production, retour lent vers le taux initial.
  *
  * Monde interconnecté (phase 4), chocs mesurés par rapport au départ et calculés par les autres
- * systèmes : niveau du PIB potentiel dû aux gains à l'échange (commerce), chocs de demande sur
+ * systèmes : niveau du PIB dû aux gains à l'échange (commerce), chocs de demande sur
  * l'écart de production (pertes d'exportations, sanctions financières, pénuries d'énergie et de
  * produits critiques, termes de l'échange céréaliers), frein technologique des sanctions et coût
  * de l'insurrection sur la croissance structurelle, saut des prix importés (droits de douane,
@@ -136,7 +138,7 @@ const K = {
   insurgencyDrag: 'economy.growth.insurgency_drag',
   foodImporter: 'economy.growth.food_importer',
   foodExporter: 'economy.growth.food_exporter',
-  grainPerCapita: 'markets.food.grain_per_capita',
+  wheatPerCapita: 'markets.food.wheat_per_capita',
 } as const;
 
 /** Valeur absente (donnée manquante) comptée comme nulle dans les sommes. */
@@ -224,9 +226,9 @@ function hydrocarbonVolume(ctx: SystemContext, i: number): number {
 }
 
 /**
- * Facture céréalière nette par rapport au prix de départ (% du PIB) : importations nettes de
- * céréales (consommation × (1 − autosuffisance)) × écart du prix du blé ; négative pour un
- * exportateur net quand le prix monte.
+ * Facture du blé nette par rapport au prix de départ (% du PIB) : importations nettes de blé
+ * (consommation par habitant × population × (1 − autosuffisance céréalière)) × écart du prix du
+ * blé ; négative pour un exportateur net quand le prix monte.
  */
 function foodBill(ctx: SystemContext, i: number, price: number, price0: number): number {
   const S = ctx.state;
@@ -234,7 +236,7 @@ function foodBill(ctx: SystemContext, i: number, price: number, price0: number):
   const pop = S.e(C.pop)[i] as number;
   if (!(gdp > 0) || !(pop > 0) || !(price0 > 0)) return 0;
   const ss = fin(S.e(C.selfSufficiency)[i] as number);
-  const net = pop * ctx.model.get(K.grainPerCapita) * (1 - ss / 100);
+  const net = pop * ctx.model.get(K.wheatPerCapita) * (1 - ss / 100);
   return ((net * (price - price0)) / 1e9 / gdp) * 100;
 }
 
@@ -437,8 +439,10 @@ function monthly(ctx: SystemContext): void {
     const volume = hydrocarbonVolume(ctx, i);
     const energyImpulse =
       -(exporter ? m.get(K.energyExporter) : m.get(K.energyImporter)) *
-        (tot - (totPrev[i] as number)) +
-      m.get(K.hydrocarbonVolume) * (volume - (volumePrev[i] as number));
+      (tot - (totPrev[i] as number));
+    // Volumes d'hydrocarbures produits : effet de niveau (la production est de la valeur ajoutée),
+    // qui dure autant que la variation de production (fermeture d'un détroit, quotas).
+    const hydroLevel = Math.max(0.05, 1 + (m.get(K.hydrocarbonVolume) * volume) / 100);
     const fragility = 1 - Math.min(100, Math.max(0, stability)) / 100;
     const sd = sigma * (1 + m.get(K.instability) * fragility * fragility);
     const xPrev = gaps[i] as number;
@@ -467,7 +471,7 @@ function monthly(ctx: SystemContext): void {
     const yBefore = realGdp[i] as number;
     const yAfter = Math.max(
       1e-9,
-      (potentialOutput[i] as number) * (tradeLevel[i] as number) * (1 + xNow / 100),
+      (potentialOutput[i] as number) * (tradeLevel[i] as number) * hydroLevel * (1 + xNow / 100),
     );
     realGdp[i] = yAfter;
     const f = yAfter / yBefore;
