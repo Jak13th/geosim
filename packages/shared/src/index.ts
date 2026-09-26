@@ -30,3 +30,5 @@ export {
   TRADE_SECTORS,
   paramById,
 } from './params/catalog.ts';
+export * from './data/base.ts';
+export { ENUM_LABELS, componentLabel, enumLabel } from './params/enumLabels.ts';

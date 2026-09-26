@@ -141,7 +141,16 @@ Ordre : population, PIB, urbanisation et régime d'abord (les replis et la carte
 
 Commerce (BACI, flux ≥ 1 M$), dépendances énergétique et critique (part des importations ≥ 1 % : chapitre 27 ; puces SH 8542 ; terres rares ; céréales ; armes, chapitre 93), traités (engagement le plus fort, blocs à défense mutuelle compris ; crédibilité des blocs 0,8 par hypothèse), sanctions (maximum par volet), droits de douane, revendications, présence militaire (somme des bases), état de guerre (le plus grave des conflits interétatiques), reconnaissance, relations initiales (`relations_seed.yaml`, 148 paires), frontières et distances (carte). Une paire en double sans règle de fusion arrête la construction.
 
-### 2.4 Limites
+### 2.4 Paramètres dérivés par définition (`packages/engine/src/derived.ts`, phase 2)
+
+Certains dérivés sont de simples définitions, sans coefficient ; ils sont calculés à la volée depuis les valeurs de base :
+
+- **PIB par habitant** (`eco.gdp_per_capita`, $) = PIB nominal (Md$) × 10⁹ / population ; 0 si la population est nulle.
+- **Indice de misère** (`eco.misery_index`, points) = inflation + chômage (Okun).
+
+Provenance composée : source `DER`, méthode `derived`, date = la plus récente des entrées, confiance = la plus faible des entrées, note = formule et sources des entrées (ex. « `eco.gdp_nominal` : IMF:NGDPD, 2026 ; `demo.population` : WB:SP.POP.TOTL, 2025 »). Les autres dérivés (croissance, puissance militaire, dépendance énergétique, cohésion sociale…) relèvent de leur système et sont calculés par le moteur à partir de la phase 3.
+
+### 2.5 Limites
 
 - Données anciennes signalées dans le rapport : rentes des ressources (2021), indice de capital humain (2020), production d'hydrocarbures des petits producteurs (2016, Shift Data Portal via OWID).
 - Consommations de pétrole, gaz et charbon : Energy Institute (≈ 80 pays) ; les autres par médiane régionale par habitant (confiance faible).

@@ -17,10 +17,10 @@
  */
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { paramById, type Confidence } from '@geosim/shared';
+import { paramById, type Confidence, type ParamValue } from '@geosim/shared';
 import { checkProvenance, loadYaml, type CuratedProvenance } from '../config.ts';
 
-export type ParamValue = number | string | boolean | string[] | Record<string, number> | null;
+export type { ParamValue };
 
 export interface CuratedValue extends CuratedProvenance {
   value: ParamValue;

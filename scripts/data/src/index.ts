@@ -12,7 +12,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { EnvHttpProxyAgent, fetch } from 'undici';
-import type { MapGeo, MapMeta, MapRoutes } from '@geosim/shared';
+import type { MapGeo, MapMeta, MapRoutes, WorldBaseFile } from '@geosim/shared';
 import { loadYaml } from './config.ts';
 import { loadCountryValues, parseDefaults } from './country/curated.ts';
 import type { Ctx } from './country/context.ts';
@@ -256,7 +256,8 @@ try {
     .map(([id]) => id);
   const countries = countriesBase(ctx, meta.buildId, runtimeParams);
   const pairs = pairsBase(ctx, geo, routes);
-  const world = worldBase(ctx, meta, chokepoints, geoZones);
+  // Annotation : vérifie à la compilation que world.base.json respecte le contrat lu par l'interface.
+  const world: WorldBaseFile = worldBase(ctx, meta, chokepoints, geoZones);
   await mkdir(BUILD_DIR, { recursive: true });
   await writeFile(join(BUILD_DIR, 'countries.base.json'), JSON.stringify(countries));
   await writeFile(join(BUILD_DIR, 'pairs.base.json'), JSON.stringify(pairs));

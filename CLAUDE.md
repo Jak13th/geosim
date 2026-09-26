@@ -44,7 +44,7 @@ GeoSim est une simulation géopolitique **locale** et **temps réel**, inspirée
 Prérequis : Node ≥ 22.12. Première installation : `npm install`, puis `npm run setup:browser` (Chromium headless pour `check:console`).
 - `npm run dev` : lance l'application sur http://localhost:5173 (écoute sur localhost uniquement)
 - `npm test` · `npm run typecheck` · `npm run lint` · `npm run format` (Prettier)
-- `npm run check:console` : démarre l'application dans Chromium headless et échoue si la console contient une erreur ou un avertissement
+- `npm run check:console [-- --screenshots <dossier>]` : démarre l'application dans Chromium headless, parcourt l'interface et échoue si la console contient une erreur ou un avertissement
 - `npm run build` : build de production de l'interface
 - `npm run data [-- --refresh] [-- --resolution 2048|4096|8192]` : construit les données (téléchargements, cache, validation, rapport de couverture)
 - `npm run sim -- --scenario <nom> --years <n> --runs <n> --seed <n> --out <dossier>` : simulations sans interface

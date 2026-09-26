@@ -5,3 +5,10 @@
 export { Rng, deriveSeed, fnv1a32, type RngState } from './rng.ts';
 
 export const ENGINE_VERSION = '0.0.0';
+export {
+  DEFINITIONAL_DERIVATIONS,
+  derivationOf,
+  deriveValue,
+  weakestConfidence,
+  type Derivation,
+} from './derived.ts';

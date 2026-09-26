@@ -4,26 +4,24 @@
  * - `pairs.base.json` : paramètres bilatéraux (commerce, dépendances, traités, sanctions…) ;
  * - `world.base.json` : paramètres mondiaux et de zone, blocs, conflits, détroits…
  */
-import { CATALOG, type Confidence, type MapGeo, type MapMeta } from '@geosim/shared';
+import {
+  CATALOG,
+  type Confidence,
+  type CountriesBase,
+  type CountryRecord,
+  type MapGeo,
+  type MapMeta,
+  type PairParam,
+  type PairProvenance,
+  type PairsBase,
+} from '@geosim/shared';
 import type { ChokepointDef } from '../map/routing.ts';
 import type { ParamValue } from './curated.ts';
-import type { Ctx, EntityInfo, Resolved } from './context.ts';
+import type { Ctx, Resolved } from './context.ts';
 import type { GeoZone } from './geozones.ts';
 import type { TreatyType } from './topics.ts';
 
-export interface CountryRecord extends Omit<EntityInfo, 'classification'> {
-  classification: EntityInfo['classification'];
-  params: Record<string, Resolved>;
-}
-
-export interface CountriesBase {
-  version: 1;
-  buildDate: string;
-  mapBuildId: string;
-  /** Paramètres dérivés calculés par le moteur (absents des entités). */
-  runtimeParams: string[];
-  entities: CountryRecord[];
-}
+export type { CountriesBase, CountryRecord, PairParam, PairProvenance, PairsBase };
 
 export function countriesBase(
   ctx: Ctx,
@@ -60,31 +58,6 @@ function roundResolved(r: Resolved): Resolved {
 }
 
 // ——— Paires ———
-
-export interface PairProvenance {
-  source: string;
-  date: string;
-  confidence: Confidence;
-  note?: string;
-}
-
-export interface PairParam {
-  unit: string;
-  /** Valeur des paires absentes, et sa justification. */
-  default: ParamValue;
-  defaultNote: string;
-  refs: PairProvenance[];
-  /** [i, j, valeur, index de provenance dans `refs`]. */
-  entries: [string, string, ParamValue, number][];
-}
-
-export interface PairsBase {
-  version: 1;
-  buildDate: string;
-  /** Paramètres bilatéraux dérivés, calculés par le moteur (absents du fichier). */
-  runtimeParams: string[];
-  params: Record<string, PairParam>;
-}
 
 /** Combine deux valeurs d'une même paire (sources multiples) ; sans règle, un doublon est une erreur. */
 type Merge = (previous: ParamValue, next: ParamValue) => ParamValue;
@@ -461,6 +434,8 @@ export interface WorldBase {
   food: unknown;
   chokepoints: (Pick<ChokepointDef, 'id' | 'name' | 'nameFr' | 'kind'> & {
     riparians: string[];
+    /** Position du marqueur [lon, lat] : centre de la première porte, ou le cap lui-même. */
+    lonLat: [number, number];
     status: ChokepointDef['status'];
   })[];
   zones: {
@@ -469,6 +444,19 @@ export interface WorldBase {
     fortifications: GeoZone[];
     claims: GeoZone[];
   };
+}
+
+/**
+ * Position du marqueur d'un passage : centre de sa première porte, sauf pour un cap, dont la
+ * porte court jusqu'à l'Antarctique : le marqueur est alors placé sur le cap (premier point).
+ */
+export function markerLonLat(c: Pick<ChokepointDef, 'gates' | 'kind'>): [number, number] {
+  const gate = c.gates[0] ?? [];
+  if (gate.length === 0) throw new Error('Détroit sans porte');
+  const points = c.kind === 'cape' ? gate.slice(0, 1) : gate;
+  const lon = points.reduce((s, q) => s + (q[0] as number), 0) / points.length;
+  const lat = points.reduce((s, q) => s + (q[1] as number), 0) / points.length;
+  return [Math.round(lon * 1e3) / 1e3, Math.round(lat * 1e3) / 1e3];
 }
 
 export function worldBase(
@@ -530,6 +518,7 @@ export function worldBase(
       nameFr: c.nameFr,
       kind: c.kind,
       riparians: meta.chokepoints.find((m) => m.id === c.id)?.riparians ?? [],
+      lonLat: markerLonLat(c),
       status: c.status,
     })),
     zones: { control: meta.controlZones, ...geoZones },

@@ -249,3 +249,70 @@ Répartition décrite dans `MODELES.md` §1.10 : noyaux gaussiens autour des vil
 ### D36. Construction : `--skip-map` et contrôles bloquants
 
 `npm run data -- --skip-map` réutilise la carte construite pour itérer sur les données pays (40 s au lieu de 4 min). Arrêtent la construction : référence introuvable dans un fichier curé, provenance incomplète, valeur de profil ou de relation hors plage, paire bilatérale en double, zone de contrôle sans pixel (au-delà de 2 pixels de surface), écart aux totaux de population.
+
+## 2026-09-26 — Phase 2 (carte interactive en lecture seule)
+
+### D37. Données servies par l'API locale et chargées dans l'interface
+
+Le plugin Vite sert `data/build/` en lecture seule (`/api/data/status`, `/api/data/files/<nom>`), limité à une liste blanche de fichiers ; il sert aussi le build de production (`vite preview`). L'interface choisit la carte dont le `buildId` correspond aux données pays, télécharge les archives gzip en flux et les décompresse avec `DecompressionStream` ; le décodage ne crée que des vues sur le tampon. Des builds incohérents (carte et données pays de deux constructions différentes) sont signalés à l'écran, pas dans la console.
+
+- _Écartée_ : charger la carte dans le worker du moteur dès la phase 2.
+- _Raison_ : en lecture seule, le fil principal doit de toute façon posséder les couches pour le rendu et le survol. En phase 3, le moteur possédera l'état dynamique et enverra des diffs de pixels (SPEC §7.3) ; seules les couches statiques resteront partagées.
+
+### D38. Contrat des fichiers de données dans `@geosim/shared`
+
+Les types de `countries.base.json`, `pairs.base.json` et `world.base.json` (valeurs résolues, provenance, méthodes, paires, blocs, conflits, détroits) passent du pipeline au paquet partagé. Le pipeline les réexporte et vérifie à la compilation que son `WorldBase` respecte la vue lue par l'interface.
+
+### D39. Rendu : un shader, remplissage anticrénelé, bordures à l'échelle de l'écran
+
+Complète D1. Les couches `owner`, `sovereign`, `flags`, `elevation` et un RGBA8UI (terrain, biome, urbanisation, infrastructures) sont des textures entières ; zones maritimes et densité de population sont chargées à la première utilisation de leur couche. Chaque fragment :
+
+- au dézoom (un pixel d'écran couvre plus de 1,25 pixel de carte), moyenne la couleur de remplissage de 2 × 2 échantillons ;
+- calcule une seule fois bordures (voisins à ≈ un pixel d'écran, donc fines à toute échelle), relief ombré (altitude WorldClim, lumière au nord-ouest) et mise en évidence (survol, sélection) ;
+- hachure en espace écran les pixels dont contrôle et souveraineté diffèrent (couleur de l'autre entité dans les couches politiques, sombre dans les choroplèthes) ; pointille les valeurs estimées.
+
+Le contour du globe vient de la demi-largeur Equal Earth de chaque ligne (texture R32F). Palette politique : 20 teintes OKLCH et coloration gloutonne (Welsh-Powell) sur les voisinages terrestres et maritimes, factions et entités de facto comprises, de sorte que deux voisins n'ont jamais la même couleur ; couleur de départ dérivée du code (stable d'un build à l'autre). Une surcouche Canvas 2D porte les noms, capitales, villes, détroits et routes.
+
+- _Écartée_ : image couleur précalculée avec mipmaps (une seule lecture de texture au dézoom).
+- _Raison_ : les bordures y deviendraient floues au dézoom et tout changement de couche imposerait de recalculer 8 M pixels.
+- _Mesure_ : `?debug` affiche le temps GPU mesuré (extension `EXT_disjoint_timer_query_webgl2` quand le navigateur l'expose) et la cadence d'images pendant une interaction. Le conteneur de développement n'a pas de GPU (rendu logiciel SwiftShader, ≈ 4 images/s) : la fluidité à 4096 px reste à confirmer sur une machine réelle.
+
+### D40. Couches de la phase 2
+
+Dix couches, raccourcis 1–9 et 0 : politique (contrôle de facto), souveraineté de jure, relations du pays sélectionné, blocs et alliances (vue d'ensemble des alliances de défense mutuelle, traités bilatéraux compris, ou un bloc au choix avec membres, partenaires, observateurs et suspendus), indicateurs, sanctions (reçues, ou croisées avec le pays sélectionné), population (densité par pixel), terrain et biomes, infrastructures, mer (zones maritimes, routes des plus gros flux commerciaux, statut des détroits).
+
+- La couche « indicateurs » accepte **tout** paramètre pays numérique, catégoriel ou booléen du catalogue qui a des valeurs (liste générée) : échelle bornée aux 2ᵉ et 98ᵉ centiles (un pays extrême n'écrase pas les couleurs), logarithmique quand le catalogue le demande, rampe viridis ; catégories en palette qualitative.
+- Croissance, puissance militaire et dépendance énergétique (SPEC §9.2) sont des dérivés calculés par le moteur : proposées à partir de la phase 3 ; en attendant, croissance potentielle et budget de défense figurent parmi les indicateurs principaux.
+- Différées : flux commerciaux animés, bases à l'étranger, revendications et séparatismes (polygones), fronts, retombées (phases 4 à 6).
+
+### D41. Dérivés « par définition » dès la phase 2
+
+PIB par habitant et indice de misère ne demandent aucun coefficient : ils sont calculés dans `packages/engine/src/derived.ts` (réutilisé par le moteur en phase 3) et affichés avec une provenance composée (voir MODELES §2.4). Les autres dérivés (croissance, puissance, cohésion sociale…) affichent « moteur (phase 3) ».
+
+### D42. Libellés des valeurs catégorielles dans le paquet partagé
+
+`ENUM_LABELS` (valeurs des paramètres `enum`) et `componentLabel` (composantes des vecteurs : domaines militaires, postes commerciaux, minerais, volets de sanctions…) sont déclarés à côté du catalogue ; un test vérifie que chaque valeur de chaque paramètre catégoriel a son libellé.
+
+- _Écartée_ : ajouter les libellés dans `ParamDef`.
+- _Raison_ : le test d'alignement du catalogue sur `PARAMETRES.md` reste inchangé ; la complétude est vérifiée à part.
+
+### D43. Pas de drapeaux dans l'infobulle pour l'instant
+
+L'infobulle montre la couleur politique du pays à la place du drapeau (SPEC §9.2). Les données ne portent pas de code ISO alpha-2, les émojis de drapeaux ne s'affichent pas sous Windows, et un jeu de drapeaux (SVG) serait une nouvelle dépendance à licence à vérifier ; les factions et entités de facto n'y figurent pas. À décider avec toi.
+
+### D44. Cadrage et noms sur la carte
+
+- Cadrage (recherche, bouton ⌖) : composante connexe de la capitale, plus les composantes proches (moins de 0,6 diagonale) représentant au moins 1 % du territoire. La France est cadrée sur la métropole, pas sur l'Atlantique jusqu'à la Guyane ; les États-Unis incluent l'Alaska ; le Danemark est cadré sur le Danemark.
+- Noms : au point d'étiquette de l'entité (pôle d'inaccessibilité calculé par le pipeline), sauf s'il tombe dans un territoire dépendant (Danemark → Groenland) ; les territoires dépendants de plus de 100 pixels (Groenland, Nouvelle-Calédonie, Porto Rico, Malouines, Antarctique…) reçoivent leur nom, en italique, au point le plus intérieur de l'unité (transformée de distance du chanfrein). Taille selon la surface, placement glouton sans chevauchement.
+
+### D45. Position des détroits dans `world.base.json`
+
+Chaque détroit reçoit `lonLat`, centre de sa première porte (le cap lui-même pour les routes des caps, dont la porte court jusqu'à l'Antarctique), pour ses marqueurs sur la carte. Les données construites avant la phase 2 doivent être reconstruites : `npm run data -- --skip-map` (≈ 40 s).
+
+### D46. `check:console` devient un test de fumée de l'interface
+
+Le script attend la carte, parcourt les dix couches, zoome, déplace, ouvre la recherche, l'inspecteur (tous les onglets, provenance, filtres), le panneau bilatéral (Maj+Entrée dans la recherche) et le panneau Monde, et échoue au moindre avertissement. `--screenshots <dossier>` enregistre des captures. Chromium est lancé avec `--use-angle=swiftshader --enable-unsafe-swiftshader` : sans ces options, le WebGL logiciel du mode headless signale des ralentissements de lecture de pixels dans la console. Sans données construites, seule la page est vérifiée.
+
+### D47. État de l'interface : Zustand
+
+Couche, indicateur, bloc, survol, sélection et panneaux sont dans un magasin Zustand (SPEC §3). L'état de la simulation vivra dans le moteur (phase 3), pas dans ce magasin.

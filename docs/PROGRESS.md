@@ -7,8 +7,8 @@
 | Plan initial (sources vérifiées, architecture)     | validé                                 | 2026-09-25 |
 | 0 — Fondations                                     | terminée                               | 2026-09-25 |
 | 1a — Géographie et carte                           | terminée                               | 2026-09-25 |
-| 1b — Données pays et fichiers curés                | **terminée**, en attente de validation | 2026-09-25 |
-| 2 — Carte interactive (lecture seule)              | à faire                                |            |
+| 1b — Données pays et fichiers curés                | terminée                               | 2026-09-25 |
+| 2 — Carte interactive (lecture seule)              | **terminée**, en attente de validation | 2026-09-26 |
 | 3 — Moteur et temps réel                           | à faire                                |            |
 | 4 — Monde interconnecté                            | à faire                                |            |
 | 5 — Forces armées et guerre                        | à faire                                |            |
@@ -113,6 +113,46 @@ La phase 1 est découpée en deux jalons avec arrêt (voir `DECISIONS.md`).
 - Population par pixel non calibrée sur une grille de référence (GPW, WorldPop) ; biomes climatiques.
 - Zones de contrôle statiques jusqu'à la phase 5 (fronts).
 
-## Prochaines étapes (phase 2)
+## Phase 2 — Carte interactive en lecture seule (2026-09-26)
 
-Carte interactive en lecture seule (SPEC §12) : rendu, déplacement et zoom, survol, sélection, couches principales (politique, de jure, terrain, population…) et légendes ; inspecteur de pays généré depuis le catalogue, en lecture seule, avec la source et l'année de chaque paramètre ; recherche de pays.
+**Fait**
+
+- Données servies par l'API locale (`/api/data/status`, `/api/data/files/<nom>`, liste blanche de `data/build/`) et chargées en flux (décompression `DecompressionStream`), avec contrôle de cohérence des builds (D37). Contrat des fichiers de données déplacé dans `@geosim/shared` (D38).
+- Rendu WebGL2 (D1, D39) : couches de la grille en textures, palette par entité, relief ombré, bordures fines à toute échelle, anticrénelage au dézoom, hachures là où contrôle et souveraineté diffèrent, contour du globe. Palette politique où deux voisins n'ont jamais la même couleur. Surcouche 2D : noms des pays (taille selon la surface, sans chevauchement ; territoires dépendants en italique, D44), capitales et villes selon le zoom.
+- Navigation : glisser, molette (zoom vers le curseur), double-clic (zoom), flèches du clavier, `+`/`−`, `Origine` (vue d'ensemble) ; survol (infobulle : nom, cinq indicateurs clés avec leur année, valeur de la couche, relation avec le pays sélectionné, détail du pixel) ; clic (sélection), Maj+clic (second pays), Échap. Rendu à la demande uniquement.
+- Dix couches (touches 1–9 et 0, D40) : politique, souveraineté de jure, relations, blocs et alliances, indicateurs (tout paramètre pays du catalogue ; valeurs estimées en pointillés), sanctions, population, terrain et biomes, infrastructures, mer (zones maritimes, routes des principaux flux, statut des détroits). Légende dynamique pour chacune.
+- Inspecteur généré depuis le catalogue : aperçu (indicateurs clés, géographie, voisins, appartenances, conflits, zones de contrôle) puis un onglet par catégorie de `PARAMETRES.md` ; chaque paramètre avec sa valeur, un badge « source · année » coloré selon la confiance, et au clic sa provenance complète (source et liens, date, confiance, méthode, note, écrêtage, définition, fiche du catalogue). Recherche de paramètre, filtres « estimés » et « anciens ». Vecteurs détaillés (domaines, postes, minerais…).
+- Panneau bilatéral A ↔ B (Maj+clic, ou Maj+Entrée dans la recherche) : chaque paramètre bilatéral dans les deux sens, avec sa source ; panneau Monde : paramètres mondiaux sourcés, détroits, conflits.
+- Recherche de pays (Ctrl+K ou `/`) insensible aux accents, par nom français, anglais ou code ; Entrée cadre la carte sur le pays (composante de la capitale, D44).
+- Dérivés par définition (PIB par habitant, indice de misère) dans le moteur, avec provenance composée (D41, MODELES §2.4) ; libellés des valeurs catégorielles et des composantes dans le paquet partagé (D42).
+- `world.base.json` : position des marqueurs de détroits (D45).
+- `npm run check:console` parcourt désormais toute l'interface (D46) ; `?debug` affiche le temps GPU et la cadence d'images.
+
+**Vérifications** : `npm run typecheck`, `npm test` (39 fichiers, 185 tests, dont les invariants de l'interface sur les données construites : chaque paramètre de chaque entité a une source et une date, chaque couche et chacun des indicateurs se construit sans couleur invalide), `npm run lint`, `npm run format:check`, `npm run build`, `npm run check:console` (10 couches, recherche, inspecteur et ses 15 onglets, panneau bilatéral, panneau Monde : aucune erreur ni aucun avertissement).
+
+**Comment tester**
+
+1. Si tes données datent de la phase 1b : `npm run data -- --skip-map` (≈ 40 s, ajoute la position des détroits) ; sinon `npm run data`.
+2. `npm run dev`, puis http://localhost:5173 (chargement ≈ 150 Mo décompressés, quelques secondes).
+3. Survole et clique des pays ; Ctrl+K « Taïwan » puis Entrée ; parcours les onglets et clique un paramètre pour voir sa provenance ; Maj+clic sur un voisin pour la relation bilatérale.
+4. Touches 1 à 0 pour les couches ; en couche 5, choisis un indicateur dans la liste (ex. « Ogives nucléaires », « Type de régime »).
+5. Fluidité : http://localhost:5173/?debug affiche le temps GPU par image et la cadence pendant un déplacement.
+
+**À valider par toi**
+
+- La fluidité à 4096 px sur ta machine (`?debug`) : ce conteneur n'a pas de GPU (rendu logiciel, ≈ 4 images/s), je n'ai donc pas pu la mesurer en conditions réelles.
+- Drapeaux absents de l'infobulle (D43) : pastille de couleur à la place ; dis-moi si tu veux un jeu de drapeaux (dépendance et licence à choisir).
+- Points de la phase 1b toujours ouverts : profils décisionnels et relations initiales (D35), ligne de front DeepStateMap (D31), Sahara occidental (D32).
+
+**Limites connues**
+
+- Lecture seule : aucune modification de paramètre (phase 3).
+- Croissance, puissance militaire, dépendance énergétique et autres dérivés : « moteur (phase 3) ».
+- Relations : 148 paires initiales seulement ; les autres attendent le modèle d'affinité (phase 4).
+- Pas encore de flux commerciaux animés, bases à l'étranger, revendications ni séparatismes dessinés (phases 4 à 6).
+- Chargement sur le fil principal : quelques centaines de millisecondes de calcul à l'ouverture (emprises, étiquettes, textures).
+- Écran d'ordinateur uniquement (pas de gestes tactiles).
+
+## Prochaines étapes (phase 3)
+
+Moteur et temps réel (SPEC §12) : worker, boucle, vitesses, pas-à-pas, commandes, journal, captures ; couches de valeur (surcharge, verrou, réinitialisation, modificateurs) ; édition en direct dans l'inspecteur ; onglet Modèle avec rechargement à chaud ; démographie, économie, budget, dette, inflation, chômage, marchés simplifiés ; graphiques.
