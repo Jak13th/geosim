@@ -39,17 +39,12 @@ export function slotOf(def: ParamDef, ctx: SlotContext): Slot {
 
 /**
  * Phase de livraison où sera calculé un paramètre que le moteur ne renseigne pas encore
- * (SPEC §12) : politique, commerce et diplomatie en phase 4 ; forces armées en phase 5 ;
- * nucléaire, escalade et technologie en phase 6 ; perception des IA en phase 7.
+ * (SPEC §12) : forces armées et soutien aux guerres en phase 5 ; nucléaire, escalade et
+ * technologie en phase 6 ; aide bilatérale et perception des IA en phase 7.
  */
 const LATER_PHASE: Readonly<Record<string, number>> = {
-  'demo.social_cohesion': 4,
-  'pol.legitimacy': 4,
-  'pol.coup_risk': 4,
-  'pol.war_support': 4,
-  'trade.maritime_share': 4,
-  'pair.affinity': 4,
-  'pair.aid': 4,
+  'pol.war_support': 5,
+  'pair.aid': 7,
   'eco.industrial_capacity': 5,
   'mil.capital_land': 5,
   'mil.capital_air': 5,

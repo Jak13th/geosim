@@ -14,13 +14,17 @@ import {
   ENGINE_VERSION,
   Engine,
   col,
+  explainCountry,
+  explainPair,
   isCountryNumeric,
   parseSnapshot,
   serializeSnapshot,
   type Command,
+  type CountryExplanation,
   type EngineData,
   type EngineSnapshot,
   type JournalEntry,
+  type PairExplanation,
 } from '@geosim/engine';
 import type { CoefficientTree, ParamValue } from '@geosim/shared';
 import type {
@@ -310,6 +314,16 @@ export class SimRunner {
 
   hash(): string {
     return this.engine.hash();
+  }
+
+  // ——— Explications (« Pourquoi ? ») ———
+
+  explainCountry(entity: string): CountryExplanation | null {
+    return explainCountry(this.engine, entity);
+  }
+
+  explainPair(from: string, to: string): PairExplanation {
+    return explainPair(this.engine, from, to);
   }
 
   // ——— Historique ———

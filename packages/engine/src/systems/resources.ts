@@ -127,17 +127,22 @@ export function criticalShortfalls(
   const out = new Float64Array(n);
   const table = state.pairGen.get('pair.critical_dependence');
   if (table === undefined) return out;
+  // Dépendances en tableau dense (importateur j × N + fournisseur i) : les sommes se font dans
+  // l'ordre des indices, jamais dans l'ordre d'insertion de la table (qui diffère entre une
+  // simulation et sa relecture depuis une capture : l'arrondi flottant changerait l'histoire).
+  const dep = new Float64Array(n * n);
+  for (const [k, v] of table) dep[k] = (vectorValue(v)[product] ?? 0) / 100;
   const supply0 = new Float64Array(n);
   const loss = new Float64Array(n);
-  for (const [k, v] of table) {
-    const j = Math.floor(k / n);
-    const i = k % n;
-    const d = (vectorValue(v)[product] ?? 0) / 100;
-    if (!(d > 0) || i === j) continue;
-    const f0 = start[i * n + j] as number;
-    const f = now[i * n + j] as number;
-    supply0[j] = (supply0[j] as number) + d * f0;
-    loss[j] = (loss[j] as number) + d * Math.max(0, f0 - f);
+  for (let j = 0; j < n; j++) {
+    for (let i = 0; i < n; i++) {
+      const d = dep[j * n + i] as number;
+      if (!(d > 0) || i === j) continue;
+      const f0 = start[i * n + j] as number;
+      const f = now[i * n + j] as number;
+      supply0[j] = (supply0[j] as number) + d * f0;
+      loss[j] = (loss[j] as number) + d * Math.max(0, f0 - f);
+    }
   }
   for (let j = 0; j < n; j++) {
     const s0 = supply0[j] as number;

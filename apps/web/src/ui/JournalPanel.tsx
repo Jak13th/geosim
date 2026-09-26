@@ -25,6 +25,31 @@ const EVENT_LABELS: Record<string, string> = {
   default: 'Défaut souverain',
   default_exit: 'Sortie du défaut (restructuration)',
   bop_crisis: 'Crise de balance des paiements',
+  energy_shortage: 'Pénurie d’énergie',
+  energy_shortage_end: 'Fin de la pénurie d’énergie',
+  famine: 'Famine',
+  famine_end: 'Fin de la famine',
+  refugee_crisis: 'Crise des réfugiés',
+  refugee_crisis_end: 'Fin de la crise des réfugiés',
+  protests: 'Manifestations de masse',
+  political_crisis: 'Crise politique',
+  uprising: 'Soulèvement',
+  calm_restored: 'Retour au calme',
+  civil_war: 'Guerre civile',
+  civil_war_end: 'Fin de la guerre civile',
+  early_election: 'Élections anticipées',
+  election_alternance: 'Élection : alternance',
+  election_continuity: 'Élection : gouvernement reconduit',
+  coup: 'Coup d’État',
+  succession: 'Succession non planifiée',
+  revolution: 'Révolution',
+};
+
+const UN_LABELS: Record<string, string> = {
+  condemnation: 'condamnation',
+  sanctions: 'sanctions',
+  ceasefire: 'cessez-le-feu',
+  peacekeeping: 'maintien de la paix',
 };
 
 const SEVERITY_LABELS = ['information', 'notable', 'important', 'majeur'] as const;
@@ -91,6 +116,15 @@ export function entrySummary(e: JournalEntry, data: Dataset, names: ValueContext
     }
     case 'setModel':
       return `Modèle rechargé : ${e.coefficients?.length ?? 0} coefficient(s) modifié(s)`;
+    case 'bloc': {
+      const bloc = data.raw.world.blocs.find((b) => b.id === cmd.bloc)?.nameFr ?? cmd.bloc;
+      const who = data.byId.get(cmd.entity)?.nameFr ?? cmd.entity;
+      return `${who} ${cmd.action === 'join' ? 'adhère à' : 'quitte'} ${bloc}`;
+    }
+    case 'unResolution': {
+      const who = data.byId.get(cmd.target)?.nameFr ?? cmd.target;
+      return `ONU : résolution (${UN_LABELS[cmd.kind] ?? cmd.kind}) visant ${who}${e.note ? ` — ${e.note}` : ''}`;
+    }
     case 'undo':
       return `Annulation de l’entrée n° ${e.target ?? '?'}`;
     case 'redo':

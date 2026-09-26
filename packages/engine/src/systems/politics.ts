@@ -503,6 +503,14 @@ export function approvalContributions(
   return { target: clamp(target, 0, 100), anchor, factors };
 }
 
+/** Contribution en deçà de laquelle un facteur n'est pas cité dans une explication (points). */
+const SIGNIFICANT = 0.05;
+
+/** Chocs temporaires sur la stabilité (modificateurs) : valeur effective − valeur courante. */
+export function stabilityShock(state: State, i: number): number {
+  return fin(state.effNow(C.stability, i)) - fin(state.v(C.stability)[i] as number);
+}
+
 // ——— Coups d'État ———
 
 function coupBase(ctx: Pick<SystemContext, 'model'>, regime: ParamValue): number {
@@ -903,9 +911,11 @@ function emitUnrest(ctx: SystemContext, i: number, before: number, now: number):
   const kinds = ['calm_restored', 'protests', 'political_crisis', 'uprising'] as const;
   const st = stabilityContributions(ctx, i);
   const top = [...st.factors]
-    .filter((f) => (f.contribution ?? 0) < 0)
+    .filter((f) => (f.contribution ?? 0) < -SIGNIFICANT)
     .sort((a, b) => (a.contribution ?? 0) - (b.contribution ?? 0))
     .slice(0, 4);
+  // Chocs temporaires (défaut, coup d'État…) : écart entre la valeur effective et la valeur courante.
+  const shock = stabilityShock(S, i);
   ctx.emit({
     kind: kinds[now] ?? 'protests',
     entities: [e.id],
@@ -913,6 +923,23 @@ function emitUnrest(ctx: SystemContext, i: number, before: number, now: number):
     factors: [
       { id: 'pol.stability', label: 'Stabilité', value: S.effNow(C.stability, i), unit: 'indice' },
       { id: 'pol.stability.start', label: 'Stabilité au départ', value: st.anchor, unit: 'indice' },
+      {
+        id: 'pol.stability.target',
+        label: 'Stabilité visée (facteurs)',
+        value: st.target,
+        unit: 'indice',
+      },
+      ...(Math.abs(shock) > SIGNIFICANT
+        ? [
+            {
+              id: 'pol.stability.shocks',
+              label: 'Chocs temporaires (défaut, coup…)',
+              value: shock,
+              unit: 'points',
+              contribution: shock,
+            },
+          ]
+        : []),
       ...top,
     ],
     effects: [

@@ -107,7 +107,12 @@ function worldData(): EngineData {
     default: null,
     defaultNote: 'aucune',
     refs: [],
-    entries: [['FRA', 'USA', { chips: 60, rare_earths: 0, grain: 0, arms: 0 }, 0]],
+    // Entrées volontairement hors de l'ordre des clés (voir le test de restauration).
+    entries: [
+      ['FRA', 'SAU', { chips: 13, rare_earths: 21, grain: 0, arms: 0 }, 0],
+      ['FRA', 'NGA', { chips: 17, rare_earths: 37, grain: 0, arms: 0 }, 0],
+      ['FRA', 'USA', { chips: 60, rare_earths: 11, grain: 0, arms: 0 }, 0],
+    ],
   };
   data.pairs.params['pair.distance'] = {
     unit: 'km',
@@ -593,6 +598,17 @@ function e_crisis(e: Engine): boolean {
 }
 
 describe('déterminisme et invariants du monde interconnecté', () => {
+  it('une capture restaurée continue à l’identique (ordre des tables sans effet)', () => {
+    const a = make(3);
+    a.apply({ type: 'set', slots: [hormuz], value: 'closed' });
+    a.apply(sanctions(['USA'], 'FRA', { technology: 0.7, trade: 0.3 }));
+    months(a, 2);
+    const b = Engine.restore(data, a.snapshot());
+    months(a, 4);
+    months(b, 4);
+    expect(b.hash()).toBe(a.hash());
+  });
+
   it('même graine et mêmes commandes : même empreinte ; relecture du journal identique', () => {
     const script = (e: Engine): void => {
       e.apply({ type: 'set', slots: [hormuz], value: 'closed' });

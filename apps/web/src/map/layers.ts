@@ -337,7 +337,8 @@ function relationsLayer(
     }
     const war = src.pair('pair.war_state', selected.id, e.id);
     const rel = src.pair('pair.relation', selected.id, e.id);
-    const value = typeof rel === 'number' ? rel : null;
+    // Relations simulées : réelles, arrondies pour l'affichage.
+    const value = typeof rel === 'number' && Number.isFinite(rel) ? Math.round(rel) : null;
     const relText =
       value === null ? 'relation non renseignée' : `relation ${value > 0 ? '+' : ''}${value}`;
     if (war === 'war') {
@@ -364,10 +365,10 @@ function relationsLayer(
     { kind: 'swatch', color: WAR_COLOR, label: 'En guerre' },
     { kind: 'swatch', color: CEASEFIRE_COLOR, label: 'Cessez-le-feu' },
     { kind: 'swatch', color: STYLE.selection, label: selected.nameFr },
-    { kind: 'swatch', color: NO_DATA, label: 'Non renseignée (modèle d’affinité en phase 4)' },
+    { kind: 'swatch', color: NO_DATA, label: 'Non renseignée' },
     {
       kind: 'note',
-      text: `${known} relation${known > 1 ? 's' : ''} renseignée${known > 1 ? 's' : ''} (relations_seed.yaml, hypothèses à valider).`,
+      text: `${known} relation${known > 1 ? 's' : ''} connue${known > 1 ? 's' : ''} : données de départ (relations_seed.yaml, hypothèses à valider) ; en simulation, les autres paires partent de leur affinité structurelle.`,
     },
   );
   return {
@@ -382,6 +383,16 @@ function relationsLayer(
 
 const MUTUAL_DEFENSE_TREATY = hex('#a58fd0');
 
+/** Membres courants d'un bloc (appartenances simulées : adhésions, retraits, suspensions). */
+function liveMembers(data: Dataset, src: ValueSource, blocId: string): string[] {
+  const out: string[] = [];
+  for (const e of data.list) {
+    const list = src.value(e, 'dip.memberships');
+    if (Array.isArray(list) && list.includes(blocId)) out.push(e.id);
+  }
+  return out;
+}
+
 function blocsLayer(data: Dataset, src: ValueSource, blocId: string): LayerView {
   const palette = new PaletteBuffer(data.maxIndex + 1);
   palette.fill(NO_DATA);
@@ -393,7 +404,7 @@ function blocsLayer(data: Dataset, src: ValueSource, blocId: string): LayerView 
     military.forEach((b, k) => {
       const color = CATEGORICAL[k % CATEGORICAL.length] as Rgb;
       let count = 0;
-      for (const code of b.members) {
+      for (const code of liveMembers(data, src, b.id)) {
         const e = data.byId.get(code);
         if (e === undefined || texts.has(e.index)) continue;
         palette.set(e.index, color);
@@ -443,7 +454,7 @@ function blocsLayer(data: Dataset, src: ValueSource, blocId: string): LayerView 
   const bloc = blocs.find((b) => b.id === blocId);
   if (bloc === undefined) return blocsLayer(data, src, DEFAULT_BLOC);
   const roles: [string, readonly string[] | undefined, Rgb][] = [
-    ['Membre', bloc.members, CATEGORICAL[0] as Rgb],
+    ['Membre', liveMembers(data, src, bloc.id), CATEGORICAL[0] as Rgb],
     ['Partenaire', bloc.partners, hex('#6fb3a8')],
     ['Observateur', bloc.observers, hex('#a3a86f')],
     ['Suspendu', bloc.suspended, hex('#c9774d')],
