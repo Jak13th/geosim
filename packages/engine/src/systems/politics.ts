@@ -116,6 +116,7 @@ const K = {
   insurgencyInertia: 'politics.insurgency.inertia',
   insurgencyStability: 'politics.insurgency.stability_effect',
   insurgencyThreshold: 'politics.insurgency.stability_threshold',
+  insurgencyBase: 'politics.insurgency.base_sensitivity',
   civilWar: 'politics.insurgency.civil_war',
   civilWarEnd: 'politics.insurgency.civil_war_end',
   protests: 'politics.unrest.protests',
@@ -149,6 +150,7 @@ const K = {
   coupLegitimacy: 'politics.coups.legitimacy_factor',
   coupDemocracyFactor: 'politics.coups.democracy_factor',
   coupCondemnation: 'politics.coups.condemnation',
+  coupCondemnationDemocracy: 'politics.coups.condemnation_democracy',
   successionShock: 'politics.succession.stability_shock',
   revolutionThreshold: 'politics.revolution.stability_threshold',
   revolutionRate: 'politics.revolution.rate',
@@ -784,7 +786,7 @@ function monthly(ctx: SystemContext): void {
       i0 +
         m.get(K.insurgencyStability) *
           (fragile(S.effNow(C.stability, i)) - fragile(s0)) *
-          (0.5 + fragmentation),
+          (m.get(K.insurgencyBase) + fragmentation),
       0,
       100,
     );
@@ -1206,7 +1208,8 @@ function coup(ctx: SystemContext, i: number, factors: Factor[], risk: number): v
   for (let j = 0; j < S.n; j++) {
     if (j === i) continue;
     const ed = clamp(fin(S.e(C.electoral)[j] as number), 0, 1);
-    if (ed > 0.5) memoryShock(S, j, i, -m.get(K.coupCondemnation) * ed);
+    if (ed > m.get(K.coupCondemnationDemocracy))
+      memoryShock(S, j, i, -m.get(K.coupCondemnation) * ed);
   }
   ctx.emit({
     kind: 'coup',

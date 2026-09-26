@@ -37,6 +37,8 @@ const C = {
 const K = {
   currencyWeight: 'diplomacy.sanctions.finance_currency_weight',
   gdpWeight: 'diplomacy.sanctions.finance_gdp_weight',
+  techChipWeight: 'diplomacy.sanctions.tech_chip_weight',
+  techGdpWeight: 'diplomacy.sanctions.tech_gdp_weight',
   secondary: 'diplomacy.sanctions.secondary_strength',
   evasionMonths: 'diplomacy.sanctions.evasion_months',
   newThreshold: 'diplomacy.sanctions.new_threshold',
@@ -118,6 +120,8 @@ export function pressures(
     overall: new Float64Array(n),
   };
   const groupMax = new Map<number, number>();
+  const techChip = ctx.model.get(K.techChipWeight);
+  const techGdp = ctx.model.get(K.techGdpWeight);
   for (let i = 0; i < n; i++) {
     groupMax.clear();
     let financeGdp = 0;
@@ -137,7 +141,7 @@ export function pressures(
       const t = grid[tIdx + k] as number;
       if (t > 0) {
         const chipShare = chips > 0 ? Math.max(0, value(C.chipFab, s)) / chips : 0;
-        tech += t * (0.5 * chipShare + 0.5 * gdpShare);
+        tech += t * (techChip * chipShare + techGdp * gdpShare);
       }
       elite += (grid[eIdx + k] as number) * gdpShare;
       let mean = 0;

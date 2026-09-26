@@ -87,6 +87,12 @@ const K = {
   treatyNonAggression: 'diplomacy.affinity.treaty_non_aggression',
   treatyPartnership: 'diplomacy.affinity.treaty_partnership',
   aidReference: 'diplomacy.affinity.aid_reference',
+  profileFloor: 'diplomacy.affinity.profile_floor',
+  enemiesCap: 'diplomacy.affinity.enemies_cap',
+  unComplianceFloor: 'diplomacy.un.compliance_floor',
+  unReciprocity: 'diplomacy.un.reciprocity',
+  unDefaultTrade: 'diplomacy.un.default_trade_sanctions',
+  unSecondaryShock: 'diplomacy.un.secondary_shock_share',
   convergence: 'diplomacy.relations.convergence',
   residualYears: 'diplomacy.relations.residual_half_life_years',
   memoryMonths: 'diplomacy.relations.memory_half_life_months',
@@ -217,6 +223,10 @@ interface AffinityWeights {
   /** Poids de chaque niveau de traité (aucun, non-agression, partenariat, défense mutuelle). */
   treatyWeights: Float64Array;
   revisionism: number;
+  /** Plancher des facteurs modulés par le profil : facteur × (plancher + profil). */
+  profileFloor: number;
+  /** Nombre d'ennemis communs pour lequel le facteur est maximal. */
+  enemiesCap: number;
 }
 
 function affinityWeights(m: SystemContext['model']): AffinityWeights {
@@ -253,6 +263,8 @@ function affinityWeights(m: SystemContext['model']): AffinityWeights {
       1,
     ]),
     revisionism: m.get(K.revisionism),
+    profileFloor: m.get(K.profileFloor),
+    enemiesCap: Math.max(1, m.get(K.enemiesCap)),
   };
 }
 
@@ -356,7 +368,7 @@ function affinityTerms(inp: AffinityInputs, i: number, j: number, out: Float64Ar
   const k = i * n + j;
   const kr = j * n + i;
   const ed = 1 - 2 * Math.abs((inp.ed[i] as number) - (inp.ed[j] as number));
-  out[0] = w.regime * clamp(ed, -1, 1) * (0.5 + (inp.ideology[i] as number));
+  out[0] = w.regime * clamp(ed, -1, 1) * (w.profileFloor + (inp.ideology[i] as number));
   let shared = 0;
   const li = inp.blocLists[i] as number[];
   const bj = inp.blocs[j] as Uint8Array;
@@ -373,11 +385,11 @@ function affinityTerms(inp: AffinityInputs, i: number, j: number, out: Float64Ar
   let common = 0;
   const enemiesI = inp.enemies[i] as number[];
   const rowJ = j * n;
-  for (let x = 0; x < enemiesI.length && common < 2; x++) {
+  for (let x = 0; x < enemiesI.length && common < w.enemiesCap; x++) {
     const e = enemiesI[x] as number;
     if (e !== j && inp.enemy[rowJ + e] === 1) common++;
   }
-  out[3] = w.enemies * Math.min(1, common / 2);
+  out[3] = w.enemies * Math.min(1, common / w.enemiesCap);
   out[4] = (-w.grievances * clamp(fin(inp.grievance[k] as number), 0, 100)) / 100;
   const claim = Math.max(inp.claims[k] as number, inp.claims[kr] as number);
   out[5] = (-w.claims * clamp(claim, 0, 100)) / 100;
@@ -403,7 +415,9 @@ function affinityTerms(inp: AffinityInputs, i: number, j: number, out: Float64Ar
   out[10] = -w.war * (w.warWeights[inp.war[k] as number] ?? 0);
   out[11] = -w.sanctions * Math.max(inp.sanctions[k] as number, inp.sanctions[kr] as number);
   out[12] =
-    w.treaty * (w.treatyWeights[inp.treaty[k] as number] ?? 0) * (0.5 + (inp.loyalty[i] as number));
+    w.treaty *
+    (w.treatyWeights[inp.treaty[k] as number] ?? 0) *
+    (w.profileFloor + (inp.loyalty[i] as number));
   out[13] =
     -w.revisionism * Math.abs((inp.revisionism[i] as number) - (inp.revisionism[j] as number));
   let a = 0;
@@ -815,6 +829,9 @@ function voteOf(
   return { vote: 'abstain', support };
 }
 
+/** Majorité requise au Conseil de sécurité (Charte des Nations unies, article 27). */
+const UNSC_MAJORITY = 9;
+
 const VOTE_LABEL: Record<Vote, string> = { yes: 'pour', no: 'contre', abstain: 'abstention' };
 
 /** Résolution de l'ONU : votes, adoption, effets (commande journalisée). */
@@ -857,7 +874,7 @@ export function applyUnResolution(
       contribution: support,
     });
   }
-  const adopted = yes >= 9 && vetoes.length === 0;
+  const adopted = yes >= UNSC_MAJORITY && vetoes.length === 0;
   // Assemblée générale : vote non contraignant de tous les États si le Conseil échoue.
   const general: Record<Vote, number> = { yes: 0, no: 0, abstain: 0 };
   const generalYes: number[] = [];
@@ -897,7 +914,7 @@ export function applyUnResolution(
       if (v === t) continue;
       for (const [a, b, x] of [
         [t, v, strength],
-        [v, t, strength / 2],
+        [v, t, strength * model.get(K.unReciprocity)],
       ] as const) {
         const k = a * n + b;
         internal.push(['dip.memory', k, memory[k] as number]);
@@ -909,6 +926,9 @@ export function applyUnResolution(
   const modifiers: Modifier[] = [];
   let note: string;
   const effectiveness = clamp(fin(S.worldEff('world.un_effectiveness')), 0, 100) / 100;
+  // Application par les États membres : plancher, plus une part selon l'efficacité de l'ONU.
+  const floor = clamp(model.get(K.unComplianceFloor), 0, 1);
+  const complianceOf = (x: number): number => floor + (1 - floor) * x;
   if (adopted) {
     const councilYes = council
       .filter(({ i }) => voteOf(ctx, command.kind, i, t, war).vote === 'yes')
@@ -920,13 +940,13 @@ export function applyUnResolution(
           const x = command.tracks?.[tr];
           if (typeof x === 'number' && x > 0) tracks[tr] = clamp(x, 0, 1);
         }
-        if (Object.keys(tracks).length === 0) tracks.trade = 0.5;
+        if (Object.keys(tracks).length === 0) tracks.trade = model.get(K.unDefaultTrade);
         const table = S.pairGen.get('pair.sanctions') ?? new Map<number, ParamValue>();
         for (let i = 0; i < n; i++) {
           if (i === t || S.entities[i]?.kind !== 'state') continue;
           const closeness =
             Math.max(0, fin(S.pairMatrix('pair.relation')[i * n + t] as number)) / 100;
-          const compliance = (0.5 + 0.5 * effectiveness) * (1 - closeness);
+          const compliance = complianceOf(effectiveness) * (1 - closeness);
           if (!(compliance > 0)) continue;
           const current = vectorValue(table.get(i * n + t) ?? null);
           const merged: Record<string, number> = { ...current };
@@ -940,7 +960,7 @@ export function applyUnResolution(
           }
           if (changed) setPair('pair.sanctions', i, t, merged);
         }
-        relationShock(councilYes, model.get(K.unCondemnation) / 2);
+        relationShock(councilYes, model.get(K.unCondemnation) * model.get(K.unSecondaryShock));
         note = `Résolution de sanctions adoptée (${yes} voix pour) : les États membres appliquent les sanctions selon l'efficacité de l'ONU (${Math.round(effectiveness * 100)}) et leur proximité avec le pays visé.`;
         break;
       }
@@ -952,7 +972,7 @@ export function applyUnResolution(
         const days = Math.max(1, Math.round(model.get(K.unPeacekeepingDays)));
         modifiers.push({
           op: 'add',
-          amount: -model.get(K.unPeacekeeping) * (0.5 + 0.5 * effectiveness),
+          amount: -model.get(K.unPeacekeeping) * complianceOf(effectiveness),
           durationDays: days,
           decay: 'linear',
           label: 'Mission de maintien de la paix',
@@ -969,11 +989,12 @@ export function applyUnResolution(
         note = `Résolution de cessez-le-feu adoptée (${yes} voix pour) : son effet sur les combats viendra avec les fronts (phase 5) ; consignée au journal.`;
     }
   } else {
-    if (generalAdopted) relationShock(generalYes, model.get(K.unCondemnation) / 2);
+    if (generalAdopted)
+      relationShock(generalYes, model.get(K.unCondemnation) * model.get(K.unSecondaryShock));
     note =
       (vetoes.length > 0
         ? `Projet bloqué par le veto de ${vetoes.join(', ')}`
-        : `Projet rejeté au Conseil de sécurité (${yes} voix pour sur 9 nécessaires)`) +
+        : `Projet rejeté au Conseil de sécurité (${yes} voix pour sur ${UNSC_MAJORITY} nécessaires)`) +
       ` ; Assemblée générale : ${general.yes} pour, ${general.no} contre, ${general.abstain} abstentions (${generalAdopted ? 'adoptée, non contraignante' : 'rejetée'}).`;
   }
   for (const mod of modifiers) {

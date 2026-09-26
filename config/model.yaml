@@ -1654,12 +1654,17 @@ politics:
       value: 1
       range: [0, 10]
       unit: 'points par point'
-      description: "Hausse de l'insurrection par point de stabilité sous le seuil de fragilité, au-delà du départ, × (0,5 + fragmentation)."
+      description: "Hausse de l'insurrection par point de stabilité sous le seuil de fragilité, au-delà du départ, × (sensibilité de base + fragmentation)."
     stability_threshold:
       value: 30
       range: [0, 100]
       unit: 'indice'
       description: "Seuil de fragilité : l'insurrection ne croît que lorsque la stabilité passe sous ce seuil plus bas qu'au départ."
+    base_sensitivity:
+      value: 0.5
+      range: [0, 2]
+      unit: ''
+      description: "Sensibilité de l'insurrection d'une société parfaitement soudée : l'effet de la stabilité est multiplié par (sensibilité de base + fragmentation)."
     civil_war:
       value: 60
       range: [0, 100]
@@ -1828,6 +1833,11 @@ politics:
       range: [0, 100]
       unit: 'points'
       description: "Choc sur la relation des démocraties envers le pays après un coup d'État (× démocratie électorale)."
+    condemnation_democracy:
+      value: 0.5
+      range: [0, 1]
+      unit: 'indice'
+      description: "Démocratie électorale (V-Dem) au-delà de laquelle un pays condamne un coup d'État (choc sur sa relation)."
   succession:
     stability_shock:
       value: -8
@@ -1866,7 +1876,7 @@ diplomacy:
       value: 15
       range: [0, 100]
       unit: 'points'
-      description: "Poids de la similarité des régimes (w1), modulé par le poids de l'idéologie du gouvernement (0,5 + idéologie)."
+      description: "Poids de la similarité des régimes (w1), modulé par le poids de l'idéologie du gouvernement (plancher du profil + idéologie)."
     blocs:
       value: 25
       range: [0, 100]
@@ -1886,7 +1896,7 @@ diplomacy:
       value: 10
       range: [0, 100]
       unit: 'points'
-      description: 'Poids des ennemis communs (w4), plafonné à deux ennemis.'
+      description: "Poids des ennemis communs (w4), maximal à partir du plafond d'ennemis communs."
     enemy_threshold:
       value: -40
       range: [-100, 0]
@@ -1927,6 +1937,16 @@ diplomacy:
       range: [0.01, 20]
       unit: '% du PIB'
       description: 'Aide reçue (en % du PIB du bénéficiaire) pour laquelle le facteur aide est maximal.'
+    profile_floor:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Plancher des facteurs modulés par le profil du gouvernement : similarité des régimes × (plancher + poids de l'idéologie), traité × (plancher + loyauté envers les alliés)."
+    enemies_cap:
+      value: 2
+      range: [1, 10]
+      unit: 'pays'
+      description: "Nombre d'ennemis communs pour lequel le facteur des ennemis communs est maximal."
     threat:
       value: 25
       range: [0, 100]
@@ -1971,7 +1991,7 @@ diplomacy:
       value: 20
       range: [0, 100]
       unit: 'points'
-      description: 'Poids du traité (w13 ; défense mutuelle 1, partenariat 0,5, non-agression 0,25), modulé par la loyauté envers les alliés.'
+      description: 'Poids du traité (w13 ; défense mutuelle 1, partenariat et non-agression selon leurs coefficients), modulé par la loyauté envers les alliés (plancher du profil + loyauté).'
     treaty_partnership:
       value: 0.5
       range: [0, 1]
@@ -2085,6 +2105,16 @@ diplomacy:
       range: [0, 1]
       unit: ''
       description: 'Poids de la part du PIB mondial des émetteurs dans la pression financière.'
+    tech_chip_weight:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: 'Poids de la part des émetteurs dans la fabrication mondiale de puces avancées dans la pression technologique.'
+    tech_gdp_weight:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: 'Poids de la part du PIB mondial des émetteurs dans la pression technologique.'
     secondary_strength:
       value: 0.8
       range: [0, 1]
@@ -2151,6 +2181,26 @@ diplomacy:
       range: [-1, 1]
       unit: ''
       description: 'Soutien de base à une mission de maintien de la paix.'
+    compliance_floor:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Application minimale des décisions du Conseil de sécurité par les États membres ; le reste croît avec l'efficacité de l'ONU (sanctions appliquées, effet des missions de paix)."
+    reciprocity:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: 'Part du choc de condamnation qui dégrade aussi la relation des pays qui votent envers le pays visé.'
+    default_trade_sanctions:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Volet commerce d'une résolution de sanctions qui ne précise aucun volet."
+    secondary_shock_share:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Part du choc de condamnation appliquée par une résolution de sanctions ou par un vote de l'Assemblée générale."
 military: {}
 combat: {}
 nuclear: {}
