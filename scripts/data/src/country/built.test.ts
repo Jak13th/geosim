@@ -127,6 +127,10 @@ describe.skipIf(!built)('données pays construites', () => {
       checkResolved(r as Resolved, def.id);
     }
     expect(world.chokepoints).toHaveLength(17);
+    for (const c of world.chokepoints) {
+      const [lon, lat] = c.lonLat;
+      expect(Math.abs(lon) <= 180 && Math.abs(lat) <= 90, c.id).toBe(true);
+    }
   });
 
   it('écrit le rapport de couverture', () => {

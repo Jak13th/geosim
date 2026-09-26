@@ -2,7 +2,7 @@
  * Contexte de construction des données pays : séries des sources automatisées, tables curées,
  * sujets curés (blocs, nucléaire…) et entités. Les règles de résolution y lisent tout.
  */
-import type { Confidence } from '@geosim/shared';
+import type { ResolvedValue as Resolved } from '@geosim/shared';
 import type { BaciTrade } from './baci.ts';
 import type { CuratedTables, Defaults, ParamValue } from './curated.ts';
 import type { FaoFertilizer, FaoGrain } from './fao.ts';
@@ -30,45 +30,8 @@ export interface EntityInfo {
   parent: string | null;
 }
 
-/**
- * Méthode d'obtention d'une valeur :
- * - `source` : source automatisée ou curée prévue par le catalogue ;
- * - `fallback_source` : source de repli documentée (ex. Banque mondiale au lieu du FMI) ;
- * - `curated` : fichier curé daté ;
- * - `derived` : calcul documenté à partir d'autres données ;
- * - `map` : calculé depuis la carte ;
- * - `regional_median` : médiane de pays comparables (estimation, signalée) ;
- * - `default` : hypothèse par défaut (defaults.yaml) ;
- * - `zero` : absence documentée (ni production, ni stock connus) ;
- * - `not_applicable` : sans objet (ex. quota OPEP+ d'un pays non membre) ;
- * - `missing` : lacune (aucune source, aucun repli), listée dans le rapport.
- */
-export type Method =
-  | 'source'
-  | 'fallback_source'
-  | 'curated'
-  | 'derived'
-  | 'map'
-  | 'regional_median'
-  | 'default'
-  | 'zero'
-  | 'not_applicable'
-  | 'missing';
-
-export interface Resolved {
-  value: ParamValue;
-  /** Référence de la source (ex. `WB:SP.POP.TOTL`, `CUR:country_economy.yaml`, `HYP`). */
-  source: string;
-  /** Année de la donnée, ou date de consultation / de curation. */
-  date: string;
-  confidence: Confidence;
-  method: Method;
-  note?: string;
-  /** Donnée de plus de trois ans (SPEC §5.1). */
-  stale?: boolean;
-  /** Valeur de la source, hors de la plage du catalogue, avant écrêtage à cette plage. */
-  clampedFrom?: number;
-}
+/** Méthode d'obtention d'une valeur et valeur résolue : contrat partagé (voir @geosim/shared). */
+export type { ResolutionMethod as Method, ResolvedValue as Resolved } from '@geosim/shared';
 
 export interface Ctx {
   buildDate: string;

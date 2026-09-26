@@ -2,8 +2,8 @@
 
 Simulation géopolitique **locale** et **temps réel**, inspirée d'[OpenFront.io](https://openfront.io) et alimentée par des données réelles. Chaque paramètre du monde se modifie pendant que la simulation tourne.
 
-> **État du projet : phase 1b (données pays et fichiers curés) terminée, en attente de validation.**
-> `npm run data` construit la carte du monde (pays, zones de contrôle, terrain, biomes, fleuves, infrastructures, population, zones maritimes, routes maritimes et détroits) et les données de 208 entités (paramètres pays, bilatéraux et mondiaux, avec leur provenance). L'application affiche encore une page d'accueil : la carte interactive arrive en phase 2. L'avancement détaillé est dans [`docs/PROGRESS.md`](docs/PROGRESS.md).
+> **État du projet : phase 2 (carte interactive en lecture seule) terminée, en attente de validation.**
+> `npm run data` construit la carte du monde et les données de 208 entités (paramètres pays, bilatéraux et mondiaux, avec leur provenance) ; l'application les affiche sur une carte interactive, avec dix couches, un inspecteur de pays et un panneau bilatéral où chaque valeur montre sa source et son année. La simulation arrive en phase 3. L'avancement détaillé est dans [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
 ## Prérequis
 
@@ -26,10 +26,23 @@ npm run setup:browser   # facultatif : navigateur headless pour `npm run check:c
 npm run dev
 ```
 
-Ouvre ensuite http://localhost:5173. La page affiche « GeoSim » et, en vert, « Moteur 0.0.0 prêt ».
+Ouvre ensuite http://localhost:5173. La carte s'affiche après quelques secondes si les données ont été construites (`npm run data`, voir [Données](#données)) ; sinon, la page indique la commande à lancer.
 
 - Le serveur n'écoute que sur `localhost` : l'application n'est pas accessible depuis le réseau.
 - Sous WSL2, ouvre l'adresse depuis le navigateur Windows ; WSL2 redirige `localhost` automatiquement.
+
+### Utiliser la carte
+
+| Action                          | Effet                                                                                                             |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Glisser · molette · double-clic | Déplacer · zoomer vers le curseur · zoomer                                                                        |
+| Flèches · `+` / `−` · `Origine` | Déplacer · zoomer · revenir à la vue d'ensemble                                                                   |
+| Survol                          | Infobulle : indicateurs clés avec leur année, valeur de la couche                                                 |
+| Clic · Maj+clic · `Échap`       | Sélectionner un pays (inspecteur) · second pays (relation A ↔ B) · désélectionner                                 |
+| `1` … `9`, `0`                  | Couches : politique, de jure, relations, blocs, indicateurs, sanctions, population, terrain, infrastructures, mer |
+| `Ctrl+K` ou `/`                 | Rechercher un pays (Entrée : y aller ; Maj+Entrée : second pays)                                                  |
+
+Dans l'inspecteur, un clic sur un paramètre affiche sa provenance complète (source, date, confiance, méthode, note). Ajoute `?debug` à l'adresse pour afficher le temps GPU et la cadence d'images.
 
 Pour tester le build de production :
 
@@ -40,14 +53,14 @@ npm run preview -w @geosim/web   # http://localhost:4173
 
 ## Tester
 
-| Commande                | Rôle                                                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `npm test`              | Tests unitaires (Vitest)                                                                                            |
-| `npm run test:watch`    | Tests en continu pendant le développement                                                                           |
-| `npm run typecheck`     | Vérification TypeScript de chaque workspace                                                                         |
-| `npm run lint`          | ESLint, dont les règles d'architecture du moteur                                                                    |
-| `npm run format:check`  | Vérifie le formatage (Prettier) ; `npm run format` le corrige                                                       |
-| `npm run check:console` | Lance l'application dans Chromium headless et échoue au moindre message d'erreur ou d'avertissement dans la console |
+| Commande                | Rôle                                                                                                                                                                                                                                              |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm test`              | Tests unitaires (Vitest)                                                                                                                                                                                                                          |
+| `npm run test:watch`    | Tests en continu pendant le développement                                                                                                                                                                                                         |
+| `npm run typecheck`     | Vérification TypeScript de chaque workspace                                                                                                                                                                                                       |
+| `npm run lint`          | ESLint, dont les règles d'architecture du moteur                                                                                                                                                                                                  |
+| `npm run format:check`  | Vérifie le formatage (Prettier) ; `npm run format` le corrige                                                                                                                                                                                     |
+| `npm run check:console` | Lance l'application dans Chromium headless, parcourt l'interface (couches, zoom, recherche, inspecteur, panneaux) et échoue au moindre message d'erreur ou d'avertissement dans la console ; `-- --screenshots <dossier>` enregistre des captures |
 
 Vérification complète, celle de chaque fin de phase :
 
