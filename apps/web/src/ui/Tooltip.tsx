@@ -16,7 +16,8 @@ import { formatNumber, formatQuantity } from '../format.ts';
 import { toCss } from '../map/colors.ts';
 import type { LayerView } from '../map/layers.ts';
 import { useApp } from '../store.ts';
-import { KIND_LABELS } from './Inspector.tsx';
+import { KIND_LABELS } from './labels.ts';
+import { useLive } from './live.ts';
 import { dataYear } from './provenance.ts';
 
 const KEY_INDICATORS = [
@@ -70,12 +71,23 @@ export function Tooltip({ data, layerView }: { data: Dataset; layerView: LayerVi
   const pixel = useApp((s) => s.hoverPixel);
   const selected = useApp((s) => s.selected);
   const layer = useApp((s) => s.layer);
+  const live = useLive();
   const e = hovered ? data.byIndex[hovered] : undefined;
   const detail = pixel >= 0 ? pixelDetail(data, pixel, layer) : null;
   if (e === undefined && detail === null) return null;
   const sel = selected && selected !== hovered ? data.byIndex[selected] : undefined;
-  const relation = e && sel ? data.pair('pair.relation', sel.id, e.id) : null;
-  const war = e && sel ? data.pair('pair.war_state', sel.id, e.id)?.value : null;
+  const relation =
+    e && sel
+      ? live
+        ? live.pairValue('pair.relation', sel.id, e.id)
+        : (data.pair('pair.relation', sel.id, e.id)?.value ?? null)
+      : null;
+  const war =
+    e && sel
+      ? live
+        ? live.pairValue('pair.war_state', sel.id, e.id)
+        : data.pair('pair.war_state', sel.id, e.id)?.value
+      : null;
   const layerText = e ? layerView.describe(e) : null;
   return (
     <div className="tooltip-body">
@@ -91,13 +103,23 @@ export function Tooltip({ data, layerView }: { data: Dataset; layerView: LayerVi
               {KEY_INDICATORS.map((id) => {
                 const def = CATALOG.find((d) => d.id === id);
                 const r = data.param(e, id);
-                if (def === undefined || r.state !== 'value' || typeof r.value.value !== 'number')
-                  return null;
+                const start =
+                  r.state === 'value' && typeof r.value.value === 'number' ? r.value.value : null;
+                const value = live ? live.number(e.id, id) : start;
+                if (def === undefined || value === null) return null;
+                const simulated =
+                  live !== null &&
+                  live.changed(
+                    { scope: 'country', param: id, entity: e.id },
+                    live.baseNumber(e.id, id),
+                  );
                 return (
                   <tr key={id}>
                     <th>{def.label}</th>
-                    <td>{formatQuantity(r.value.value, def.unit)}</td>
-                    <td className="muted">{dataYear(r.value.date)}</td>
+                    <td>{formatQuantity(value, def.unit)}</td>
+                    <td className="muted">
+                      {simulated ? 'simulé' : r.state === 'value' ? dataYear(r.value.date) : ''}
+                    </td>
                   </tr>
                 );
               })}
@@ -109,8 +131,8 @@ export function Tooltip({ data, layerView }: { data: Dataset; layerView: LayerVi
               Avec {sel.nameFr} :{' '}
               {war === 'war'
                 ? 'en guerre'
-                : typeof relation?.value === 'number'
-                  ? `relation ${relation.value > 0 ? '+' : ''}${relation.value}`
+                : typeof relation === 'number'
+                  ? `relation ${relation > 0 ? '+' : ''}${formatNumber(relation)}`
                   : 'relation non renseignée'}
             </p>
           )}

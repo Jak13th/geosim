@@ -48,6 +48,7 @@ export {
   baseOf,
   isSlotLocked,
   readSlot,
+  slotLockedReason,
   type Inverse,
   type SlotState,
 } from './commands.ts';

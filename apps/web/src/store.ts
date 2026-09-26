@@ -1,6 +1,7 @@
 /**
  * État de l'interface (Zustand) : données chargées, couche affichée, survol, sélection,
- * panneaux ouverts. L'état de la simulation vivra dans le moteur (phase 3), pas ici.
+ * panneaux ouverts, filtres et favoris. L'état de la simulation vit dans le moteur (worker) et
+ * son miroir (`sim/store.ts`), pas ici.
  */
 import type { CategoryId } from '@geosim/shared';
 import { create } from 'zustand';
@@ -15,8 +16,42 @@ export type LoadState =
   | { state: 'missing'; status: DataStatus }
   | { state: 'error'; message: string };
 
-/** Filtre des paramètres de l'inspecteur : tous, estimés, anciens (plus de trois ans). */
-export type ParamFilter = 'all' | 'estimated' | 'stale';
+/**
+ * Filtre des paramètres de l'inspecteur : tous, modifiés (surcharge, verrou ou effet
+ * temporaire), favoris, estimés, anciens (plus de trois ans).
+ */
+export type ParamFilter = 'all' | 'modified' | 'favorites' | 'estimated' | 'stale';
+
+export type LeftTab = 'world' | 'model' | 'sim';
+export type BottomTab = 'journal' | 'charts';
+
+export interface JournalFilter {
+  author: 'all' | 'user' | 'event';
+  /** Gravité minimale (0 : toutes). */
+  severity: 0 | 1 | 2 | 3;
+  /** Seulement les entrées du pays sélectionné. */
+  selectedOnly: boolean;
+}
+
+const FAVORITES_KEY = 'geosim.favorites';
+
+function loadFavorites(): string[] {
+  try {
+    const raw = globalThis.localStorage?.getItem(FAVORITES_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveFavorites(ids: string[]): void {
+  try {
+    globalThis.localStorage?.setItem(FAVORITES_KEY, JSON.stringify(ids));
+  } catch {
+    // Stockage indisponible (navigation privée) : favoris gardés pour la session.
+  }
+}
 
 /** Demande de cadrage de la carte sur une entité (le compteur distingue deux demandes identiques). */
 export interface FocusRequest {
@@ -45,8 +80,18 @@ export interface AppState {
   paramFilter: ParamFilter;
   searchOpen: boolean;
   worldOpen: boolean;
+  leftTab: LeftTab;
+  bottomOpen: boolean;
+  bottomTab: BottomTab;
   legendOpen: boolean;
   focus: FocusRequest | null;
+  /** Paramètres favoris (identifiants du catalogue), conservés dans le navigateur. */
+  favorites: string[];
+  journalFilter: JournalFilter;
+  /** Graphiques : paramètre pays, entités comparées, séries mondiales. */
+  chartParam: string;
+  chartEntities: string[];
+  chartWorld: string[];
 
   setLoad(load: LoadState): void;
   setData(data: Dataset): void;
@@ -64,8 +109,16 @@ export interface AppState {
   setParamFilter(filter: ParamFilter): void;
   setSearchOpen(open: boolean): void;
   setWorldOpen(open: boolean): void;
+  /** Ouvre le panneau gauche sur un onglet (le ferme s'il y est déjà). */
+  toggleLeft(tab: LeftTab): void;
+  setBottom(open: boolean, tab?: BottomTab): void;
   setLegendOpen(open: boolean): void;
   focusOn(index: number): void;
+  toggleFavorite(id: string): void;
+  setJournalFilter(filter: Partial<JournalFilter>): void;
+  setChartParam(id: string): void;
+  setChartEntities(ids: string[]): void;
+  setChartWorld(keys: string[]): void;
 }
 
 export const useApp = create<AppState>()((set, get) => ({
@@ -83,8 +136,16 @@ export const useApp = create<AppState>()((set, get) => ({
   paramFilter: 'all',
   searchOpen: false,
   worldOpen: false,
+  leftTab: 'world',
+  bottomOpen: false,
+  bottomTab: 'journal',
   legendOpen: true,
   focus: null,
+  favorites: loadFavorites(),
+  journalFilter: { author: 'all', severity: 0, selectedOnly: false },
+  chartParam: 'eco.growth',
+  chartEntities: [],
+  chartWorld: ['world.oil_price', 'world.growth'],
 
   setLoad: (load) => set({ load }),
   setData: (data) => set({ data, load: { state: 'ready' } }),
@@ -112,6 +173,21 @@ export const useApp = create<AppState>()((set, get) => ({
   setParamFilter: (paramFilter) => set({ paramFilter }),
   setSearchOpen: (searchOpen) => set({ searchOpen }),
   setWorldOpen: (worldOpen) => set({ worldOpen }),
+  toggleLeft: (tab) => {
+    const { worldOpen, leftTab } = get();
+    set(worldOpen && leftTab === tab ? { worldOpen: false } : { worldOpen: true, leftTab: tab });
+  },
+  setBottom: (bottomOpen, tab) => set(tab ? { bottomOpen, bottomTab: tab } : { bottomOpen }),
   setLegendOpen: (legendOpen) => set({ legendOpen }),
   focusOn: (index) => set({ focus: { index, nonce: (get().focus?.nonce ?? 0) + 1 } }),
+  toggleFavorite: (id) => {
+    const current = get().favorites;
+    const favorites = current.includes(id) ? current.filter((x) => x !== id) : [...current, id];
+    saveFavorites(favorites);
+    set({ favorites });
+  },
+  setJournalFilter: (filter) => set({ journalFilter: { ...get().journalFilter, ...filter } }),
+  setChartParam: (chartParam) => set({ chartParam }),
+  setChartEntities: (chartEntities) => set({ chartEntities }),
+  setChartWorld: (chartWorld) => set({ chartWorld }),
 }));

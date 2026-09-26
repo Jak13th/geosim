@@ -1,41 +1,24 @@
 /**
  * Inspecteur du pays sélectionné (SPEC §9.3), généré depuis le catalogue : un onglet par
- * catégorie de PARAMETRES.md, chaque paramètre avec sa valeur, sa source et son année.
- * Lecture seule en phase 2 (l'édition arrive avec le moteur, phase 3).
+ * catégorie de PARAMETRES.md ; chaque paramètre avec sa valeur simulée, sa source et son année,
+ * éditable en direct (curseur, verrou, réinitialisation, effets temporaires, édition groupée).
  */
-import { CATALOG, CATEGORIES, type CategoryId, type ParamDef } from '@geosim/shared';
+import type { Slot } from '@geosim/engine';
+import { CATALOG, CATEGORIES, paramById, type CategoryId, type ParamDef } from '@geosim/shared';
 import { useMemo, useState } from 'react';
 import type { Dataset, EntityView } from '../data/dataset.ts';
 import { formatNumber } from '../format.ts';
 import { toCss } from '../map/colors.ts';
+import type { LiveSim } from '../sim/mirror.ts';
 import { useApp, type ParamFilter } from '../store.ts';
+import { INCOME_LABELS, KIND_LABELS, REGION_LABELS } from './labels.ts';
+import { useLive } from './live.ts';
+import { LiveRow } from './LiveRow.tsx';
 import { namesFor } from './names.ts';
 import { PairPanel } from './PairPanel.tsx';
-import { ParamRow, isEstimate } from './ParamRow.tsx';
+import { isEstimate } from './ParamRow.tsx';
 import { normalize } from './search.ts';
-
-export const REGION_LABELS: Record<string, string> = {
-  EAS: 'Asie de l’Est et Pacifique',
-  ECS: 'Europe et Asie centrale',
-  LCN: 'Amérique latine et Caraïbes',
-  MEA: 'Moyen-Orient et Afrique du Nord',
-  NAC: 'Amérique du Nord',
-  SAS: 'Asie du Sud',
-  SSF: 'Afrique subsaharienne',
-};
-
-export const INCOME_LABELS: Record<string, string> = {
-  HIC: 'revenu élevé',
-  UMC: 'revenu intermédiaire supérieur',
-  LMC: 'revenu intermédiaire inférieur',
-  LIC: 'faible revenu',
-};
-
-export const KIND_LABELS: Record<EntityView['kind'], string> = {
-  state: 'État',
-  de_facto: 'Entité de facto',
-  faction: 'Faction armée',
-};
+import { Sparkline, useSeries } from './Sparkline.tsx';
 
 /** Indicateurs clés de l'aperçu. */
 const OVERVIEW = [
@@ -55,20 +38,117 @@ const OVERVIEW = [
 
 const COUNTRY_CATEGORIES = CATEGORIES.filter((c) => c.scope === 'country');
 
-const FILTERS: [ParamFilter, string][] = [
-  ['all', 'Tous'],
-  ['estimated', 'Estimés'],
-  ['stale', 'Anciens'],
+/** Trajectoires affichées dans l'aperçu (mini-graphes). */
+const TRAJECTORIES = [
+  'eco.growth',
+  'eco.inflation',
+  'eco.unemployment',
+  'eco.public_debt',
+] as const;
+
+const FILTERS: [ParamFilter, string, string][] = [
+  ['all', 'Tous', 'Tous les paramètres'],
+  ['modified', 'Modifiés', 'Modifiés par toi, verrouillés ou sous effet temporaire'],
+  ['favorites', 'Favoris', 'Paramètres marqués d’une étoile'],
+  ['estimated', 'Estimés', 'Valeurs de départ estimées (confiance faible, médiane régionale…)'],
+  ['stale', 'Anciens', 'Données de plus de trois ans'],
 ];
 
-function matchesFilter(data: Dataset, e: EntityView, def: ParamDef, filter: ParamFilter): boolean {
-  if (filter === 'all') return true;
-  const r = data.param(e, def.id);
-  if (r.state !== 'value') return false;
-  return filter === 'estimated' ? isEstimate(r.value) : r.value.stale === true;
+function countrySlot(def: ParamDef, e: EntityView): Slot {
+  return { scope: 'country', param: def.id, entity: e.id };
 }
 
-function Overview({ data, entity }: { data: Dataset; entity: EntityView }) {
+function matchesFilter(
+  data: Dataset,
+  live: LiveSim | null,
+  favorites: readonly string[],
+  e: EntityView,
+  def: ParamDef,
+  filter: ParamFilter,
+): boolean {
+  switch (filter) {
+    case 'all':
+      return true;
+    case 'modified':
+      return live?.isModified(countrySlot(def, e)) ?? false;
+    case 'favorites':
+      return favorites.includes(def.id);
+    default: {
+      const r = data.param(e, def.id);
+      if (r.state !== 'value') return false;
+      return filter === 'estimated' ? isEstimate(r.value) : r.value.stale === true;
+    }
+  }
+}
+
+/** Ligne de paramètre pays : valeur en direct, provenance, favoris. */
+function CountryRow({
+  data,
+  live,
+  entity,
+  def,
+  names,
+}: {
+  data: Dataset;
+  live: LiveSim | null;
+  entity: EntityView;
+  def: ParamDef;
+  names: ReturnType<typeof namesFor>;
+}) {
+  const favorite = useApp((s) => s.favorites.includes(def.id));
+  const toggle = useApp((s) => s.toggleFavorite);
+  return (
+    <LiveRow
+      def={def}
+      slot={countrySlot(def, entity)}
+      lookup={data.param(entity, def.id)}
+      live={live}
+      data={data}
+      names={names}
+      favorite={favorite}
+      onToggleFavorite={() => toggle(def.id)}
+    />
+  );
+}
+
+/** Mini-graphes des grandeurs macroéconomiques : l'effet d'une modification s'y voit aussitôt. */
+function Trajectories({ entity, live }: { entity: EntityView; live: LiveSim }) {
+  const result = useSeries(entity.id, TRAJECTORIES);
+  return (
+    <div className="trajectories">
+      {TRAJECTORIES.map((id) => {
+        const def = paramById(id);
+        const series = result?.series[id] ?? null;
+        return (
+          <div key={id} className="trajectory">
+            <span className="muted small">{def?.label ?? id}</span>
+            {series ? (
+              <Sparkline
+                values={series}
+                current={live.number(entity.id, id)}
+                width={150}
+                height={30}
+                label={def?.label ?? id}
+              />
+            ) : (
+              <span className="muted small">—</span>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Overview({
+  data,
+  entity,
+  live,
+}: {
+  data: Dataset;
+  entity: EntityView;
+  live: LiveSim | null;
+}) {
   const names = useMemo(() => namesFor(data), [data]);
   const select = useApp((s) => s.select);
   const focusOn = useApp((s) => s.focusOn);
@@ -108,12 +188,18 @@ function Overview({ data, entity }: { data: Dataset; entity: EntityView }) {
     <div className="overview">
       <section>
         {OVERVIEW.map((id) => {
-          const def = CATALOG.find((d) => d.id === id);
+          const def = paramById(id);
           return def ? (
-            <ParamRow key={id} def={def} lookup={data.param(entity, id)} names={names} />
+            <CountryRow key={id} data={data} live={live} entity={entity} def={def} names={names} />
           ) : null;
         })}
       </section>
+      {live !== null && (
+        <section>
+          <h3>Trajectoires (mensuelles)</h3>
+          <Trajectories entity={entity} live={live} />
+        </section>
+      )}
       <section>
         <h3>Géographie</h3>
         <p>
@@ -192,6 +278,8 @@ function memberships(
 }
 
 function CountryParams({ data, entity }: { data: Dataset; entity: EntityView }) {
+  const live = useLive();
+  const favorites = useApp((s) => s.favorites);
   const tab = useApp((s) => s.inspectorTab);
   const setTab = useApp((s) => s.setInspectorTab);
   const query = useApp((s) => s.paramQuery);
@@ -206,7 +294,7 @@ function CountryParams({ data, entity }: { data: Dataset; entity: EntityView }) 
       d.scope === 'country' &&
       (searching || d.category === tab) &&
       (q === '' || normalize(`${d.label} ${d.id} ${d.description}`).includes(q)) &&
-      matchesFilter(data, entity, d, filter),
+      matchesFilter(data, live, favorites, entity, d, filter),
   );
   return (
     <>
@@ -246,10 +334,11 @@ function CountryParams({ data, entity }: { data: Dataset; entity: EntityView }) 
           aria-label="Chercher un paramètre"
         />
         <div className="segmented" role="group" aria-label="Filtre">
-          {FILTERS.map(([f, label]) => (
+          {FILTERS.map(([f, label, title]) => (
             <button
               type="button"
               key={f}
+              title={title}
               className={filter === f ? 'active' : ''}
               onClick={() => setFilter(f)}
             >
@@ -260,7 +349,7 @@ function CountryParams({ data, entity }: { data: Dataset; entity: EntityView }) 
       </div>
       <div className="params">
         {!searching && tab === 'apercu' ? (
-          <Overview data={data} entity={entity} />
+          <Overview data={data} entity={entity} live={live} />
         ) : (
           <>
             {searching && (
@@ -270,8 +359,23 @@ function CountryParams({ data, entity }: { data: Dataset; entity: EntityView }) 
               </p>
             )}
             {rows.map((def) => (
-              <ParamRow key={def.id} def={def} lookup={data.param(entity, def.id)} names={names} />
+              <CountryRow
+                key={def.id}
+                data={data}
+                live={live}
+                entity={entity}
+                def={def}
+                names={names}
+              />
             ))}
+            {rows.length === 0 && filter === 'modified' && (
+              <p className="muted small">Aucun paramètre modifié pour ce pays.</p>
+            )}
+            {rows.length === 0 && filter === 'favorites' && (
+              <p className="muted small">
+                Aucun favori : clique sur l’étoile d’un paramètre pour l’ajouter.
+              </p>
+            )}
           </>
         )}
       </div>

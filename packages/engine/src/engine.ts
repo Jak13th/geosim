@@ -83,10 +83,14 @@ export interface EngineSnapshot {
   tick: number;
   seed: number;
   startDate: string;
+  /** Libellé choisi à la capture (métadonnée, sans effet sur la restauration). */
+  label?: string;
   monthCount: number;
   model: CoefficientTree;
   values: Float64Array;
   base: Float64Array;
+  /** Valeurs au départ de la simulation (absentes des captures antérieures : base). */
+  initial?: Float64Array;
   locked: Uint8Array;
   generic: ParamValue[][];
   genericBase: ParamValue[][];
@@ -130,6 +134,11 @@ export class Engine {
   model: Model;
   readonly calendar: Calendar;
   history: History;
+  /**
+   * Valeurs des paramètres pays au départ (P × N), après calage et calcul des dérivés : elles
+   * distinguent une valeur simulée d'une valeur calculée dès le départ (affichage).
+   */
+  initial: Float64Array;
   readonly dataId: string;
   journal: JournalEntry[] = [];
   private inverses = new Map<number, StoredInverse>();
@@ -146,6 +155,7 @@ export class Engine {
     this.model = model;
     this.calendar = calendar;
     this.history = new History(state.n);
+    this.initial = new Float64Array(0);
     this.dataId = dataId(state.data);
   }
 
@@ -173,6 +183,7 @@ export class Engine {
         state.base[k] = state.values[k] as number;
       }
     }
+    engine.initial = state.values.slice();
     for (const id of SIMULATED_PARAMS) engine.history.track(state, col(id));
     engine.history.record(state);
     return engine;
@@ -295,14 +306,7 @@ export class Engine {
       case 'setModel': {
         const next = new Model(command.model, REQUIRED_COEFFICIENTS);
         const previous = this.model.tree();
-        const changes = next
-          .paths()
-          .filter((p) => !this.model.has(p) || this.model.get(p) !== next.get(p))
-          .map((p) => ({
-            path: p,
-            from: this.model.has(p) ? this.model.get(p) : Number.NaN,
-            to: next.get(p),
-          }));
+        const changes = this.modelChanges(next);
         this.model = next;
         return { entry: { coefficients: changes, entities: [] }, inverse: { model: previous } };
       }
@@ -434,13 +438,33 @@ export class Engine {
     return entry;
   }
 
+  /**
+   * Coefficients qui changeraient en passant à un autre modèle (arbre de config/model.yaml validé
+   * ou modèle déjà construit) : permet d'ignorer un rechargement sans effet.
+   */
+  modelChanges(other: CoefficientTree | Model): { path: string; from: number; to: number }[] {
+    const next = other instanceof Model ? other : new Model(other, REQUIRED_COEFFICIENTS);
+    const removed = this.model.paths().filter((p) => !next.has(p));
+    return [
+      ...next
+        .paths()
+        .filter((p) => !this.model.has(p) || this.model.get(p) !== next.get(p))
+        .map((p) => ({
+          path: p,
+          from: this.model.has(p) ? this.model.get(p) : Number.NaN,
+          to: next.get(p),
+        })),
+      ...removed.map((p) => ({ path: p, from: this.model.get(p), to: Number.NaN })),
+    ];
+  }
+
   // ——— Empreinte, captures, relecture ———
 
   hash(): string {
     return hashState(this.state, this.model);
   }
 
-  snapshot(): EngineSnapshot {
+  snapshot(label?: string): EngineSnapshot {
     const S = this.state;
     const pairNum: Record<string, Float64Array> = {};
     for (const [k, m] of S.pairNum) pairNum[k] = m.slice();
@@ -458,10 +482,12 @@ export class Engine {
       tick: S.tick,
       seed: S.seed,
       startDate: this.calendar.isoAt(0),
+      ...(label ? { label } : {}),
       monthCount: this.monthCount,
       model: this.model.tree(),
       values: S.values.slice(),
       base: S.base.slice(),
+      initial: this.initial.slice(),
       locked: S.locked.slice(),
       generic: S.generic.map((c) => c.slice()),
       genericBase: S.genericBase.map((c) => c.slice()),
@@ -506,6 +532,7 @@ export class Engine {
     state.tick = snap.tick;
     state.values.set(snap.values);
     state.base.set(snap.base);
+    engine.initial = (snap.initial ?? snap.base).slice();
     state.locked.set(snap.locked);
     snap.generic.forEach((c, g) =>
       c.forEach((v, i) => ((state.generic[g] as ParamValue[])[i] = v)),

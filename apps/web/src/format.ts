@@ -62,6 +62,9 @@ export function formatShort(v: number): string {
 
 const COUNT_UNITS = new Set(['habitants', 'personnes', 'ogives', 'missiles', 'unités-équivalent']);
 
+/** Unités au singulier dans le catalogue, accordées à partir de 2 (« 12 crans »). */
+const PLURALS: Readonly<Record<string, string>> = { cran: 'crans', jour: 'jours', an: 'ans' };
+
 /** Nombre suivi de son unité du catalogue. */
 export function formatQuantity(v: number, unit: string): string {
   if (!Number.isFinite(v)) return '—';
@@ -73,7 +76,8 @@ export function formatQuantity(v: number, unit: string): string {
   const n = COUNT_UNITS.has(unit) ? nf(0).format(v) : formatNumber(v);
   if (unit === '' || unit === 'indice' || unit === 'entier') return n;
   if (unit === 'multiplicateur') return `×${NBSP}${n}`;
-  return `${n}${NBSP}${unit}`;
+  const plural = Math.abs(v) >= 2 ? PLURALS[unit] : undefined;
+  return `${n}${NBSP}${plural ?? unit}`;
 }
 
 const MONTHS = [

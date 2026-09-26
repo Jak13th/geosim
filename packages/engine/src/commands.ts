@@ -53,12 +53,36 @@ const SIM_EDITABLE = new Set([
 /** Paramètres de zone modifiables en phase 3 (les zones géographiques relèvent des outils de scénario). */
 const ZONE_EDITABLE = new Set(['zone.chokepoint_status']);
 
+/**
+ * Raison pour laquelle un emplacement n'est pas modifiable par commande (null s'il l'est) :
+ * vitesse réglée par la barre de temps, paramètres fixés au lancement, zones géographiques
+ * réservées aux outils de scénario.
+ */
+export function slotLockedReason(slot: Slot): string | null {
+  const def = paramById(slot.param);
+  if (def === undefined) return `Paramètre inconnu : ${slot.param}`;
+  if (slot.scope === 'zone' && !ZONE_EDITABLE.has(slot.param)) {
+    return `${def.label} : zones géographiques modifiables avec les outils de scénario (pinceau, phase 8)`;
+  }
+  if (slot.scope === 'sim') {
+    if (slot.param === 'sim.speed') {
+      return 'La vitesse se règle dans la barre de temps (elle ne change pas l’histoire simulée)';
+    }
+    if (!SIM_EDITABLE.has(slot.param)) {
+      return `${def.label} : fixé au lancement de la simulation ou à la construction des données`;
+    }
+  }
+  return null;
+}
+
 export function slotDef(state: State, slot: Slot): ParamDef {
   const def = paramById(slot.param);
   if (def === undefined) throw new CommandError(`Paramètre inconnu : ${slot.param}`);
   if (def.scope !== slot.scope) {
     throw new CommandError(`${slot.param} : portée ${def.scope}, pas ${slot.scope}`);
   }
+  const reason = slotLockedReason(slot);
+  if (reason !== null) throw new CommandError(reason);
   switch (slot.scope) {
     case 'country':
       if (!state.byId.has(slot.entity)) throw new CommandError(`Entité inconnue : ${slot.entity}`);
@@ -70,27 +94,11 @@ export function slotDef(state: State, slot: Slot): ParamDef {
       if (slot.from === slot.to) throw new CommandError('Une paire relie deux entités distinctes');
       break;
     case 'zone':
-      if (!ZONE_EDITABLE.has(slot.param)) {
-        throw new CommandError(
-          `${def.label} : zones géographiques modifiables avec les outils de scénario (pinceau, phase 8)`,
-        );
-      }
       if (!state.zone.get(slot.param)?.has(slot.target)) {
         throw new CommandError(`Zone inconnue : ${slot.target}`);
       }
       break;
     case 'sim':
-      if (slot.param === 'sim.speed') {
-        throw new CommandError(
-          'La vitesse se règle dans la barre de temps (elle ne change pas l’histoire simulée)',
-        );
-      }
-      if (!SIM_EDITABLE.has(slot.param)) {
-        throw new CommandError(
-          `${def.label} : fixé au lancement de la simulation ou à la construction des données`,
-        );
-      }
-      break;
     case 'world':
       break;
   }

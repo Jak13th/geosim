@@ -14,6 +14,7 @@ import {
 import { useState } from 'react';
 import type { ParamLookup } from '../data/dataset.ts';
 import { formatDataDate, formatNumber, formatValue, type ValueContext } from '../format.ts';
+import { laterPhase } from './live.ts';
 import { CONFIDENCE_CLASS, dataYear, sourceName, splitLinks } from './provenance.ts';
 
 const KIND_LABELS: Record<ParamDef['kind'], string> = {
@@ -79,7 +80,7 @@ export function SourceBadge({
   runtime?: boolean;
 }) {
   if (value === null) {
-    return <span className="src conf-none">{runtime ? 'moteur (phase 3)' : 'absent'}</span>;
+    return <span className="src conf-none">{runtime ? 'moteur' : 'absent'}</span>;
   }
   return (
     <span
@@ -145,7 +146,16 @@ export function inlineValue(def: ParamDef, value: ParamValue, names: ValueContex
   return formatValue(value, def, names);
 }
 
-export function ProvenanceDetails({ def, lookup }: { def: ParamDef; lookup: ParamLookup }) {
+export function ProvenanceDetails({
+  def,
+  lookup,
+  computed,
+}: {
+  def: ParamDef;
+  lookup: ParamLookup;
+  /** Le moteur calcule déjà ce paramètre (sinon : phase ultérieure). */
+  computed?: boolean;
+}) {
   const v = lookup.state === 'value' ? lookup.value : null;
   return (
     <dl className="provenance">
@@ -190,7 +200,11 @@ export function ProvenanceDetails({ def, lookup }: { def: ParamDef; lookup: Para
       {lookup.state === 'runtime' && (
         <>
           <dt>Valeur</dt>
-          <dd>Paramètre dérivé, calculé par le moteur à partir de la phase 3.</dd>
+          <dd>
+            {computed
+              ? 'Calculée par le moteur : valeur initiale calée sur les données, puis simulée.'
+              : `Calculée par le moteur à partir de la phase ${laterPhase(def)}.`}
+          </dd>
         </>
       )}
       {lookup.state === 'absent' && (

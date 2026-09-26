@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Dataset } from '../data/dataset.ts';
 import { toCss } from '../map/colors.ts';
 import { useApp } from '../store.ts';
-import { KIND_LABELS } from './Inspector.tsx';
+import { KIND_LABELS } from './labels.ts';
 import { search, type Searchable } from './search.ts';
 
 export function SearchDialog({ data }: { data: Dataset }) {
