@@ -199,6 +199,16 @@ export interface RelationSeed extends P {
   why: string;
 }
 
+/** Grief historique ou proximité culturelle entre deux pays (pair_ties.yaml), hypothèse. */
+export interface PairTie extends P {
+  a: string;
+  b: string;
+  value: number;
+  /** Valeur de b envers a (griefs orientés) ; absente pour les proximités (symétriques). */
+  reverse?: number;
+  why: string;
+}
+
 export interface ExtraEntity extends P {
   id: string;
   name: string;
@@ -242,6 +252,7 @@ export interface Topics {
   semiconductors: SemiconductorsFile;
   profiles: Record<string, Profile>;
   relations: RelationSeed[];
+  ties: { grievances: PairTie[]; proximity: PairTie[] };
   entities: { extra: ExtraEntity[]; meta: Record<string, EntityMeta> };
   world: Record<string, WorldValue>;
   food: unknown;
@@ -366,6 +377,27 @@ export async function loadTopics(dir: string): Promise<Topics> {
   );
   for (const r of relations) inRange(r.value, -100, 100, `relations_seed.yaml › ${r.a}-${r.b}`);
 
+  const tiesRaw = await y('pair_ties.yaml');
+  const ties = {
+    grievances: list<PairTie>(tiesRaw, 'grievances', 'pair_ties.yaml'),
+    proximity: list<PairTie>(tiesRaw, 'proximity', 'pair_ties.yaml'),
+  };
+  for (const [key, items] of Object.entries(ties)) {
+    const seen = new Set<string>();
+    for (const t of items) {
+      const where = `pair_ties.yaml › ${key} ${t.a}-${t.b}`;
+      inRange(t.value, 0, 100, where);
+      if (t.reverse !== undefined) inRange(t.reverse, 0, 100, `${where} (reverse)`);
+      if (typeof t.why !== 'string' || t.why.trim() === '')
+        throw new Error(`${where} : justification (why) obligatoire`);
+      if (t.confidence !== 'assumption')
+        throw new Error(`${where} : hypothèse attendue (confidence: assumption)`);
+      const key2 = [t.a, t.b].sort().join('-');
+      if (seen.has(key2)) throw new Error(`${where} : paire en double`);
+      seen.add(key2);
+    }
+  }
+
   const entitiesRaw = await y('entities.yaml');
   const entities = {
     extra: list<ExtraEntity>(entitiesRaw, 'extra', 'entities.yaml'),
@@ -393,6 +425,7 @@ export async function loadTopics(dir: string): Promise<Topics> {
     semiconductors: semisRaw,
     profiles,
     relations,
+    ties,
     entities,
     world,
     food,
@@ -467,6 +500,8 @@ export function checkTopicCodes(topics: Topics, codes: ReadonlySet<string>): str
     check(c, 'semiconductors.yaml');
   for (const c of Object.keys(topics.profiles)) check(c, 'profiles.yaml');
   for (const r of topics.relations) for (const c of [r.a, r.b]) check(c, 'relations_seed.yaml');
+  for (const t of [...topics.ties.grievances, ...topics.ties.proximity])
+    for (const c of [t.a, t.b]) check(c, 'pair_ties.yaml');
   for (const [c, m] of Object.entries(topics.entities.meta)) {
     check(c, 'entities.yaml › meta');
     for (const x of [

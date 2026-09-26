@@ -19,6 +19,9 @@
  * fonds (pays qui en ont un) ou au désendettement. En défaut, l'accès aux marchés est perdu : le
  * solde primaire doit revenir à l'équilibre (austérité).
  *
+ * Phase 4 : l'accueil de réfugiés supplémentaires s'ajoute aux dépenses (réfugiés) ; les sanctions
+ * financières ajoutent une prime au taux souverain (sanctions).
+ *
  * Règle budgétaire (en attendant les décisions des pays, phase 7) : le solde primaire se
  * rapproche du solde qui stabilise la dette, plus une réaction à la dette au-delà de son niveau
  * initial (Bohn, 1998).
@@ -130,7 +133,11 @@ export function budgetAccounts(
   const rentDelta = Number.isFinite(rents0) && Number.isFinite(rents) ? rents - rents0 : 0;
   const revenue =
     S.effNow(C.revenue, i) * (te0 > 0 ? te / te0 : 1) + ctx.model.get(K.rentShare) * rentDelta;
-  let primary = S.effNow(C.other, i) - S.effNow(C.adjustment, i);
+  // Accueil des nouveaux réfugiés (coût net de l'aide internationale).
+  let primary =
+    S.effNow(C.other, i) -
+    S.effNow(C.adjustment, i) +
+    ((S.internal.get('refugees.cost')?.[i] ?? 0) as number);
   for (const p of SPENDING) {
     const x = S.effNow(p, i);
     if (Number.isFinite(x)) primary += x;
@@ -176,12 +183,15 @@ export function marketRate(state: State, ctx: Pick<SystemContext, 'model'>, i: n
     S.effNow(C.inflation, i),
   );
   const inDefault = S.genericValue('eco.in_default', i) === true;
+  // Prime due aux sanctions financières (par rapport au départ).
+  const sanctions = (S.internal.get('econ.spread.sanctions')?.[i] ?? 0) as number;
   const rate =
     reference +
     (S.worldEff('world.policy_rate') - policy0) +
     m.get(K.fisher) * (expected - expected0) +
     spreadOf(m, S.effNow(C.rating, i), inDefault) -
-    spread0;
+    spread0 +
+    sanctions;
   return Math.max(m.get(K.floor), rate);
 }
 

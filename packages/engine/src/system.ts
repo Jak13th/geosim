@@ -4,6 +4,7 @@
  * fournit :
  * - `init` : calage sur la situation initiale (tick 0) ;
  * - `monthly` : pas mensuel (économie, démographie, marchés…) ;
+ * - `daily` : contrôle quotidien léger (élections à leur date) ; renvoie vrai s'il a modifié l'état ;
  * - `derive` : valeurs dérivées instantanées, recalculées après chaque pas et chaque commande
  *   (un curseur modifié se répercute aussitôt sur les soldes, taux, ratios…), sans aléa.
  */
@@ -47,5 +48,6 @@ export interface System {
   writes: readonly string[];
   init?(ctx: SystemContext): void;
   monthly?(ctx: SystemContext): void;
+  daily?(ctx: SystemContext): boolean;
   derive?(ctx: SystemContext): void;
 }

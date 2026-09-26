@@ -1,6 +1,7 @@
 # Blocs, alliances et organisations au 25/09/2026 (SPEC §5.2) : membres, partenaires, observateurs,
 # membres suspendus, et règles (défense mutuelle et zone couverte, politique commerciale commune,
-# sanctions communes, coordination pétrolière). Codes pays : ISO 3166-1 alpha-3 ou codes GeoSim.
+# sanctions communes, coordination pétrolière, suspension des membres après un coup d'État :
+# déclaration de Lomé de l'UA, 2000 ; protocole de la CEDEAO sur la démocratie, 2001). Codes pays : ISO 3166-1 alpha-3 ou codes GeoSim.
 version: 1
 blocs:
   - id: nato
@@ -281,8 +282,9 @@ blocs:
         common_trade_policy: false,
         common_sanctions: false,
         oil_coordination: false,
+        suspends_after_coup: true,
       }
-    source: https://en.wikipedia.org/wiki/Member_states_of_the_African_Union ; https://amaniafrica-et.org/informal-consultation-with-member-states-in-political-transition/
+    source: https://en.wikipedia.org/wiki/Member_states_of_the_African_Union ; https://amaniafrica-et.org/informal-consultation-with-member-states-in-political-transition/ ; https://en.wikipedia.org/wiki/Lom%C3%A9_Declaration
     date: '2026-09-25'
     confidence: high
     note:
@@ -533,8 +535,9 @@ blocs:
         common_trade_policy: true,
         common_sanctions: false,
         oil_coordination: false,
+        suspends_after_coup: true,
       }
-    source: https://en.wikipedia.org/wiki/ECOWAS
+    source: https://en.wikipedia.org/wiki/ECOWAS ; https://en.wikipedia.org/wiki/ECOWAS_Protocol_on_Democracy_and_Good_Governance
     date: '2026-09-25'
     confidence: high
     note: Le Mali, le Burkina Faso et le Niger l’ont quittée le 29/01/2025.

@@ -114,6 +114,16 @@ export class Rng {
   }
 }
 
+/**
+ * Tirage uniforme sur [0, 1) désigné par une clé (ex. `election|FRA|2027-04-11`) : il ne dépend que
+ * de la graine et de la clé, pas des autres tirages ni de leur ordre. Les événements rares à date
+ * variable (élections, coups d'État…) gardent ainsi leurs tirages quand le reste change (nombres
+ * aléatoires communs), sans état à sauvegarder.
+ */
+export function keyedUniform(seed: number, key: string): number {
+  return Rng.forStream(seed, key).nextFloat();
+}
+
 function rotl(x: number, k: number): number {
   return ((x << k) | (x >>> (32 - k))) >>> 0;
 }

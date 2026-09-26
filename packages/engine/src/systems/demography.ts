@@ -15,7 +15,9 @@
  *   vers un niveau de long terme (tendance liée au développement).
  * - Solde migratoire : constant (‰, levier), versé dans la tranche 15–64 ans.
  * - Population active proportionnelle aux 15–64 ans (taux d'activité constant).
- * - Pertes de guerre, famines, épidémies et réfugiés : phases 4 à 6.
+ * - Famine (phase 4) : surmortalité calculée par l'alimentation (`demo.famine`, ‰/an), répartie
+ *   sur les tranches d'âge. Réfugiés : transferts de population (système des réfugiés).
+ * - Pertes de guerre et épidémies : phases 5 et 6.
  */
 import { col, type State } from '../state.ts';
 import type { System, SystemContext } from '../system.ts';
@@ -155,6 +157,7 @@ function monthly(ctx: SystemContext): void {
   const dt = ctx.dt;
   const scale = S.internalArray('demo.mortalityScale', 1);
   const workingGrowth = S.internalArray('demo.workingAgeGrowth', 0);
+  const famine = S.internalArray('demo.famine', 0);
   const mortalityTrend = Math.exp((-m.get(K.decline) / 100) * ctx.years);
   const m0 = m.get(K.m0) / 1000;
   const m1 = m.get(K.m1) / 1000;
@@ -190,9 +193,11 @@ function monthly(ctx: SystemContext): void {
     const births = (S.effNow(C.birth, i) / 1000) * pop * dt;
 
     const k = (scale[i] as number) * mortalityTrend;
-    const d0 = a0 * m0 * k * dt;
-    const d1 = a1 * m1 * k * dt;
-    const d2 = a2 * m2 * k * dt;
+    // Surmortalité de famine (‰/an), sur toutes les tranches d'âge.
+    const extra = Math.max(0, famine[i] as number) / 1000;
+    const d0 = a0 * (m0 * k + extra) * dt;
+    const d1 = a1 * (m1 * k + extra) * dt;
+    const d2 = a2 * (m2 * k + extra) * dt;
     const up0 = a0 * flows.childToAdult * dt;
     const up1 = a1 * flows.adultToSenior * dt;
     const migrants = ((S.e(C.migration)[i] as number) / 1000) * pop * dt;

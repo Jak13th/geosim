@@ -1,0 +1,1629 @@
+# Griefs historiques et proximité culturelle entre paires clés (SPEC §8.6 ; PARAMETRES.md §15 :
+# pair.historical_grievance, pair.cultural_proximity), au 2026-09-26.
+# HYPOTHÈSES GeoSim (confidence: assumption) : l'intensité est une estimation fondée sur des faits
+# historiques, linguistiques et religieux documentés (source de chaque entrée) ; une justification
+# d'une ligne par entrée. Elles décrivent des sociétés et des États, jamais des personnes. À valider.
+# Échelles 0–100.
+# - grievances : grief de a envers b (orienté) ; `reverse` : grief de b envers a quand il existe.
+# - proximity : proximité culturelle, linguistique et religieuse (symétrique).
+# Paires absentes : grief nul ; proximité par défaut calculée par le moteur (même région de la
+# Banque mondiale : coefficient diplomacy.affinity.same_region_proximity ; sinon 0).
+version: 1
+grievances:
+  - {
+      a: CHN,
+      b: JPN,
+      value: 60,
+      reverse: 10,
+      why: 'Invasion et occupation japonaises (1931-1945), massacre de Nankin ; contentieux mémoriels récurrents.',
+      source: https://en.wikipedia.org/wiki/Second_Sino-Japanese_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: KOR,
+      b: JPN,
+      value: 40,
+      reverse: 10,
+      why: 'Colonisation japonaise (1910-1945), travail forcé et « femmes de réconfort » : différends judiciaires persistants.',
+      source: https://en.wikipedia.org/wiki/Korea_under_Japanese_rule,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: PRK,
+      b: JPN,
+      value: 65,
+      reverse: 40,
+      why: 'Colonisation japonaise ; enlèvements de ressortissants japonais par la Corée du Nord (1977-1983).',
+      source: https://en.wikipedia.org/wiki/North_Korean_abductions_of_Japanese_citizens,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: KOR,
+      b: PRK,
+      value: 45,
+      reverse: 45,
+      why: 'Guerre de Corée (1950-1953), armistice sans traité de paix, provocations militaires.',
+      source: https://en.wikipedia.org/wiki/Korean_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: PRK,
+      b: USA,
+      value: 60,
+      reverse: 40,
+      why: 'Guerre de Corée et hostilité depuis 1953 ; programme nucléaire nord-coréen et sanctions.',
+      source: https://en.wikipedia.org/wiki/North_Korea%E2%80%93United_States_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: PAK,
+      value: 55,
+      reverse: 65,
+      why: 'Partition de 1947 et guerres de 1947, 1965, 1971 et 1999 ; Cachemire ; affrontements de mai 2025.',
+      source: https://en.wikipedia.org/wiki/India%E2%80%93Pakistan_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: CHN,
+      value: 35,
+      reverse: 10,
+      why: 'Guerre de 1962 et affrontements de la vallée de Galwan (2020) sur la ligne de contrôle effectif.',
+      source: https://en.wikipedia.org/wiki/Sino-Indian_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ARM,
+      b: TUR,
+      value: 65,
+      reverse: 15,
+      why: 'Génocide arménien (1915), non reconnu par la Turquie ; frontière fermée depuis 1993.',
+      source: https://en.wikipedia.org/wiki/Armenian_genocide,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ARM,
+      b: AZE,
+      value: 60,
+      reverse: 55,
+      why: 'Guerres du Haut-Karabakh (1988-1994, 2020) et exode des Arméniens du Karabakh (2023) ; traité de paix paraphé en 2025.',
+      source: https://en.wikipedia.org/wiki/Nagorno-Karabakh_conflict,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: GRC,
+      b: TUR,
+      value: 40,
+      reverse: 25,
+      why: 'Guerre gréco-turque (1919-1922), échange de populations, Chypre (1974), différends en mer Égée.',
+      source: https://en.wikipedia.org/wiki/Greece%E2%80%93Turkey_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CYP,
+      b: TUR,
+      value: 60,
+      reverse: 20,
+      why: "Intervention turque de 1974 et occupation du nord de l'île ; République turque de Chypre du Nord non reconnue.",
+      source: https://en.wikipedia.org/wiki/Turkish_invasion_of_Cyprus,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: UKR,
+      b: RUS,
+      value: 90,
+      reverse: 30,
+      why: 'Holodomor (1932-1933), annexion de la Crimée (2014), invasion à grande échelle depuis 2022.',
+      source: https://en.wikipedia.org/wiki/Russia%E2%80%93Ukraine_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: POL,
+      b: RUS,
+      value: 55,
+      reverse: 15,
+      why: 'Partitions de la Pologne, invasion soviétique de 1939, massacre de Katyn, domination soviétique.',
+      source: https://en.wikipedia.org/wiki/Poland%E2%80%93Russia_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: EST,
+      b: RUS,
+      value: 55,
+      reverse: 15,
+      why: 'Annexion soviétique (1940), déportations, occupation jusqu’en 1991.',
+      source: https://en.wikipedia.org/wiki/Occupation_of_the_Baltic_states,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: LVA,
+      b: RUS,
+      value: 55,
+      reverse: 15,
+      why: 'Annexion soviétique (1940), déportations, occupation jusqu’en 1991.',
+      source: https://en.wikipedia.org/wiki/Occupation_of_the_Baltic_states,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: LTU,
+      b: RUS,
+      value: 55,
+      reverse: 15,
+      why: 'Annexion soviétique (1940), déportations, occupation jusqu’en 1991.',
+      source: https://en.wikipedia.org/wiki/Occupation_of_the_Baltic_states,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: GEO,
+      b: RUS,
+      value: 60,
+      reverse: 15,
+      why: 'Guerre de 2008 et occupation de l’Abkhazie et de l’Ossétie du Sud.',
+      source: https://en.wikipedia.org/wiki/Russo-Georgian_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: MDA,
+      b: RUS,
+      value: 35,
+      reverse: 10,
+      why: 'Guerre de Transnistrie (1992) et présence militaire russe en Transnistrie.',
+      source: https://en.wikipedia.org/wiki/Transnistria_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: USA,
+      value: 60,
+      reverse: 45,
+      why: "Coup d'État de 1953, crise des otages (1979-1981), sanctions, guerre de 2026.",
+      source: https://en.wikipedia.org/wiki/Iran%E2%80%93United_States_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: GBR,
+      value: 35,
+      reverse: 10,
+      why: "Coup d'État de 1953 et rôle britannique dans le pétrole iranien.",
+      source: https://en.wikipedia.org/wiki/1953_Iranian_coup_d%27%C3%A9tat,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: IRQ,
+      value: 30,
+      reverse: 30,
+      why: 'Guerre Iran-Irak (1980-1988).',
+      source: https://en.wikipedia.org/wiki/Iran%E2%80%93Iraq_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: IRN,
+      value: 30,
+      reverse: 30,
+      why: 'Rivalité régionale et confessionnelle, guerres par procuration (Yémen, Syrie, Liban).',
+      source: https://en.wikipedia.org/wiki/Iran%E2%80%93Saudi_Arabia_proxy_conflict,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: KWT,
+      b: IRQ,
+      value: 45,
+      reverse: 10,
+      why: 'Invasion et annexion irakiennes du Koweït (1990-1991).',
+      source: https://en.wikipedia.org/wiki/Iraqi_invasion_of_Kuwait,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CUB,
+      b: USA,
+      value: 50,
+      reverse: 25,
+      why: 'Embargo américain depuis 1962, débarquement de la baie des Cochons (1961).',
+      source: https://en.wikipedia.org/wiki/United_States_embargo_against_Cuba,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: VNM,
+      b: CHN,
+      value: 30,
+      reverse: 10,
+      why: 'Guerre sino-vietnamienne (1979), affrontements en mer de Chine méridionale (Paracels 1974, Johnson 1988).',
+      source: https://en.wikipedia.org/wiki/Sino-Vietnamese_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: VNM,
+      b: USA,
+      value: 10,
+      reverse: 5,
+      why: 'Guerre du Viêt Nam (1955-1975), en grande partie surmontée depuis la normalisation de 1995.',
+      source: https://en.wikipedia.org/wiki/Vietnam%E2%80%93United_States_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: PHL,
+      b: CHN,
+      value: 25,
+      reverse: 5,
+      why: 'Incidents répétés en mer de Chine méridionale (Scarborough, Second Thomas) ; sentence arbitrale de 2016 rejetée par Pékin.',
+      source: https://en.wikipedia.org/wiki/Philippines_v._China,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: XKX,
+      b: SRB,
+      value: 70,
+      reverse: 60,
+      why: 'Guerre du Kosovo (1998-1999) ; indépendance de 2008 non reconnue par la Serbie.',
+      source: https://en.wikipedia.org/wiki/Kosovo_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: BIH,
+      b: SRB,
+      value: 40,
+      reverse: 15,
+      why: 'Guerre de Bosnie (1992-1995), génocide de Srebrenica.',
+      source: https://en.wikipedia.org/wiki/Bosnian_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: HRV,
+      b: SRB,
+      value: 30,
+      reverse: 30,
+      why: "Guerre d'indépendance croate (1991-1995).",
+      source: https://en.wikipedia.org/wiki/Croatian_War_of_Independence,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: DZA,
+      b: FRA,
+      value: 40,
+      reverse: 10,
+      why: "Colonisation (1830-1962) et guerre d'Algérie ; contentieux mémoriels et crises diplomatiques récentes.",
+      source: https://en.wikipedia.org/wiki/Algeria%E2%80%93France_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: DZA,
+      b: MAR,
+      value: 35,
+      reverse: 35,
+      why: 'Guerre des Sables (1963), conflit du Sahara occidental, frontière fermée depuis 1994 et relations rompues en 2021.',
+      source: https://en.wikipedia.org/wiki/Algeria%E2%80%93Morocco_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: PSE,
+      b: ISR,
+      value: 90,
+      reverse: 50,
+      why: 'Nakba (1948), occupation depuis 1967, guerre de Gaza (2023-2025) ; attaques du 7 octobre 2023.',
+      source: https://en.wikipedia.org/wiki/Israeli%E2%80%93Palestinian_conflict,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: LBN,
+      b: ISR,
+      value: 60,
+      reverse: 40,
+      why: 'Invasions et occupations israéliennes (1978, 1982-2000), guerres de 2006 et 2024-2026 contre le Hezbollah.',
+      source: https://en.wikipedia.org/wiki/Israel%E2%80%93Lebanon_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SYR,
+      b: ISR,
+      value: 55,
+      reverse: 30,
+      why: 'Guerres de 1948, 1967 et 1973, occupation et annexion du Golan.',
+      source: https://en.wikipedia.org/wiki/Israel%E2%80%93Syria_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ERI,
+      b: ETH,
+      value: 45,
+      reverse: 40,
+      why: "Guerre d'indépendance (1961-1991) et guerre frontalière de 1998-2000 ; tensions sur l'accès à la mer Rouge.",
+      source: https://en.wikipedia.org/wiki/Eritrean%E2%80%93Ethiopian_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SOM,
+      b: ETH,
+      value: 40,
+      reverse: 15,
+      why: "Guerre de l'Ogaden (1977-1978), interventions éthiopiennes, protocole Éthiopie-Somaliland de 2024.",
+      source: https://en.wikipedia.org/wiki/Ethiopia%E2%80%93Somalia_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ARG,
+      b: GBR,
+      value: 40,
+      reverse: 10,
+      why: 'Guerre des Malouines (1982), revendication argentine maintenue.',
+      source: https://en.wikipedia.org/wiki/Falklands_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: BOL,
+      b: CHL,
+      value: 45,
+      reverse: 10,
+      why: 'Guerre du Pacifique (1879-1884) et perte de l’accès à la mer ; relations diplomatiques rompues depuis 1978.',
+      source: https://en.wikipedia.org/wiki/Bolivia%E2%80%93Chile_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: PER,
+      b: CHL,
+      value: 20,
+      reverse: 5,
+      why: 'Guerre du Pacifique (1879-1884) ; différend maritime tranché par la CIJ en 2014.',
+      source: https://en.wikipedia.org/wiki/Chile%E2%80%93Peru_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: KHM,
+      b: THA,
+      value: 30,
+      reverse: 25,
+      why: 'Différend sur les temples frontaliers (Preah Vihear) et affrontements armés de 2025.',
+      source: https://en.wikipedia.org/wiki/Cambodia%E2%80%93Thailand_border_dispute,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: AFG,
+      b: PAK,
+      value: 35,
+      reverse: 30,
+      why: 'Ligne Durand contestée, soutien pakistanais aux talibans puis conflit armé frontalier de 2025-2026.',
+      source: https://en.wikipedia.org/wiki/Afghanistan%E2%80%93Pakistan_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IRQ,
+      b: USA,
+      value: 25,
+      reverse: 5,
+      why: "Invasion de 2003 et occupation jusqu'en 2011.",
+      source: https://en.wikipedia.org/wiki/Iraq_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: GBR,
+      value: 20,
+      reverse: 0,
+      why: "Guerres de l'opium (1839-1860), « siècle d'humiliation ».",
+      source: https://en.wikipedia.org/wiki/Century_of_humiliation,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: TWN,
+      value: 30,
+      reverse: 40,
+      why: 'Guerre civile chinoise inachevée (1945-1949), crises du détroit ; pressions militaires croissantes depuis 2022.',
+      source: https://en.wikipedia.org/wiki/Cross-Strait_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: GBR,
+      value: 15,
+      reverse: 0,
+      why: 'Colonisation britannique (1858-1947), famines du Bengale.',
+      source: https://en.wikipedia.org/wiki/British_Raj,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: NAM,
+      b: DEU,
+      value: 20,
+      reverse: 0,
+      why: 'Génocide des Herero et des Nama (1904-1908), reconnu par l’Allemagne en 2021.',
+      source: https://en.wikipedia.org/wiki/Herero_and_Nama_genocide,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SSD,
+      b: SDN,
+      value: 40,
+      reverse: 20,
+      why: 'Deux guerres civiles (1955-1972, 1983-2005) avant l’indépendance de 2011 ; différend sur Abyei.',
+      source: https://en.wikipedia.org/wiki/Second_Sudanese_Civil_War,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: RWA,
+      b: COD,
+      value: 30,
+      reverse: 55,
+      why: 'Guerres du Congo (1996-2003) et soutien rwandais au M23 ; présence des FDLR dans l’Est congolais.',
+      source: https://en.wikipedia.org/wiki/Democratic_Republic_of_the_Congo%E2%80%93Rwanda_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: HUN,
+      b: ROU,
+      value: 15,
+      reverse: 10,
+      why: 'Traité de Trianon (1920) et minorité hongroise de Transylvanie.',
+      source: https://en.wikipedia.org/wiki/Treaty_of_Trianon,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+proximity:
+  - {
+      a: USA,
+      b: GBR,
+      value: 80,
+      why: 'Langue anglaise, institutions et histoire communes.',
+      source: https://en.wikipedia.org/wiki/Anglosphere,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: CAN,
+      value: 85,
+      why: 'Langue, culture et économie profondément intégrées.',
+      source: https://en.wikipedia.org/wiki/Canada%E2%80%93United_States_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: AUS,
+      value: 70,
+      why: 'Langue anglaise, héritage britannique commun.',
+      source: https://en.wikipedia.org/wiki/Anglosphere,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: NZL,
+      value: 65,
+      why: 'Langue anglaise, héritage britannique commun.',
+      source: https://en.wikipedia.org/wiki/Anglosphere,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: IRL,
+      value: 60,
+      why: 'Langue anglaise et importante diaspora irlandaise.',
+      source: https://en.wikipedia.org/wiki/Irish_Americans,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: MEX,
+      value: 45,
+      why: 'Voisinage, diaspora mexicaine (≈ 37 millions de personnes d’origine mexicaine).',
+      source: https://en.wikipedia.org/wiki/Mexican_Americans,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: ISR,
+      value: 45,
+      why: 'Liens religieux et diaspora juive américaine.',
+      source: https://en.wikipedia.org/wiki/Israel%E2%80%93United_States_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: PHL,
+      value: 45,
+      why: 'Ancienne colonie américaine (1898-1946), anglais langue officielle.',
+      source: https://en.wikipedia.org/wiki/Philippines%E2%80%93United_States_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: GBR,
+      b: CAN,
+      value: 75,
+      why: 'Langue anglaise, Commonwealth, même souverain.',
+      source: https://en.wikipedia.org/wiki/Commonwealth_realm,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: GBR,
+      b: AUS,
+      value: 80,
+      why: 'Langue anglaise, Commonwealth, même souverain.',
+      source: https://en.wikipedia.org/wiki/Commonwealth_realm,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: GBR,
+      b: NZL,
+      value: 80,
+      why: 'Langue anglaise, Commonwealth, même souverain.',
+      source: https://en.wikipedia.org/wiki/Commonwealth_realm,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: GBR,
+      b: IRL,
+      value: 65,
+      why: 'Langue et histoire communes, zone de voyage commune.',
+      source: https://en.wikipedia.org/wiki/Common_Travel_Area,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: GBR,
+      b: IND,
+      value: 35,
+      why: 'Anglais, Commonwealth, diaspora indienne au Royaume-Uni.',
+      source: https://en.wikipedia.org/wiki/British_Indians,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: AUS,
+      b: NZL,
+      value: 90,
+      why: 'Langue, histoire et institutions communes, libre circulation (accord trans-tasman).',
+      source: https://en.wikipedia.org/wiki/Trans-Tasman_Travel_Arrangement,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CAN,
+      b: FRA,
+      value: 45,
+      why: 'Francophonie (Québec).',
+      source: https://en.wikipedia.org/wiki/Organisation_internationale_de_la_Francophonie,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: BEL,
+      value: 75,
+      why: 'Langue française partagée, voisinage.',
+      source: https://en.wikipedia.org/wiki/Organisation_internationale_de_la_Francophonie,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: CHE,
+      value: 65,
+      why: 'Langue française partagée (Suisse romande), voisinage.',
+      source: https://en.wikipedia.org/wiki/Organisation_internationale_de_la_Francophonie,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: LUX,
+      value: 65,
+      why: 'Langue française partagée, voisinage.',
+      source: https://en.wikipedia.org/wiki/Organisation_internationale_de_la_Francophonie,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: DEU,
+      value: 45,
+      why: 'Voisinage et intégration européenne, langues distinctes.',
+      source: https://en.wikipedia.org/wiki/France%E2%80%93Germany_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: ITA,
+      value: 55,
+      why: 'Langues romanes, culture latine et catholique.',
+      source: https://en.wikipedia.org/wiki/Romance_languages,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: ESP,
+      value: 55,
+      why: 'Langues romanes, culture latine et catholique.',
+      source: https://en.wikipedia.org/wiki/Romance_languages,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: DZA,
+      value: 40,
+      why: 'Français répandu, importante diaspora algérienne en France.',
+      source: https://en.wikipedia.org/wiki/Algerians_in_France,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: MAR,
+      value: 45,
+      why: 'Français répandu, importante diaspora marocaine en France.',
+      source: https://en.wikipedia.org/wiki/Moroccans_in_France,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: TUN,
+      value: 45,
+      why: 'Français répandu, diaspora tunisienne en France.',
+      source: https://en.wikipedia.org/wiki/Organisation_internationale_de_la_Francophonie,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: SEN,
+      value: 45,
+      why: 'Français langue officielle, liens historiques.',
+      source: https://en.wikipedia.org/wiki/Organisation_internationale_de_la_Francophonie,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: CIV,
+      value: 45,
+      why: 'Français langue officielle, liens historiques.',
+      source: https://en.wikipedia.org/wiki/Organisation_internationale_de_la_Francophonie,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: DEU,
+      b: AUT,
+      value: 90,
+      why: 'Langue allemande, histoire et culture communes.',
+      source: https://en.wikipedia.org/wiki/German-speaking_Europe,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: DEU,
+      b: CHE,
+      value: 70,
+      why: 'Langue allemande majoritaire en Suisse.',
+      source: https://en.wikipedia.org/wiki/German-speaking_Europe,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: DEU,
+      b: LUX,
+      value: 60,
+      why: 'Langue et culture proches, voisinage.',
+      source: https://en.wikipedia.org/wiki/German-speaking_Europe,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: DEU,
+      b: NLD,
+      value: 55,
+      why: 'Langues germaniques proches, voisinage.',
+      source: https://en.wikipedia.org/wiki/Germanic_languages,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: DEU,
+      b: TUR,
+      value: 25,
+      why: 'Diaspora turque en Allemagne (≈ 3 millions).',
+      source: https://en.wikipedia.org/wiki/Turks_in_Germany,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: BEL,
+      b: NLD,
+      value: 70,
+      why: 'Néerlandais partagé (Flandre), voisinage.',
+      source: https://en.wikipedia.org/wiki/Dutch_language,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ESP,
+      b: PRT,
+      value: 65,
+      why: 'Péninsule ibérique, langues romanes proches.',
+      source: https://en.wikipedia.org/wiki/Iberian_Peninsula,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ESP,
+      b: MEX,
+      value: 60,
+      why: 'Langue espagnole, héritage colonial et catholique.',
+      source: https://en.wikipedia.org/wiki/Hispanophone,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ESP,
+      b: ARG,
+      value: 60,
+      why: 'Langue espagnole, forte immigration espagnole.',
+      source: https://en.wikipedia.org/wiki/Hispanophone,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ESP,
+      b: COL,
+      value: 60,
+      why: 'Langue espagnole, héritage colonial et catholique.',
+      source: https://en.wikipedia.org/wiki/Hispanophone,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ESP,
+      b: PER,
+      value: 55,
+      why: 'Langue espagnole, héritage colonial et catholique.',
+      source: https://en.wikipedia.org/wiki/Hispanophone,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ESP,
+      b: CHL,
+      value: 55,
+      why: 'Langue espagnole, héritage colonial et catholique.',
+      source: https://en.wikipedia.org/wiki/Hispanophone,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ESP,
+      b: VEN,
+      value: 55,
+      why: 'Langue espagnole, diaspora vénézuélienne en Espagne.',
+      source: https://en.wikipedia.org/wiki/Hispanophone,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ESP,
+      b: CUB,
+      value: 55,
+      why: 'Langue espagnole, liens historiques.',
+      source: https://en.wikipedia.org/wiki/Hispanophone,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: PRT,
+      b: BRA,
+      value: 75,
+      why: 'Langue portugaise, héritage colonial commun.',
+      source: https://en.wikipedia.org/wiki/Community_of_Portuguese_Language_Countries,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: PRT,
+      b: AGO,
+      value: 55,
+      why: 'Langue portugaise (CPLP).',
+      source: https://en.wikipedia.org/wiki/Community_of_Portuguese_Language_Countries,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: PRT,
+      b: MOZ,
+      value: 55,
+      why: 'Langue portugaise (CPLP).',
+      source: https://en.wikipedia.org/wiki/Community_of_Portuguese_Language_Countries,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: BRA,
+      b: AGO,
+      value: 40,
+      why: 'Langue portugaise (CPLP), liens atlantiques.',
+      source: https://en.wikipedia.org/wiki/Community_of_Portuguese_Language_Countries,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ARG,
+      b: URY,
+      value: 85,
+      why: 'Culture rioplatense commune.',
+      source: https://en.wikipedia.org/wiki/Rioplatense_Spanish,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ITA,
+      b: ARG,
+      value: 45,
+      why: 'Immigration italienne massive en Argentine.',
+      source: https://en.wikipedia.org/wiki/Italian_Argentines,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: BLR,
+      value: 85,
+      why: 'Langue russe dominante, histoire commune, État de l’Union.',
+      source: https://en.wikipedia.org/wiki/Union_State,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: UKR,
+      value: 55,
+      why: 'Langues slaves orientales, histoire commune, russophonie répandue (malgré la guerre).',
+      source: https://en.wikipedia.org/wiki/East_Slavs,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: KAZ,
+      value: 55,
+      why: 'Russe langue officielle, importante minorité russe.',
+      source: https://en.wikipedia.org/wiki/Russians_in_Kazakhstan,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: KGZ,
+      value: 50,
+      why: 'Russe langue officielle, migrations de travail.',
+      source: https://en.wikipedia.org/wiki/Russian_language_in_Kyrgyzstan,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: SRB,
+      value: 50,
+      why: 'Monde slave et orthodoxe.',
+      source: https://en.wikipedia.org/wiki/Russia%E2%80%93Serbia_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: ARM,
+      value: 40,
+      why: 'Christianisme oriental, diaspora arménienne en Russie.',
+      source: https://en.wikipedia.org/wiki/Armenians_in_Russia,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: MDA,
+      value: 35,
+      why: 'Russophonie répandue, histoire soviétique commune.',
+      source: https://en.wikipedia.org/wiki/Russian_language_in_Moldova,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: UKR,
+      b: POL,
+      value: 50,
+      why: 'Langues slaves, histoire commune, ≈ 1,5 million d’Ukrainiens en Pologne.',
+      source: https://en.wikipedia.org/wiki/Ukrainians_in_Poland,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: TWN,
+      value: 85,
+      why: 'Langue chinoise, culture han commune.',
+      source: https://en.wikipedia.org/wiki/Cross-Strait_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: SGP,
+      value: 50,
+      why: 'Majorité de culture chinoise à Singapour.',
+      source: https://en.wikipedia.org/wiki/Chinese_Singaporeans,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: JPN,
+      value: 30,
+      why: 'Écriture et héritage confucéen partiellement communs.',
+      source: https://en.wikipedia.org/wiki/East_Asian_cultural_sphere,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: KOR,
+      value: 30,
+      why: 'Héritage confucéen, sphère culturelle est-asiatique.',
+      source: https://en.wikipedia.org/wiki/East_Asian_cultural_sphere,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: VNM,
+      value: 40,
+      why: 'Héritage confucéen, systèmes politiques communistes.',
+      source: https://en.wikipedia.org/wiki/East_Asian_cultural_sphere,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: JPN,
+      b: KOR,
+      value: 35,
+      why: 'Sphère culturelle est-asiatique, échanges culturels intenses.',
+      source: https://en.wikipedia.org/wiki/East_Asian_cultural_sphere,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: KOR,
+      b: PRK,
+      value: 85,
+      why: 'Même langue et même histoire jusqu’en 1945.',
+      source: https://en.wikipedia.org/wiki/Korean_reunification,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: NPL,
+      value: 70,
+      why: 'Hindouisme, frontière ouverte, langues proches.',
+      source: https://en.wikipedia.org/wiki/India%E2%80%93Nepal_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: BGD,
+      value: 50,
+      why: 'Langue bengalie partagée (Bengale-Occidental), histoire commune.',
+      source: https://en.wikipedia.org/wiki/Bengal,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: PAK,
+      value: 45,
+      why: 'Histoire, langues (hindi-ourdou) et cultures communes avant 1947.',
+      source: https://en.wikipedia.org/wiki/Hindustani_language,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: LKA,
+      value: 40,
+      why: 'Minorité tamoule, liens religieux (bouddhisme, hindouisme).',
+      source: https://en.wikipedia.org/wiki/India%E2%80%93Sri_Lanka_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: BTN,
+      value: 55,
+      why: 'Liens culturels himalayens, relation spéciale (traité de 2007).',
+      source: https://en.wikipedia.org/wiki/Bhutan%E2%80%93India_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: PAK,
+      b: AFG,
+      value: 45,
+      why: 'Pachtounes de part et d’autre de la ligne Durand, islam sunnite.',
+      source: https://en.wikipedia.org/wiki/Pashtuns,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: ARE,
+      value: 75,
+      why: 'Péninsule arabique, langue arabe, monarchies du Golfe.',
+      source: https://en.wikipedia.org/wiki/Arab_states_of_the_Persian_Gulf,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: KWT,
+      value: 75,
+      why: 'Péninsule arabique, langue arabe, monarchies du Golfe.',
+      source: https://en.wikipedia.org/wiki/Arab_states_of_the_Persian_Gulf,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: BHR,
+      value: 75,
+      why: 'Péninsule arabique, langue arabe, monarchies du Golfe.',
+      source: https://en.wikipedia.org/wiki/Arab_states_of_the_Persian_Gulf,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: QAT,
+      value: 65,
+      why: 'Péninsule arabique, langue arabe, monarchies du Golfe (blocus de 2017-2021).',
+      source: https://en.wikipedia.org/wiki/Arab_states_of_the_Persian_Gulf,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: OMN,
+      value: 65,
+      why: 'Péninsule arabique, langue arabe, monarchies du Golfe.',
+      source: https://en.wikipedia.org/wiki/Arab_states_of_the_Persian_Gulf,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ARE,
+      b: KWT,
+      value: 70,
+      why: 'Péninsule arabique, langue arabe, monarchies du Golfe.',
+      source: https://en.wikipedia.org/wiki/Arab_states_of_the_Persian_Gulf,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ARE,
+      b: QAT,
+      value: 65,
+      why: 'Péninsule arabique, langue arabe, monarchies du Golfe.',
+      source: https://en.wikipedia.org/wiki/Arab_states_of_the_Persian_Gulf,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: EGY,
+      b: SAU,
+      value: 50,
+      why: 'Langue arabe, islam sunnite, diaspora égyptienne dans le Golfe.',
+      source: https://en.wikipedia.org/wiki/Arab_world,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: EGY,
+      b: JOR,
+      value: 55,
+      why: 'Langue arabe, islam sunnite, voisinage.',
+      source: https://en.wikipedia.org/wiki/Arab_world,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: EGY,
+      b: SDN,
+      value: 55,
+      why: 'Vallée du Nil, langue arabe, histoire commune (condominium).',
+      source: https://en.wikipedia.org/wiki/Egypt%E2%80%93Sudan_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: EGY,
+      b: LBY,
+      value: 50,
+      why: 'Langue arabe, voisinage, tribus transfrontalières.',
+      source: https://en.wikipedia.org/wiki/Arab_world,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SYR,
+      b: LBN,
+      value: 70,
+      why: 'Levant, langue arabe, histoire commune.',
+      source: https://en.wikipedia.org/wiki/Levant,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SYR,
+      b: IRQ,
+      value: 50,
+      why: 'Langue arabe, tribus transfrontalières.',
+      source: https://en.wikipedia.org/wiki/Arab_world,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: JOR,
+      b: PSE,
+      value: 70,
+      why: 'Majorité d’origine palestinienne en Jordanie.',
+      source: https://en.wikipedia.org/wiki/Palestinians_in_Jordan,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: DZA,
+      b: MAR,
+      value: 60,
+      why: 'Maghreb, langues arabe et amazighe, islam sunnite.',
+      source: https://en.wikipedia.org/wiki/Maghreb,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: DZA,
+      b: TUN,
+      value: 65,
+      why: 'Maghreb, langues arabe et amazighe, islam sunnite.',
+      source: https://en.wikipedia.org/wiki/Maghreb,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: MAR,
+      b: TUN,
+      value: 55,
+      why: 'Maghreb, langues arabe et amazighe, islam sunnite.',
+      source: https://en.wikipedia.org/wiki/Maghreb,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: IRQ,
+      value: 45,
+      why: 'Majorité chiite en Irak, lieux saints partagés.',
+      source: https://en.wikipedia.org/wiki/Iran%E2%80%93Iraq_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: AFG,
+      value: 45,
+      why: 'Persan (dari), culture persane commune.',
+      source: https://en.wikipedia.org/wiki/Persianate_society,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: TJK,
+      value: 50,
+      why: 'Langue persane (tadjik), culture commune.',
+      source: https://en.wikipedia.org/wiki/Persianate_society,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: TUR,
+      b: AZE,
+      value: 85,
+      why: 'Langues turciques très proches (« une nation, deux États »).',
+      source: https://en.wikipedia.org/wiki/Azerbaijan%E2%80%93Turkey_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: TUR,
+      b: CYN,
+      value: 90,
+      why: 'Chypriotes turcs, lien direct avec la Turquie.',
+      source: https://en.wikipedia.org/wiki/Northern_Cyprus,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: TUR,
+      b: TKM,
+      value: 50,
+      why: 'Langues turciques, Organisation des États turciques.',
+      source: https://en.wikipedia.org/wiki/Organization_of_Turkic_States,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: TUR,
+      b: UZB,
+      value: 45,
+      why: 'Langues turciques, Organisation des États turciques.',
+      source: https://en.wikipedia.org/wiki/Organization_of_Turkic_States,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: TUR,
+      b: KAZ,
+      value: 45,
+      why: 'Langues turciques, Organisation des États turciques.',
+      source: https://en.wikipedia.org/wiki/Organization_of_Turkic_States,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: TUR,
+      b: KGZ,
+      value: 45,
+      why: 'Langues turciques, Organisation des États turciques.',
+      source: https://en.wikipedia.org/wiki/Organization_of_Turkic_States,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: GRC,
+      b: CYP,
+      value: 90,
+      why: 'Langue grecque et orthodoxie.',
+      source: https://en.wikipedia.org/wiki/Greek_Cypriots,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SRB,
+      b: MNE,
+      value: 80,
+      why: 'Langue et orthodoxie communes, État commun jusqu’en 2006.',
+      source: https://en.wikipedia.org/wiki/Serbia_and_Montenegro,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SRB,
+      b: BIH,
+      value: 50,
+      why: 'Serbes de Bosnie (Republika Srpska), langues mutuellement intelligibles.',
+      source: https://en.wikipedia.org/wiki/Serbs_of_Bosnia_and_Herzegovina,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: HRV,
+      b: BIH,
+      value: 50,
+      why: 'Croates de Bosnie, langues mutuellement intelligibles.',
+      source: https://en.wikipedia.org/wiki/Croats_of_Bosnia_and_Herzegovina,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ALB,
+      b: XKX,
+      value: 90,
+      why: 'Majorité albanaise au Kosovo.',
+      source: https://en.wikipedia.org/wiki/Albanians_in_Kosovo,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ALB,
+      b: MKD,
+      value: 40,
+      why: 'Minorité albanaise (≈ 25 %) en Macédoine du Nord.',
+      source: https://en.wikipedia.org/wiki/Albanians_in_North_Macedonia,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: CZE,
+      b: SVK,
+      value: 85,
+      why: 'Langues très proches, État commun jusqu’en 1993.',
+      source: https://en.wikipedia.org/wiki/Czechoslovakia,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SWE,
+      b: NOR,
+      value: 85,
+      why: 'Langues scandinaves mutuellement intelligibles, modèle nordique.',
+      source: https://en.wikipedia.org/wiki/Nordic_countries,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SWE,
+      b: DNK,
+      value: 80,
+      why: 'Langues scandinaves, modèle nordique.',
+      source: https://en.wikipedia.org/wiki/Nordic_countries,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: NOR,
+      b: DNK,
+      value: 85,
+      why: 'Langues scandinaves, union historique (1380-1814).',
+      source: https://en.wikipedia.org/wiki/Nordic_countries,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SWE,
+      b: FIN,
+      value: 75,
+      why: 'Minorité suédophone, union historique jusqu’en 1809.',
+      source: https://en.wikipedia.org/wiki/Nordic_countries,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: NOR,
+      b: ISL,
+      value: 75,
+      why: 'Langues nordiques, modèle nordique.',
+      source: https://en.wikipedia.org/wiki/Nordic_countries,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: FIN,
+      b: EST,
+      value: 70,
+      why: 'Langues finno-ougriennes proches.',
+      source: https://en.wikipedia.org/wiki/Finnic_languages,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ROU,
+      b: MDA,
+      value: 85,
+      why: 'Même langue roumaine, histoire commune.',
+      source: https://en.wikipedia.org/wiki/Moldova%E2%80%93Romania_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: MYS,
+      b: IDN,
+      value: 70,
+      why: 'Langues malaises, islam.',
+      source: https://en.wikipedia.org/wiki/Malay_world,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: MYS,
+      b: BRN,
+      value: 75,
+      why: 'Langue malaise, islam.',
+      source: https://en.wikipedia.org/wiki/Malay_world,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: MYS,
+      b: SGP,
+      value: 55,
+      why: 'Histoire commune (fédération de 1963-1965), minorités chinoise et malaise.',
+      source: https://en.wikipedia.org/wiki/Malaysia%E2%80%93Singapore_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SOM,
+      b: SOL,
+      value: 85,
+      why: 'Même langue somalie et même clan-famille (Somalie britannique).',
+      source: https://en.wikipedia.org/wiki/Somaliland,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SDN,
+      b: SSD,
+      value: 35,
+      why: 'État commun jusqu’en 2011.',
+      source: https://en.wikipedia.org/wiki/South_Sudan,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ETH,
+      b: ERI,
+      value: 50,
+      why: 'Langues sémitiques (tigrinya), histoire commune jusqu’en 1993.',
+      source: https://en.wikipedia.org/wiki/Eritrea%E2%80%93Ethiopia_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ZAF,
+      b: LSO,
+      value: 60,
+      why: 'Enclave, langues sotho, économies intégrées (SACU).',
+      source: https://en.wikipedia.org/wiki/Southern_African_Customs_Union,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ZAF,
+      b: SWZ,
+      value: 60,
+      why: 'Langue swazi, économies intégrées (SACU).',
+      source: https://en.wikipedia.org/wiki/Southern_African_Customs_Union,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ZAF,
+      b: BWA,
+      value: 50,
+      why: 'Langues tswana, économies intégrées (SACU).',
+      source: https://en.wikipedia.org/wiki/Southern_African_Customs_Union,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: ZAF,
+      b: NAM,
+      value: 50,
+      why: 'Administration sud-africaine jusqu’en 1990, SACU.',
+      source: https://en.wikipedia.org/wiki/Southern_African_Customs_Union,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: KEN,
+      b: TZA,
+      value: 60,
+      why: 'Swahili, Communauté d’Afrique de l’Est.',
+      source: https://en.wikipedia.org/wiki/East_African_Community,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: KEN,
+      b: UGA,
+      value: 55,
+      why: 'Swahili, Communauté d’Afrique de l’Est.',
+      source: https://en.wikipedia.org/wiki/East_African_Community,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: SEN,
+      b: GMB,
+      value: 80,
+      why: 'Wolof et mandingue, enclave gambienne (confédération de 1982-1989).',
+      source: https://en.wikipedia.org/wiki/Senegambia_Confederation,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: RWA,
+      b: BDI,
+      value: 65,
+      why: 'Langues kinyarwanda et kirundi très proches, mêmes groupes.',
+      source: https://en.wikipedia.org/wiki/Burundi%E2%80%93Rwanda_relations,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: MLI,
+      b: BFA,
+      value: 60,
+      why: 'Sahel, Alliance des États du Sahel, langues mandingues.',
+      source: https://en.wikipedia.org/wiki/Alliance_of_Sahel_States,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: MLI,
+      b: NER,
+      value: 55,
+      why: 'Sahel, Alliance des États du Sahel.',
+      source: https://en.wikipedia.org/wiki/Alliance_of_Sahel_States,
+      date: '2026-09-26',
+      confidence: assumption,
+    }
+  - {
+      a: BFA,
+      b: NER,
+      value: 55,
+      why: 'Sahel, Alliance des États du Sahel.',
+      source: https://en.wikipedia.org/wiki/Alliance_of_Sahel_States,
+      date: '2026-09-26',
+      confidence: assumption,
+    }

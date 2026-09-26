@@ -6,14 +6,18 @@
  */
 import {
   CATALOG,
+  REGIME_TYPES,
   type Confidence,
   type CountriesBase,
   type CountryRecord,
   type MapGeo,
   type MapMeta,
+  type MapRoutes,
   type PairParam,
   type PairProvenance,
+  type PairRoutes,
   type PairsBase,
+  type ProfileDefaults,
 } from '@geosim/shared';
 import type { ChokepointDef } from '../map/routing.ts';
 import type { ParamValue } from './curated.ts';
@@ -128,7 +132,41 @@ export function expandCodes(ctx: Ctx, codes: readonly string[]): string[] {
   return [...new Set(out)];
 }
 
-export function pairsBase(ctx: Ctx, geo: MapGeo, routes: Map<string, number>): PairsBase {
+/**
+ * Routes maritimes compactes pour le moteur : longueur et détroits (masque de bits sur
+ * `chokepointIds`) de la route principale et de l'alternative de chaque paire non orientée.
+ */
+export function compactRoutes(file: MapRoutes, chokepointIds: readonly string[]): PairRoutes {
+  if (chokepointIds.length > 30) throw new Error('Routes : plus de 30 détroits (masque 32 bits)');
+  const bit = new Map(chokepointIds.map((id, k) => [id, 1 << k]));
+  const mask = (straits: readonly string[], where: string): number => {
+    let m = 0;
+    for (const s of straits) {
+      const b = bit.get(s);
+      if (b === undefined) throw new Error(`Routes ${where} : détroit inconnu « ${s} »`);
+      m |= b;
+    }
+    return m;
+  };
+  return {
+    chokepoints: [...chokepointIds],
+    entries: file.routes.map((r) => [
+      r.a,
+      r.b,
+      Math.round(r.primary.km),
+      mask(r.primary.straits, `${r.a}-${r.b}`),
+      r.alternative ? Math.round(r.alternative.km) : -1,
+      r.alternative ? mask(r.alternative.straits, `${r.a}-${r.b}`) : 0,
+    ]),
+  };
+}
+
+export function pairsBase(
+  ctx: Ctx,
+  geo: MapGeo,
+  routes: Map<string, number>,
+  routeTable?: PairRoutes,
+): PairsBase {
   const ids = new Set(ctx.entities.map((e) => e.id));
   const cur = (
     file: string,
@@ -380,27 +418,41 @@ export function pairsBase(ctx: Ctx, geo: MapGeo, routes: Map<string, number>): P
   }
   params['pair.distance'] = distance.param;
 
+  // Griefs historiques (orientés) et proximité culturelle (symétrique) des paires clés.
+  const grievance = new PairBuilder(
+    'indice',
+    0,
+    'aucun grief historique recensé (pair_ties.yaml : paires clés seulement)',
+  );
+  for (const t of ctx.topics.ties.grievances) {
+    const p = { ...cur('pair_ties.yaml', t), note: t.why };
+    grievance.add(t.a, t.b, t.value, p);
+    if (t.reverse !== undefined && t.reverse > 0) grievance.add(t.b, t.a, t.reverse, p);
+  }
+  params['pair.historical_grievance'] = grievance.param;
+  const proximity = new PairBuilder(
+    'indice',
+    null,
+    'paire non curée : proximité par défaut du moteur (même région de la Banque mondiale : coefficient diplomacy.affinity.same_region_proximity ; sinon 0)',
+  );
+  for (const t of ctx.topics.ties.proximity) {
+    const p = { ...cur('pair_ties.yaml', t), note: t.why };
+    proximity.add(t.a, t.b, t.value, p);
+    proximity.add(t.b, t.a, t.value, p);
+  }
+  params['pair.cultural_proximity'] = proximity.param;
+
   // Paramètres sans données bilatérales à ce stade : lacunes documentées (listées dans le rapport).
   const gaps: [string, string, string][] = [
     [
       'pair.financial_exposure',
       'Md$',
-      'lacune : dette détenue, investissements et réserves déposées par paire à intégrer (phase 4)',
-    ],
-    [
-      'pair.historical_grievance',
-      'indice',
-      'lacune : griefs historiques des paires clés à curer (phase 4)',
-    ],
-    [
-      'pair.cultural_proximity',
-      'indice',
-      'lacune : langues, religions et histoire communes à intégrer (phase 4)',
+      'lacune : pas de source ouverte des avoirs bilatéraux accessible (FMI CPIS/CDIS bloqués) ; le gel des réserves par les sanctions est approché par les monnaies de réserve des émetteurs (MODELES §10)',
     ],
     [
       'pair.kin_minority',
       '% de la population de j',
-      'lacune : minorités apparentées à curer (phase 4)',
+      'lacune : minorités apparentées à curer avec l’IA des pays (phase 7, irrédentisme)',
     ],
     [
       'pair.arms_transfers',
@@ -413,7 +465,13 @@ export function pairsBase(ctx: Ctx, geo: MapGeo, routes: Map<string, number>): P
   const runtimeParams = CATALOG.filter((d) => d.scope === 'pair' && !(d.id in params)).map(
     (d) => d.id,
   );
-  return { version: 1, buildDate: ctx.buildDate, runtimeParams, params };
+  return {
+    version: 1,
+    buildDate: ctx.buildDate,
+    runtimeParams,
+    params,
+    ...(routeTable ? { routes: routeTable } : {}),
+  };
 }
 
 // ——— Monde et zones ———
@@ -443,6 +501,37 @@ export interface WorldBase {
     separatism: GeoZone[];
     fortifications: GeoZone[];
     claims: GeoZone[];
+  };
+  profileDefaults: ProfileDefaults;
+}
+
+/**
+ * Profils décisionnels par défaut (defaults.yaml) par type de régime et pour les factions : le
+ * moteur les applique quand un gouvernement change sans profil curé (coup d'État, révolution).
+ */
+export function profileDefaults(ctx: Ctx): ProfileDefaults {
+  const ids = CATALOG.filter((d) => d.category === 'profil' && d.valueType === 'number').map(
+    (d) => d.id,
+  );
+  const pick = (id: string, regime: string | null, kind: string | null): number => {
+    const rule = ctx.defaults.rules.get(id);
+    if (rule === undefined) throw new Error(`defaults.yaml : règle absente pour ${id}`);
+    const v =
+      (kind !== null ? rule.byKind?.[kind] : undefined) ??
+      (regime !== null ? rule.byRegime?.[regime] : undefined) ??
+      rule.value;
+    if (typeof v !== 'number') throw new Error(`defaults.yaml › ${id} : valeur numérique attendue`);
+    return v;
+  };
+  const byRegime: Record<string, Record<string, number>> = {};
+  for (const regime of REGIME_TYPES) {
+    byRegime[regime] = Object.fromEntries(ids.map((id) => [id, pick(id, regime, null)]));
+  }
+  return {
+    source: 'HYP:defaults.yaml',
+    date: ctx.defaults.date,
+    byRegime,
+    faction: Object.fromEntries(ids.map((id) => [id, pick(id, null, 'faction')])),
   };
 }
 
@@ -522,5 +611,6 @@ export function worldBase(
       status: c.status,
     })),
     zones: { control: meta.controlZones, ...geoZones },
+    profileDefaults: profileDefaults(ctx),
   };
 }

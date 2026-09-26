@@ -31,6 +31,12 @@ export const ENUM_LABELS: Readonly<Record<string, Readonly<Record<string, string
     theocracy: 'Théocratie',
     absolute_monarchy: 'Monarchie absolue',
   },
+  'pol.unrest': {
+    calm: 'Calme',
+    protests: 'Manifestations',
+    crisis: 'Crise politique',
+    uprising: 'Soulèvement',
+  },
   'dip.unsc_seat': { permanent: 'Membre permanent', elected: 'Membre élu', none: 'Aucun' },
   'ai.controller': { ai: 'IA', player: 'Joueur', llm: 'Modèle de langage' },
   'pair.treaty': {

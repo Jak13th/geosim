@@ -288,6 +288,108 @@ demography:
       range: [0.3, 1]
       unit: ''
       description: 'Part des 18–49 ans aptes au service (hommes et femmes), pour le réservoir mobilisable.'
+  famine:
+    stress_threshold:
+      value: 15
+      range: [0, 100]
+      unit: 'points'
+      description: 'Tension alimentaire au-delà de laquelle la famine augmente la mortalité (pays pauvres).'
+    income_threshold:
+      value: 4000
+      range: [100, 50000]
+      unit: '$'
+      description: 'PIB par habitant (dollars du départ) au-delà duquel la famine ne tue plus : surmortalité × (1 − PIB par habitant / seuil).'
+    mortality:
+      value: 0.05
+      range: [0, 2]
+      unit: '‰/an par point'
+      description: 'Surmortalité par point de tension alimentaire au-delà du seuil (pays les plus pauvres).'
+    event_threshold:
+      value: 0.5
+      range: [0.01, 20]
+      unit: '‰/an'
+      description: 'Surmortalité à partir de laquelle une famine est consignée au journal.'
+  refugees:
+    insurgency_weight:
+      value: 1
+      range: [0, 5]
+      unit: ''
+      description: "Poids de l'insurrection (0-1) dans la pression de départ."
+    war_weight:
+      value: 1
+      range: [0, 5]
+      unit: ''
+      description: "Poids de l'exposition à une guerre terrestre (0-1) dans la pression de départ."
+    famine_weight:
+      value: 0.1
+      range: [0, 5]
+      unit: 'par ‰/an'
+      description: 'Poids de la surmortalité de famine dans la pression de départ.'
+    collapse_weight:
+      value: 0.1
+      range: [0, 5]
+      unit: ''
+      description: "Poids de l'effondrement de l'État (stabilité sous le seuil) dans la pression de départ."
+    collapse_threshold:
+      value: 10
+      range: [1, 100]
+      unit: 'indice'
+      description: "Stabilité sous laquelle l'effondrement de l'État pousse au départ."
+    displacement:
+      value: 0.2
+      range: [0, 1]
+      unit: ''
+      description: 'Nouveaux réfugiés visés par unité de pression de départ au-delà du départ, en part de la population.'
+    outflow_months:
+      value: 4
+      range: [1, 60]
+      unit: 'mois'
+      description: 'Délai des départs vers le stock visé.'
+    return_months:
+      value: 24
+      range: [1, 240]
+      unit: 'mois'
+      description: 'Délai des retours quand la pression retombe.'
+    distance_km:
+      value: 1000
+      range: [100, 20000]
+      unit: 'km'
+      description: 'Distance sur laquelle l’attrait d’une destination non voisine est divisé par e.'
+    income_elasticity:
+      value: 0.25
+      range: [0, 3]
+      unit: ''
+      description: "Élasticité de l'attrait d'une destination au rapport des PIB par habitant (destination / origine)."
+    income_max_ratio:
+      value: 3
+      range: [1, 100]
+      unit: ''
+      description: "Borne de l'effet du revenu sur l'attrait d'une destination (entre 1/borne et borne)."
+    size_elasticity:
+      value: 1
+      range: [0.5, 2]
+      unit: ''
+      description: "Élasticité de l'attrait d'une destination à sa population (effet de masse des modèles de gravité). À 1, les réfugiés se répartissent au prorata de la population des pays d'accueil à attrait égal (charge par habitant neutre) ; en dessous, les petits pays reçoivent davantage par habitant."
+    max_monthly_outflow:
+      value: 0.2
+      range: [0.001, 1]
+      unit: '/mois'
+      description: 'Part maximale de la population qui peut partir en un mois (borne de sécurité).'
+    cost_share:
+      value: 0.3
+      range: [0, 3]
+      unit: 'PIB par habitant'
+      description: "Coût annuel d'accueil d'un réfugié supplémentaire, en PIB par habitant du pays d'accueil."
+    aid_share:
+      value: 0.3
+      range: [0, 1]
+      unit: ''
+      description: "Part du coût d'accueil couverte par l'aide internationale."
+    crisis_threshold:
+      value: 0.1
+      range: [0.001, 10]
+      unit: '% de la population'
+      description: 'Départs mensuels au-delà desquels une crise des réfugiés est consignée au journal.'
 economy:
   potential:
     frontier_growth:
@@ -381,6 +483,21 @@ economy:
       range: [0, 2]
       unit: '%/an par point de PIB'
       description: "Croissance supplémentaire par point de PIB d'investissement public en infrastructures au-delà du niveau initial."
+    insurgency_drag:
+      value: 4
+      range: [0, 20]
+      unit: '%/an par 100 points'
+      description: "Perte de croissance structurelle due à l'insurrection et à la guerre civile au-delà du départ."
+    food_importer:
+      value: 0.6
+      range: [0, 3]
+      unit: ''
+      description: "Effet sur l'écart de production (points) d'une hausse de 1 point de PIB de la facture céréalière d'un importateur net."
+    food_exporter:
+      value: 0.15
+      range: [0, 3]
+      unit: ''
+      description: "Effet sur l'écart de production d'un gain de 1 point de PIB des exportations céréalières nettes."
   cycle:
     persistence:
       value: 0.95
@@ -654,7 +771,215 @@ economy:
       range: [0, 40]
       unit: '% PIB'
       description: 'Ajustement budgétaire maximal (hausse ou baisse des dépenses).'
-trade: {}
+  sanctions:
+    financial_shock:
+      value: 3
+      range: [0, 20]
+      unit: 'points'
+      description: "Choc sur l'écart de production d'une pression financière de 1 sur une économie pleinement intégrée au système financier."
+    spread:
+      value: 3
+      range: [0, 20]
+      unit: 'points de %'
+      description: 'Prime de risque souveraine due à une pression financière de 1 (× intégration financière).'
+    tech_drag:
+      value: 1
+      range: [0, 5]
+      unit: '%/an'
+      description: "Perte de croissance potentielle par unité d'exposition aux contrôles technologiques (× dépendance en semi-conducteurs)."
+trade:
+  gravity:
+    exporter_gdp:
+      value: 1
+      range: [0, 2]
+      unit: ''
+      description: "Élasticité des échanges au PIB nominal de l'exportateur (modèle de gravité), par rapport au départ."
+    importer_gdp:
+      value: 1
+      range: [0, 2]
+      unit: ''
+      description: "Élasticité des échanges au PIB nominal de l'importateur (modèle de gravité) ; le PIB mondial normalise la somme."
+  routes:
+    land_share_neighbors:
+      value: 0.8
+      range: [0, 1]
+      unit: ''
+      description: 'Part des échanges entre pays voisins (frontière terrestre commune) qui passe par la terre (route, rail, oléoducs et gazoducs).'
+    land_share_connected:
+      value: 0.6
+      range: [0, 1]
+      unit: ''
+      description: 'Part terrestre maximale des échanges entre pays reliés par la terre sans être voisins, avant la décroissance avec la distance.'
+    land_decay_km:
+      value: 2500
+      range: [100, 20000]
+      unit: 'km'
+      description: 'Distance (entre capitales, par voie de terre) sur laquelle la part terrestre des échanges non voisins est divisée par e.'
+    detour_elasticity:
+      value: 0.5
+      range: [0, 3]
+      unit: ''
+      description: 'Élasticité du volume échangé au rapport des distances quand un flux se reporte sur la route de contournement : volume × (km principale / km alternative)^γ.'
+  chokepoints:
+    contested_capacity:
+      value: 50
+      range: [0, 100]
+      unit: '%'
+      description: "Capacité de passage d'un détroit qui devient contesté (un détroit déjà contesté au départ garde sa capacité de départ)."
+    closure_months:
+      value: 1
+      range: [1, 24]
+      unit: 'mois'
+      description: 'Délai de baisse de la capacité de passage vers la cible de son statut (fermeture : quasi immédiate).'
+    recovery_months:
+      value: 3
+      range: [1, 36]
+      unit: 'mois'
+      description: 'Délai de remontée de la capacité de passage après une réouverture (assurances, armateurs prudents).'
+  frictions:
+    tariff_elasticity:
+      value: 4
+      range: [0, 15]
+      unit: ''
+      description: 'Élasticité des échanges aux droits de douane : volume × (1 + droits)^(−ε) (élasticité commerciale de la littérature, ≈ 4-5).'
+    sanction_block_max:
+      value: 0.95
+      range: [0.5, 0.999]
+      unit: ''
+      description: "Part maximale d'un flux bilatéral bloquée par des sanctions (une part passe toujours : exemptions, contrebande)."
+    finance_block:
+      value: 0.3
+      range: [0, 1]
+      unit: ''
+      description: "Part d'un flux bloquée par un volet finance de sanctions d'intensité 1 (paiements, dollar, SWIFT), en plus des volets sur les produits."
+    transport_block:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Part de la partie maritime d'un flux bloquée par un volet transport d'intensité 1 (ports, assurances, flotte)."
+    manufactured_tech_share:
+      value: 0.3
+      range: [0, 1]
+      unit: ''
+      description: 'Part des produits manufacturés touchée par un volet technologique (biens à double usage, électronique).'
+    war_cut:
+      value: 0.95
+      range: [0, 0.999]
+      unit: ''
+      description: 'Part des échanges coupée entre deux pays en guerre.'
+    blockade_cut:
+      value: 0.9
+      range: [0, 0.999]
+      unit: ''
+      description: 'Part des échanges coupée entre deux pays en situation de blocus.'
+    crisis_cut:
+      value: 0.3
+      range: [0, 1]
+      unit: ''
+      description: 'Part des échanges coupée entre deux pays en crise.'
+    ceasefire_cut:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: 'Part des échanges coupée entre deux pays en cessez-le-feu.'
+    tension_cut:
+      value: 0.1
+      range: [0, 1]
+      unit: ''
+      description: 'Part des échanges coupée entre deux pays en tension.'
+    bloc_effect:
+      value: 0.5
+      range: [0, 2]
+      unit: ''
+      description: "Effet (en logarithme) d'un bloc commercial commun sur les échanges : adhérer multiplie les échanges avec les membres par e^b à long terme."
+    relation_effect:
+      value: 0.2
+      range: [0, 2]
+      unit: ''
+      description: 'Effet (en logarithme) des relations sur les échanges : une dégradation de 100 points divise les échanges par e^b.'
+    fragmentation_effect:
+      value: 0.5
+      range: [0, 3]
+      unit: ''
+      description: "Effet de la fragmentation mondiale (0-100) sur les échanges entre pays d'alignements opposés (AGNU)."
+    max_ratio:
+      value: 20
+      range: [1, 1000]
+      unit: ''
+      description: "Rapport maximal des échanges d'une paire à leur niveau de départ quand des frictions disparaissent (levée de sanctions)."
+  adjustment:
+    down_months:
+      value: 1.5
+      range: [1, 24]
+      unit: 'mois'
+      description: 'Délai de baisse des échanges vers leur niveau visé (sanctions, fermetures, guerres).'
+    up_months:
+      value: 6
+      range: [1, 60]
+      unit: 'mois'
+      description: 'Délai de remontée des échanges vers leur niveau visé (levée des obstacles).'
+  redirection:
+    divert:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Part des exportations perdues (droits de douane, blocs, relations) réorientée vers d'autres clients."
+    sender:
+      value: 0.6
+      range: [0, 1]
+      unit: ''
+      description: "Part des exportations perdues par un pays qui sanctionne (il cesse de vendre au pays visé) réorientée vers d'autres clients."
+    route_exporter:
+      value: 0.2
+      range: [0, 1]
+      unit: ''
+      description: "Part des exportations bloquées par un détroit réorientée vers des clients joignables par d'autres routes."
+    war:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Part des échanges perdus avec un ennemi réorientée vers d'autres partenaires."
+    importer_replace:
+      value: 0.7
+      range: [0, 1]
+      unit: ''
+      description: "Part des importations perdues (droits de douane, sanctions imposées, blocs, relations) remplacée par d'autres fournisseurs."
+    route_importer:
+      value: 0.6
+      range: [0, 1]
+      unit: ''
+      description: "Part des importations bloquées par un détroit remplacée par d'autres fournisseurs."
+    discount:
+      value: 0.15
+      range: [0, 0.9]
+      unit: ''
+      description: 'Décote des exportations réorientées (prix cassés, intermédiaires, flotte fantôme).'
+    replacement_premium:
+      value: 0.15
+      range: [0, 1]
+      unit: ''
+      description: 'Surcoût des importations de remplacement (fournisseurs plus chers ou plus lointains).'
+    war_energy:
+      value: 0.8
+      range: [0, 1]
+      unit: ''
+      description: "Part de l'énergie qu'un producteur ne peut plus vendre à un ennemi et qu'il écoule ailleurs (marché mondial)."
+  effects:
+    export_demand:
+      value: 0.6
+      range: [0, 3]
+      unit: ''
+      description: "Effet sur l'écart de production (points) d'une perte d'exportations hors énergie de 1 point de PIB."
+    acr_elasticity:
+      value: 5
+      range: [1, 20]
+      unit: ''
+      description: "Élasticité commerciale θ des gains à l'échange (Arkolakis, Costinot et Rodríguez-Clare, 2012) : niveau = (part domestique / part de départ)^(−1/θ)."
+    import_cost_passthrough:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Transmission aux prix à la consommation du surcoût des importations (droits de douane, remplacement), en points d'inflation par point de PIB."
 markets:
   oil:
     price_elasticity:
@@ -1036,8 +1361,781 @@ markets:
       range: [5, 8]
       unit: 'MWh/t'
       description: "Contenu énergétique d'une tonne de charbon thermique de référence (6 000 kcal/kg, Newcastle)."
-politics: {}
-diplomacy: {}
+  shortage:
+    replacement_months:
+      value: 2
+      range: [1, 24]
+      unit: 'mois'
+      description: "Délai de remplacement des importations d'énergie perdues par d'autres fournisseurs."
+    refill_months:
+      value: 12
+      range: [1, 60]
+      unit: 'mois'
+      description: 'Délai de reconstitution des stocks stratégiques après une pénurie.'
+    stock_release_share:
+      value: 1
+      range: [0, 1]
+      unit: ''
+      description: "Part du manque d'énergie que les stocks stratégiques peuvent couvrir chaque mois tant qu'il en reste."
+    war_cut:
+      value: 0.95
+      range: [0, 1]
+      unit: ''
+      description: "Part d'un flux d'énergie ou de produits critiques coupée par une guerre ou un blocus entre les deux pays."
+    gdp_elasticity:
+      value: 0.5
+      range: [0, 3]
+      unit: ''
+      description: "Effet sur l'écart de production (points) d'un point de pénurie d'énergie (part de la consommation rationnée)."
+    event_threshold:
+      value: 2
+      range: [0.1, 50]
+      unit: '%'
+      description: 'Pénurie (part de la consommation) à partir de laquelle elle est consignée au journal.'
+  food:
+    grain_per_capita:
+      value: 0.34
+      range: [0.1, 1]
+      unit: 't/habitant/an'
+      description: "Utilisation de céréales par habitant (FAO : ≈ 2,8 Gt pour 8,2 milliards d'habitants), pour la facture céréalière."
+    stress_base_weight:
+      value: 0.3
+      range: [0, 1]
+      unit: ''
+      description: 'Part de la hausse des prix alimentaires ressentie même par un pays autosuffisant (prix intérieurs liés aux cours mondiaux).'
+  critical:
+    replacement_months:
+      value: 6
+      range: [1, 60]
+      unit: 'mois'
+      description: 'Délai de remplacement des fournisseurs de produits critiques (puces, terres rares).'
+    chips_effect:
+      value: 0.15
+      range: [0, 2]
+      unit: ''
+      description: "Effet sur l'écart de production (points) d'une pénurie de puces de 1 % des importations, × part de l'industrie × dépendance."
+    rare_earths_effect:
+      value: 0.05
+      range: [0, 2]
+      unit: ''
+      description: "Effet sur l'écart de production (points) d'une pénurie de terres rares de 1 % des importations, × part de l'industrie."
+politics:
+  stability:
+    inertia:
+      value: 0.08
+      range: [0, 1]
+      unit: '/mois'
+      description: 'Part de l’écart à la stabilité visée comblée chaque mois.'
+    misery:
+      value: 0.4
+      range: [0, 5]
+      unit: 'points par point'
+      description: 'Baisse de la stabilité par point de misère (chômage + inflation amortie) au-delà du départ (a1).'
+    inflation_scale:
+      value: 10
+      range: [1, 100]
+      unit: '%'
+      description: "Échelle d'amortissement de l'inflation dans la misère : échelle × ln(1 + inflation / échelle)."
+    recession:
+      value: 1
+      range: [0, 10]
+      unit: 'points par point'
+      description: 'Baisse de la stabilité par point de récession (croissance négative) au-delà du départ (a2).'
+    food:
+      value: 0.4
+      range: [0, 5]
+      unit: 'points par point'
+      description: 'Baisse de la stabilité par point de tension alimentaire au-delà du départ (a3).'
+    energy_shortage:
+      value: 0.5
+      range: [0, 5]
+      unit: 'points par point'
+      description: "Baisse de la stabilité par point de pénurie d'énergie (rationnement)."
+    war_weariness:
+      value: 8
+      range: [0, 50]
+      unit: 'points'
+      description: 'Baisse maximale de la stabilité due à la lassitude de la guerre, pondérée par (1 − tolérance aux pertes) (a4).'
+    weariness_years:
+      value: 3
+      range: [0.1, 20]
+      unit: 'ans'
+      description: 'Durée de guerre au bout de laquelle la lassitude est maximale.'
+    rally:
+      value: 8
+      range: [0, 50]
+      unit: 'points'
+      description: 'Hausse de la stabilité au début d’une guerre (ralliement au drapeau), qui décroît ensuite (a7).'
+    rally_half_life_months:
+      value: 6
+      range: [1, 60]
+      unit: 'mois'
+      description: 'Demi-vie du ralliement au drapeau.'
+    inequality:
+      value: 0.3
+      range: [0, 5]
+      unit: 'points par point'
+      description: 'Baisse de la stabilité par point de Gini au-delà du départ (a5).'
+    corruption:
+      value: 0.15
+      range: [0, 5]
+      unit: 'points par point'
+      description: 'Baisse de la stabilité par point de corruption (100 − contrôle de la corruption) au-delà du départ (a6).'
+    information_control:
+      value: 0.1
+      range: [0, 5]
+      unit: 'points par point'
+      description: "Hausse de la stabilité par point de contrôle de l'information au-delà du départ (a8)."
+    repression:
+      value: 0.1
+      range: [0, 5]
+      unit: 'points par point'
+      description: 'Hausse de la stabilité par point de capacité répressive × (1 − démocratie électorale) au-delà du départ (a9).'
+    legitimacy:
+      value: 0.3
+      range: [0, 5]
+      unit: 'points par point'
+      description: 'Hausse de la stabilité par point de légitimité au-delà du départ (a10).'
+    fragmentation:
+      value: 20
+      range: [0, 100]
+      unit: 'points'
+      description: 'Baisse de la stabilité due à (1 − cohésion sociale) × intensité de l’insurrection, au-delà du départ (a11).'
+    interference:
+      value: 5
+      range: [0, 50]
+      unit: 'points'
+      description: "Baisse de la stabilité due à l'ingérence étrangère : vulnérabilité × hostilité d'une puissance capable d'influence (a12)."
+    sanctions_elites:
+      value: 10
+      range: [0, 100]
+      unit: 'points'
+      description: 'Baisse de la stabilité due aux sanctions visant les élites (pression 0-1 au-delà du départ).'
+    refugees:
+      value: 2
+      range: [0, 20]
+      unit: 'points par %'
+      description: "Baisse de la stabilité par point de population en réfugiés accueillis au-delà de la capacité d'absorption."
+    refugee_absorption:
+      value: 1
+      range: [0, 20]
+      unit: '% de la population'
+      description: 'Réfugiés accueillis sans tension pour une cohésion sociale de 50 (proportionnelle à la cohésion).'
+  approval:
+    inertia:
+      value: 0.15
+      range: [0, 1]
+      unit: '/mois'
+      description: "Part de l'écart à l'approbation visée comblée chaque mois."
+    growth:
+      value: 1
+      range: [0, 10]
+      unit: 'points par point'
+      description: "Hausse de l'approbation par point de croissance au-delà de la référence du gouvernement."
+    misery:
+      value: 0.8
+      range: [0, 10]
+      unit: 'points par point'
+      description: "Baisse de l'approbation par point de misère au-delà de la référence."
+    food:
+      value: 0.5
+      range: [0, 10]
+      unit: 'points par point'
+      description: "Baisse de l'approbation par point de tension alimentaire."
+    energy:
+      value: 0.8
+      range: [0, 10]
+      unit: 'points par point'
+      description: "Baisse de l'approbation par point de pénurie d'énergie."
+    rally:
+      value: 15
+      range: [0, 50]
+      unit: 'points'
+      description: "Effet de la guerre sur l'approbation : ralliement au début, lassitude ensuite."
+    wear:
+      value: 8
+      range: [0, 40]
+      unit: 'points'
+      description: "Usure du pouvoir maximale : l'approbation baisse de usure × (1 − e^(−ancienneté / durée)), qui sature avec l'ancienneté."
+    wear_years:
+      value: 3
+      range: [0.5, 20]
+      unit: 'ans'
+      description: "Durée caractéristique de l'usure du pouvoir : les deux tiers de l'usure maximale sont atteints après cette ancienneté."
+    honeymoon:
+      value: 8
+      range: [0, 40]
+      unit: 'points'
+      description: "État de grâce d'un nouveau gouvernement, qui s'estompe."
+    honeymoon_half_life_months:
+      value: 6
+      range: [1, 60]
+      unit: 'mois'
+      description: "Demi-vie de l'état de grâce."
+    new_government:
+      value: 50
+      range: [0, 100]
+      unit: '%'
+      description: "Approbation d'un nouveau gouvernement élu, hors état de grâce."
+  legitimacy:
+    inertia:
+      value: 0.05
+      range: [0, 1]
+      unit: '/mois'
+      description: "Part de l'écart à la légitimité visée comblée chaque mois."
+    approval:
+      value: 0.2
+      range: [0, 3]
+      unit: 'points par point'
+      description: "Variation de la légitimité par point d'approbation au-delà du départ."
+    initial_voice_weight:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Poids de la voix citoyenne (WGI) dans la légitimité de départ ; le reste va à l'efficacité de l'État (WGI)."
+  cohesion:
+    inertia:
+      value: 0.02
+      range: [0, 1]
+      unit: '/mois'
+      description: "Part de l'écart à la cohésion sociale visée comblée chaque mois."
+    refugees:
+      value: 3
+      range: [0, 50]
+      unit: 'points par %'
+      description: "Baisse de la cohésion par point de population en réfugiés au-delà de la capacité d'absorption."
+    insurgency:
+      value: 0.2
+      range: [0, 5]
+      unit: 'points par point'
+      description: "Baisse de la cohésion par point d'insurrection au-delà du départ."
+    initial_ethnic:
+      value: 0.35
+      range: [0, 1]
+      unit: ''
+      description: 'Baisse de la cohésion de départ par unité de fractionnement ethnique (0-1, Alesina) : cohésion = 100 × (1 − a·ethnique − b·religieux) − c·(Gini − seuil).'
+    initial_religious:
+      value: 0.25
+      range: [0, 1]
+      unit: ''
+      description: 'Baisse de la cohésion de départ par unité de fractionnement religieux (0-1).'
+    initial_gini:
+      value: 0.8
+      range: [0, 5]
+      unit: 'points par point'
+      description: 'Baisse de la cohésion de départ par point de Gini au-delà du seuil.'
+    initial_gini_threshold:
+      value: 30
+      range: [0, 100]
+      unit: 'points'
+      description: 'Gini au-delà duquel les inégalités réduisent la cohésion de départ.'
+  insurgency:
+    inertia:
+      value: 0.05
+      range: [0, 1]
+      unit: '/mois'
+      description: "Part de l'écart à l'insurrection visée comblée chaque mois."
+    stability_effect:
+      value: 1
+      range: [0, 10]
+      unit: 'points par point'
+      description: "Hausse de l'insurrection par point de stabilité sous le seuil de fragilité, au-delà du départ, × (0,5 + fragmentation)."
+    stability_threshold:
+      value: 30
+      range: [0, 100]
+      unit: 'indice'
+      description: "Seuil de fragilité : l'insurrection ne croît que lorsque la stabilité passe sous ce seuil plus bas qu'au départ."
+    civil_war:
+      value: 60
+      range: [0, 100]
+      unit: 'intensité'
+      description: "Seuil d'insurrection au-delà duquel le pays entre en guerre civile."
+    civil_war_end:
+      value: 30
+      range: [0, 100]
+      unit: 'intensité'
+      description: "Seuil d'insurrection sous lequel la guerre civile s'achève."
+  unrest:
+    protests:
+      value: 30
+      range: [0, 100]
+      unit: 'indice'
+      description: 'Stabilité sous laquelle le pays connaît des manifestations de masse.'
+    crisis:
+      value: 20
+      range: [0, 100]
+      unit: 'indice'
+      description: 'Stabilité sous laquelle le pays entre en crise politique (élections anticipées possibles en démocratie).'
+    uprising:
+      value: 8
+      range: [0, 100]
+      unit: 'indice'
+      description: 'Stabilité sous laquelle le pays connaît un soulèvement.'
+    margin:
+      value: 3
+      range: [0, 20]
+      unit: 'points'
+      description: "Marge d'hystérésis : un niveau de contestation ne se quitte qu'en repassant le seuil de cette marge."
+  elections:
+    slope:
+      value: 0.12
+      range: [0, 2]
+      unit: '/point'
+      description: "Pente de la probabilité logistique d'alternance selon l'approbation du gouvernement sortant."
+    threshold:
+      value: 50
+      range: [0, 100]
+      unit: '%'
+      description: "Approbation pour laquelle l'alternance a une chance sur deux (avant la prime au sortant)."
+    incumbency:
+      value: 4
+      range: [-20, 30]
+      unit: 'points'
+      description: "Prime au sortant (notoriété, appareil), en points d'approbation."
+    competitive_min:
+      value: 0.3
+      range: [0, 1]
+      unit: 'indice'
+      description: 'Démocratie électorale (V-Dem) sous laquelle les élections ne peuvent pas changer le gouvernement.'
+    competitive_max:
+      value: 0.7
+      range: [0, 1]
+      unit: 'indice'
+      description: 'Démocratie électorale au-delà de laquelle les élections sont pleinement compétitives.'
+    term_years:
+      value: 4
+      range: [1, 10]
+      unit: 'ans'
+      description: 'Durée du mandat utilisée pour fixer la prochaine élection (faute de durée propre à chaque pays).'
+    relation_reset:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Part des griefs et amitiés propres au gouvernement sortant (résidu des relations) qui s'efface lors d'une alternance."
+    early_probability:
+      value: 0.05
+      range: [0, 1]
+      unit: '/mois'
+      description: 'Probabilité mensuelle de convoquer des élections anticipées pendant une crise politique (démocraties).'
+    early_delay_days:
+      value: 60
+      range: [7, 365]
+      unit: 'jours'
+      description: 'Délai entre la convocation et la tenue des élections anticipées.'
+  coups:
+    base_junta:
+      value: 2
+      range: [0, 100]
+      unit: '%/an'
+      description: "Risque annuel de base de coup d'État d'une junte (contre-coups)."
+    base_autocracy:
+      value: 0.6
+      range: [0, 100]
+      unit: '%/an'
+      description: "Risque annuel de base de coup d'État d'une autocratie fermée."
+    base_hybrid:
+      value: 0.8
+      range: [0, 100]
+      unit: '%/an'
+      description: "Risque annuel de base de coup d'État d'un régime hybride."
+    base_flawed_democracy:
+      value: 0.2
+      range: [0, 100]
+      unit: '%/an'
+      description: "Risque annuel de base de coup d'État d'une démocratie électorale."
+    base_democracy:
+      value: 0.02
+      range: [0, 100]
+      unit: '%/an'
+      description: "Risque annuel de base de coup d'État d'une démocratie libérale."
+    base_other:
+      value: 0.5
+      range: [0, 100]
+      unit: '%/an'
+      description: "Risque annuel de base de coup d'État des théocraties et monarchies absolues."
+    stability_slope:
+      value: 0.4
+      range: [0, 3]
+      unit: '/10 points'
+      description: 'Multiplicateur du risque : e^(pente × (40 − stabilité) / 10).'
+    loyalty_slope:
+      value: 0.3
+      range: [0, 3]
+      unit: '/10 points'
+      description: "Multiplicateur du risque : e^(pente × (80 − loyauté de l'armée) / 10)."
+    stability_reference:
+      value: 40
+      range: [0, 100]
+      unit: 'indice'
+      description: 'Stabilité pour laquelle le risque de coup vaut son risque de base (plus bas : risque accru).'
+    loyalty_reference:
+      value: 80
+      range: [0, 100]
+      unit: 'indice'
+      description: "Loyauté de l'armée pour laquelle le risque de coup vaut son risque de base."
+    recession:
+      value: 0.1
+      range: [0, 2]
+      unit: '/point'
+      description: 'Multiplicateur du risque : 1 + coefficient × max(0, −croissance).'
+    elites:
+      value: 2
+      range: [0, 20]
+      unit: ''
+      description: 'Multiplicateur du risque : 1 + coefficient × sanctions visant les élites (au-delà du départ).'
+    max:
+      value: 15
+      range: [0, 100]
+      unit: '%/an'
+      description: "Risque annuel maximal de coup d'État."
+    stability_shock:
+      value: -15
+      range: [-60, 0]
+      unit: 'points'
+      description: "Choc sur la stabilité d'un coup d'État (effet temporaire)."
+    shock_half_life_days:
+      value: 180
+      range: [7, 3650]
+      unit: 'jours'
+      description: 'Demi-vie des chocs de stabilité des changements de régime (coup, succession, révolution).'
+    legitimacy_factor:
+      value: 0.6
+      range: [0, 1]
+      unit: ''
+      description: "Facteur appliqué à la légitimité après un coup d'État."
+    democracy_factor:
+      value: 0.3
+      range: [0, 1]
+      unit: ''
+      description: "Facteur appliqué aux indices de démocratie après un coup d'État."
+    condemnation:
+      value: 10
+      range: [0, 100]
+      unit: 'points'
+      description: "Choc sur la relation des démocraties envers le pays après un coup d'État (× démocratie électorale)."
+  succession:
+    stability_shock:
+      value: -8
+      range: [-60, 0]
+      unit: 'points'
+      description: "Choc sur la stabilité d'une succession non planifiée."
+  revolution:
+    stability_threshold:
+      value: 12
+      range: [0, 100]
+      unit: 'indice'
+      description: 'Stabilité sous laquelle une révolution devient possible (régimes non démocratiques).'
+    rate:
+      value: 10
+      range: [0, 100]
+      unit: '%/an'
+      description: 'Probabilité annuelle de révolution à stabilité nulle et sans répression.'
+    stability_shock:
+      value: -10
+      range: [-60, 0]
+      unit: 'points'
+      description: "Choc sur la stabilité d'une révolution."
+    transition_democracy:
+      value: 0.4
+      range: [0, 1]
+      unit: 'indice'
+      description: "Démocratie électorale minimale d'un gouvernement de transition après une révolution."
+    election_delay_days:
+      value: 365
+      range: [30, 3650]
+      unit: 'jours'
+      description: 'Délai entre une révolution et les élections de transition.'
+diplomacy:
+  affinity:
+    regime:
+      value: 15
+      range: [0, 100]
+      unit: 'points'
+      description: "Poids de la similarité des régimes (w1), modulé par le poids de l'idéologie du gouvernement (0,5 + idéologie)."
+    blocs:
+      value: 25
+      range: [0, 100]
+      unit: 'points'
+      description: 'Poids des blocs communs (w2), selon la nature des blocs (plafonné à 1).'
+    interdependence:
+      value: 15
+      range: [0, 100]
+      unit: 'points'
+      description: 'Poids de l’interdépendance commerciale (w3).'
+    trade_reference:
+      value: 5
+      range: [0.1, 100]
+      unit: '% du PIB'
+      description: "Échanges bilatéraux (en % du PIB) pour lesquels l'interdépendance est maximale."
+    common_enemies:
+      value: 10
+      range: [0, 100]
+      unit: 'points'
+      description: 'Poids des ennemis communs (w4), plafonné à deux ennemis.'
+    enemy_threshold:
+      value: -40
+      range: [-100, 0]
+      unit: 'indice'
+      description: 'Relation sous laquelle un pays est compté comme ennemi.'
+    grievances:
+      value: 30
+      range: [0, 100]
+      unit: 'points'
+      description: 'Poids des griefs historiques (w5).'
+    claims:
+      value: 30
+      range: [0, 100]
+      unit: 'points'
+      description: 'Poids des revendications territoriales, dans un sens ou dans l’autre (w6).'
+    culture:
+      value: 15
+      range: [0, 100]
+      unit: 'points'
+      description: 'Poids de la proximité culturelle (w7).'
+    same_region_proximity:
+      value: 20
+      range: [0, 100]
+      unit: 'indice'
+      description: 'Proximité culturelle par défaut de deux pays de la même région (paires non curées).'
+    un_votes:
+      value: 25
+      range: [0, 100]
+      unit: 'points'
+      description: "Poids de la proximité des votes à l'AGNU (w8)."
+    aid:
+      value: 10
+      range: [0, 100]
+      unit: 'points'
+      description: "Poids de l'aide reçue (w9), maximale à 1 % du PIB."
+    aid_reference:
+      value: 1
+      range: [0.01, 20]
+      unit: '% du PIB'
+      description: 'Aide reçue (en % du PIB du bénéficiaire) pour laquelle le facteur aide est maximal.'
+    threat:
+      value: 25
+      range: [0, 100]
+      unit: 'points'
+      description: "Poids de la menace perçue (w10) : part militaire de l'autre × proximité × hostilité."
+    threat_distance_km:
+      value: 2000
+      range: [100, 40000]
+      unit: 'km'
+      description: 'Distance sur laquelle la menace perçue d’un pays non voisin est divisée par e.'
+    war:
+      value: 50
+      range: [0, 100]
+      unit: 'points'
+      description: "Poids de l'état de guerre ou de crise (w11 ; guerre 1, blocus 0,8, crise 0,5, cessez-le-feu 0,4, tension 0,2)."
+    war_blockade:
+      value: 0.8
+      range: [0, 1]
+      unit: ''
+      description: "Poids d'un blocus dans le facteur guerre de l'affinité (la guerre vaut 1)."
+    war_crisis:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Poids d'une crise dans le facteur guerre de l'affinité."
+    war_ceasefire:
+      value: 0.4
+      range: [0, 1]
+      unit: ''
+      description: "Poids d'un cessez-le-feu dans le facteur guerre de l'affinité."
+    war_tension:
+      value: 0.2
+      range: [0, 1]
+      unit: ''
+      description: "Poids d'une tension dans le facteur guerre de l'affinité."
+    sanctions:
+      value: 25
+      range: [0, 100]
+      unit: 'points'
+      description: 'Poids des sanctions, dans un sens ou dans l’autre (w12).'
+    treaty:
+      value: 20
+      range: [0, 100]
+      unit: 'points'
+      description: 'Poids du traité (w13 ; défense mutuelle 1, partenariat 0,5, non-agression 0,25), modulé par la loyauté envers les alliés.'
+    treaty_partnership:
+      value: 0.5
+      range: [0, 1]
+      unit: ''
+      description: "Poids d'un partenariat stratégique dans le facteur traité (la défense mutuelle vaut 1)."
+    treaty_non_aggression:
+      value: 0.25
+      range: [0, 1]
+      unit: ''
+      description: "Poids d'un pacte de non-agression dans le facteur traité."
+    revisionism:
+      value: 15
+      range: [0, 100]
+      unit: 'points'
+      description: 'Poids de l’écart de révisionnisme entre les gouvernements (w14).'
+    bloc_military:
+      value: 1
+      range: [0, 2]
+      unit: ''
+      description: "Poids d'une alliance militaire commune dans le facteur des blocs."
+    bloc_union:
+      value: 0.6
+      range: [0, 2]
+      unit: ''
+      description: "Poids d'une union politique ou monétaire commune."
+    bloc_economic:
+      value: 0.4
+      range: [0, 2]
+      unit: ''
+      description: "Poids d'une union économique ou d'un accord commercial commun."
+    bloc_security:
+      value: 0.4
+      range: [0, 2]
+      unit: ''
+      description: "Poids d'un forum de sécurité commun (Quad, AUKUS…)."
+    bloc_regional:
+      value: 0.25
+      range: [0, 2]
+      unit: ''
+      description: "Poids d'une organisation régionale commune."
+    bloc_energy:
+      value: 0.2
+      range: [0, 2]
+      unit: ''
+      description: "Poids d'un cartel énergétique commun."
+    bloc_forum:
+      value: 0.15
+      range: [0, 2]
+      unit: ''
+      description: "Poids d'un forum politique commun (G20, BRICS…)."
+  relations:
+    convergence:
+      value: 0.05
+      range: [0, 1]
+      unit: '/mois'
+      description: 'Vitesse κ de convergence des relations vers leur cible (affinité + résidu + mémoire).'
+    residual_half_life_years:
+      value: 10
+      range: [0.1, 200]
+      unit: 'ans'
+      description: "Demi-vie du résidu de calage : les relations de départ s'effacent lentement au profit de l'affinité structurelle."
+    memory_half_life_months:
+      value: 24
+      range: [1, 600]
+      unit: 'mois'
+      description: 'Demi-vie de la mémoire des chocs (sanctions, guerres, traités, condamnations).'
+    sanction_target_shock:
+      value: 0.3
+      range: [0, 2]
+      unit: 'points par %'
+      description: "Choc sur la relation du pays visé envers le pays qui le sanctionne, par point d'intensité (0-100)."
+    sanction_sender_shock:
+      value: 0.15
+      range: [0, 2]
+      unit: 'points par %'
+      description: "Choc sur la relation du pays qui sanctionne envers le pays visé, par point d'intensité."
+    sanction_lift_shock:
+      value: 0.1
+      range: [0, 2]
+      unit: 'points par %'
+      description: "Amélioration de la relation quand des sanctions sont levées, par point d'intensité."
+    war_shock:
+      value: 40
+      range: [0, 200]
+      unit: 'points'
+      description: 'Choc sur la relation quand deux pays entrent en guerre.'
+    peace_shock:
+      value: 10
+      range: [0, 200]
+      unit: 'points'
+      description: 'Amélioration de la relation au cessez-le-feu ou à la paix.'
+    treaty_shock:
+      value: 5
+      range: [0, 50]
+      unit: 'points par niveau'
+      description: 'Variation de la relation par niveau de traité gagné ou perdu (non-agression, partenariat, défense mutuelle).'
+  blocs:
+    defense_credibility:
+      value: 0.8
+      range: [0, 1]
+      unit: ''
+      description: "Crédibilité des engagements de défense mutuelle issus d'un bloc (hypothèse du pipeline de données)."
+  sanctions:
+    finance_currency_weight:
+      value: 0.8
+      range: [0, 1]
+      unit: ''
+      description: 'Poids des monnaies de réserve des émetteurs dans la pression financière (dollar, euro : accès aux paiements et aux réserves).'
+    finance_gdp_weight:
+      value: 0.2
+      range: [0, 1]
+      unit: ''
+      description: 'Poids de la part du PIB mondial des émetteurs dans la pression financière.'
+    secondary_strength:
+      value: 0.8
+      range: [0, 1]
+      unit: ''
+      description: 'Réduction du contournement par les sanctions secondaires, fondées sur les monnaies de réserve des émetteurs.'
+    evasion_months:
+      value: 12
+      range: [1, 120]
+      unit: 'mois'
+      description: 'Délai de mise en place du contournement après un durcissement (flotte fantôme, intermédiaires).'
+    new_threshold:
+      value: 0.02
+      range: [0, 0.5]
+      unit: ''
+      description: "Hausse de la pression d'ensemble au-delà de laquelle un durcissement remet le contournement à zéro."
+  un:
+    yes_threshold:
+      value: 0.15
+      range: [0, 2]
+      unit: ''
+      description: 'Soutien au-delà duquel un pays vote pour (soutien = −relation/100 + base de la résolution + guerre).'
+    no_threshold:
+      value: 0.15
+      range: [0, 2]
+      unit: ''
+      description: 'Soutien sous lequel (en négatif) un pays vote contre ; le vote contre d’un membre permanent est un veto.'
+    war_support:
+      value: 0.2
+      range: [0, 2]
+      unit: ''
+      description: 'Soutien supplémentaire quand le pays visé est en guerre.'
+    condemnation_shock:
+      value: 10
+      range: [0, 100]
+      unit: 'points'
+      description: 'Choc sur la relation du pays visé envers les pays qui votent une condamnation.'
+    peacekeeping_insurgency:
+      value: 15
+      range: [0, 100]
+      unit: 'points'
+      description: "Baisse de l'insurrection due à une mission de maintien de la paix (× efficacité de l'ONU), décroissant sur sa durée."
+    peacekeeping_days:
+      value: 730
+      range: [30, 3650]
+      unit: 'jours'
+      description: 'Durée de l’effet d’une mission de maintien de la paix.'
+    base_sanctions:
+      value: -0.1
+      range: [-1, 1]
+      unit: ''
+      description: 'Soutien de base à une résolution de sanctions (réticence aux sanctions).'
+    base_condemnation:
+      value: 0
+      range: [-1, 1]
+      unit: ''
+      description: 'Soutien de base à une résolution de condamnation.'
+    base_ceasefire:
+      value: 0.2
+      range: [-1, 1]
+      unit: ''
+      description: 'Soutien de base à une résolution de cessez-le-feu.'
+    base_peacekeeping:
+      value: 0.3
+      range: [-1, 1]
+      unit: ''
+      description: 'Soutien de base à une mission de maintien de la paix.'
 military: {}
 combat: {}
 nuclear: {}

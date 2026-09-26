@@ -129,12 +129,27 @@ export interface PairParam {
   entries: [string, string, ParamValue, number][];
 }
 
+/**
+ * Routes maritimes des paires (carte, `routes-<résolution>.json`), sous forme compacte pour le
+ * moteur : pour chaque paire non orientée, longueur et détroits de la route principale, et de la
+ * route alternative qui évite les détroits de la principale. Les détroits d'une route sont un
+ * masque de bits sur `chokepoints` (bit k : `chokepoints[k]`).
+ */
+export interface PairRoutes {
+  /** Identifiants des détroits, dans l'ordre des bits des masques. */
+  chokepoints: string[];
+  /** [a, b, km principale, masque principal, km alternative (−1 : aucune), masque alternatif]. */
+  entries: [string, string, number, number, number, number][];
+}
+
 export interface PairsBase {
   version: 1;
   buildDate: string;
   /** Paramètres bilatéraux dérivés, calculés par le moteur (absents du fichier). */
   runtimeParams: string[];
   params: Record<string, PairParam>;
+  /** Routes maritimes (absentes des données construites avant la phase 4). */
+  routes?: PairRoutes;
 }
 
 /** Provenance d'un élément curé (bloc, conflit, détroit…). */
@@ -188,10 +203,52 @@ export interface ChokepointRecord {
   status: ChokepointStatusRecord;
 }
 
+/** Traité bilatéral ou plurilatéral (treaties.yaml). */
+export interface TreatyRecord extends CuratedRef {
+  id: string;
+  name: string;
+  type:
+    | 'mutual_defense'
+    | 'security_guarantee'
+    | 'non_aggression'
+    | 'strategic_partnership'
+    | 'basing'
+    | 'consultation';
+  parties: string[];
+  /** Garantie unilatérale : le garant protège les autres parties, sans réciprocité. */
+  guarantor?: string;
+  signed: string;
+  area?: string;
+  /** Crédibilité perçue (0–1), hypothèse. */
+  credibility: number;
+}
+
+/** Régime de sanctions (sanctions.yaml) : émetteurs (codes ou `bloc:<id>`), cible, volets. */
+export interface SanctionRegimeRecord extends CuratedRef {
+  id: string;
+  name: string;
+  target: string;
+  senders: string[];
+  tracks: Partial<Record<string, number>>;
+  secondary: boolean;
+}
+
 /**
- * Vue de `world.base.json` utilisée hors du pipeline : les sujets que l'interface ne lit pas encore
- * (traités, sanctions, minerais…) n'y figurent pas. Le pipeline vérifie à la compilation que son
- * type y est conforme.
+ * Profils décisionnels par défaut (defaults.yaml) : valeurs des paramètres `ai.*` par type de
+ * régime et pour les factions, appliquées quand un gouvernement change sans profil curé (coup
+ * d'État, révolution).
+ */
+export interface ProfileDefaults {
+  source: string;
+  date: string;
+  byRegime: Record<string, Record<string, number>>;
+  faction: Record<string, number>;
+}
+
+/**
+ * Vue de `world.base.json` utilisée hors du pipeline : les sujets que l'interface et le moteur ne
+ * lisent pas (minerais, semi-conducteurs…) n'y figurent pas. Le pipeline vérifie à la compilation
+ * que son type y est conforme. Les champs optionnels manquent aux données d'avant la phase 4.
  */
 export interface WorldBaseFile {
   version: 1;
@@ -201,4 +258,7 @@ export interface WorldBaseFile {
   conflicts: ConflictRecord[];
   chokepoints: ChokepointRecord[];
   zones: { control: MapControlZone[] };
+  treaties?: TreatyRecord[];
+  sanctions?: { regimes: SanctionRegimeRecord[] };
+  profileDefaults?: ProfileDefaults;
 }
