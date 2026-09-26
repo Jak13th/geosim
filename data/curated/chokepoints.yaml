@@ -1,6 +1,5 @@
-# Détroits et passages (SPEC §5.2, liste minimale). Phase 1a : géométrie seulement.
-# Le trafic, le statut et les routes de contournement détaillées sont ajoutés en phase 1b ;
-# les pays riverains sont calculés depuis la carte.
+# Détroits et passages (SPEC §5.2, liste minimale) : géométrie (phase 1a), statut et trafic au
+# 25/09/2026 (phase 1b) ; les pays riverains sont calculés depuis la carte.
 #
 # Pour chaque passage :
 #   gates   : une ou plusieurs lignes [lon, lat] qui coupent le passage de terre à terre ;
@@ -8,6 +7,7 @@
 #             bloque ses portes.
 #   channel : chenal forcé navigable dans le graphe des routes maritimes (canaux, détroits
 #             plus étroits qu'un pixel). La carte elle-même n'est pas modifiée.
+#   status  : open, contested ou closed, trafic en % du trafic d'avant crise, trafic normal.
 #   test    : deux points en mer de part et d'autre ; le pipeline vérifie que la route la plus
 #             courte entre eux franchit la porte, et qu'elle s'allonge (ou disparaît) quand la
 #             porte est fermée.
@@ -25,6 +25,14 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Strait_of_Hormuz
     date: 2026-09-25
     confidence: medium
+    status:
+      value: contested
+      traffic_pct: 15
+      normal_traffic: '≈ 20 Mb/j de pétrole et 20 % du GNL mondial avant guerre ; ≈ 85–140 transits par jour'
+      source: https://global-energy-flow.com/hormuz/ ; https://en.wikipedia.org/wiki/2026_Strait_of_Hormuz_campaign
+      date: 2026-09-25
+      confidence: medium
+      note: "Quasi fermé depuis fin mars 2026 : passage autorisé par l'Iran pour certains navires, convois escortés par l'US Navy, attaques de navires depuis juillet ; 3,7 à 8 Mb/j selon Tankertrackers et Bloomberg (semaine au 22/09), 1 à 14 transits par jour."
   - id: bab_el_mandeb
     name: Bab-el-Mandeb
     nameFr: Bab-el-Mandeb
@@ -35,6 +43,14 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Bab-el-Mandeb
     date: 2026-09-25
     confidence: medium
+    status:
+      value: contested
+      traffic_pct: 23
+      normal_traffic: '≈ 12 % du commerce mondial ; ≈ 9 Mb/j de pétrole avant 2023'
+      source: https://www.lloydslistintelligence.com/resources/blog/red-sea-brief-3-september-2026 ; https://www.aljazeera.com/economy/2026/9/13/red-sea-nations-watch-as-houthis-seize-bab-al-mandeb-strait
+      date: 2026-09-25
+      confidence: medium
+      note: "Capacité conteneurs en août 2026 : 23 % du niveau d'août 2023 ; les Houthis tiennent Mokha et Périm depuis le 11/09/2026 et bloquent les navires saoudiens."
   - id: suez
     name: Suez Canal
     nameFr: Canal de Suez
@@ -60,6 +76,14 @@ chokepoints:
     note: Le chenal suit aussi le golfe de Suez, qui se ferme au pixel près aux résolutions grossières.
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 55
+      normal_traffic: '≈ 70 navires par jour et 12 % du commerce mondial avant 2023'
+      source: https://www.lloydslistintelligence.com/resources/blog/red-sea-brief-3-september-2026
+      date: 2026-09-25
+      confidence: medium
+      note: 'Reprise partielle : ≈ 290 navires par semaine fin août 2026 ; dépend de la sécurité de Bab-el-Mandeb.'
   - id: malacca
     name: Strait of Malacca
     nameFr: Détroit de Malacca
@@ -70,6 +94,13 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Strait_of_Malacca
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: '≈ 23 Mb/j de pétrole, ≈ 25 % du commerce maritime mondial'
+      source: https://en.wikipedia.org/wiki/Strait_of_Malacca
+      date: 2026-09-25
+      confidence: medium
   - id: singapore
     name: Singapore Strait
     nameFr: Détroit de Singapour
@@ -83,6 +114,13 @@ chokepoints:
     note: >-
       À la résolution de la carte, les îles Riau laissent de nombreux passages : la porte va de
       Johor à Sumatra et coupe toute la sortie sud du détroit de Malacca.
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: '≈ 100 000 navires par an'
+      source: https://en.wikipedia.org/wiki/Singapore_Strait
+      date: 2026-09-25
+      confidence: medium
   - id: sunda
     name: Sunda Strait
     nameFr: Détroit de la Sonde
@@ -93,6 +131,13 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Sunda_Strait
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: 'Route secondaire (navires de moins de 100 000 tpl)'
+      source: https://en.wikipedia.org/wiki/Sunda_Strait
+      date: 2026-09-25
+      confidence: medium
   - id: lombok
     name: Lombok Strait
     nameFr: Détroit de Lombok
@@ -103,6 +148,13 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Lombok_Strait
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: 'Route des grands vraquiers et pétroliers évitant Malacca'
+      source: https://en.wikipedia.org/wiki/Lombok_Strait
+      date: 2026-09-25
+      confidence: medium
   - id: taiwan
     name: Taiwan Strait
     nameFr: Détroit de Taïwan
@@ -113,6 +165,14 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Taiwan_Strait
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: '≈ 50 % de la flotte mondiale de porte-conteneurs y transite chaque année'
+      source: https://en.wikipedia.org/wiki/Taiwan_Strait
+      date: 2026-09-25
+      confidence: medium
+      note: 'Exercices militaires chinois réguliers autour de Taïwan.'
   - id: luzon
     name: Luzon Strait
     nameFr: Détroit de Luçon
@@ -123,6 +183,13 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Luzon_Strait
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: 'Route transpacifique et câbles sous-marins'
+      source: https://en.wikipedia.org/wiki/Luzon_Strait
+      date: 2026-09-25
+      confidence: medium
   - id: turkish_straits
     name: Turkish Straits (Bosporus and Dardanelles)
     nameFr: Détroits turcs (Bosphore et Dardanelles)
@@ -146,6 +213,14 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Turkish_Straits
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: '≈ 40 000 navires par an, ≈ 3 Mb/j de pétrole'
+      source: https://en.wikipedia.org/wiki/Turkish_Straits
+      date: 2026-09-25
+      confidence: medium
+      note: 'Convention de Montreux appliquée aux navires de guerre des belligérants depuis 2022.'
   - id: gibraltar
     name: Strait of Gibraltar
     nameFr: Détroit de Gibraltar
@@ -157,6 +232,13 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Strait_of_Gibraltar
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: '≈ 100 000 navires par an'
+      source: https://en.wikipedia.org/wiki/Strait_of_Gibraltar
+      date: 2026-09-25
+      confidence: medium
   - id: danish_straits
     name: Danish Straits
     nameFr: Détroits danois
@@ -168,6 +250,14 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Danish_straits
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: 'Accès à la Baltique, ≈ 3 Mb/j de pétrole russe avant 2022'
+      source: https://en.wikipedia.org/wiki/Danish_straits
+      date: 2026-09-25
+      confidence: medium
+      note: 'Contrôles renforcés de la « flotte fantôme » russe.'
   - id: dover
     name: Strait of Dover
     nameFr: Pas-de-Calais
@@ -178,6 +268,13 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Strait_of_Dover
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: 'Détroit le plus fréquenté du monde (≈ 400 navires par jour)'
+      source: https://en.wikipedia.org/wiki/Strait_of_Dover
+      date: 2026-09-25
+      confidence: medium
   - id: panama
     name: Panama Canal
     nameFr: Canal de Panama
@@ -198,6 +295,14 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Panama_Canal
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: '≈ 35 transits par jour, ≈ 5 % du commerce maritime'
+      source: https://en.wikipedia.org/wiki/Panama_Canal
+      date: 2026-09-25
+      confidence: medium
+      note: 'Restrictions liées à la sécheresse levées en 2024-2025.'
   - id: kerch
     name: Kerch Strait
     nameFr: Détroit de Kertch
@@ -209,6 +314,14 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Kerch_Strait
     date: 2026-09-25
     confidence: medium
+    status:
+      value: contested
+      traffic_pct: 60
+      normal_traffic: "Accès à la mer d'Azov"
+      source: https://en.wikipedia.org/wiki/Kerch_Strait
+      date: 2026-09-25
+      confidence: low
+      note: "Contrôlé par la Russie ; frappes ukrainiennes sur le pont et les navires ; ports ukrainiens de la mer d'Azov occupés."
   - id: cape_of_good_hope
     name: Cape of Good Hope route
     nameFr: Route du cap de Bonne-Espérance
@@ -220,6 +333,14 @@ chokepoints:
     date: 2026-09-25
     confidence: medium
     note: Méridien du cap des Aiguilles (limite conventionnelle entre Atlantique et océan Indien), du continent à l'Antarctique.
+    status:
+      value: open
+      traffic_pct: 145
+      normal_traffic: 'Route de contournement de Suez'
+      source: https://www.lloydslistintelligence.com/resources/blog/red-sea-brief-3-september-2026
+      date: 2026-09-25
+      confidence: low
+      note: 'Trafic accru par le contournement de la mer Rouge (estimation).'
   - id: drake
     name: Drake Passage
     nameFr: Passage de Drake
@@ -230,3 +351,10 @@ chokepoints:
     source: https://en.wikipedia.org/wiki/Drake_Passage
     date: 2026-09-25
     confidence: medium
+    status:
+      value: open
+      traffic_pct: 100
+      normal_traffic: 'Route de contournement du canal de Panama'
+      source: https://en.wikipedia.org/wiki/Drake_Passage
+      date: 2026-09-25
+      confidence: medium

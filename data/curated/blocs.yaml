@@ -1,0 +1,665 @@
+# Blocs, alliances et organisations au 25/09/2026 (SPEC §5.2) : membres, partenaires, observateurs,
+# membres suspendus, et règles (défense mutuelle et zone couverte, politique commerciale commune,
+# sanctions communes, coordination pétrolière). Codes pays : ISO 3166-1 alpha-3 ou codes GeoSim.
+version: 1
+blocs:
+  - id: nato
+    name: NATO
+    nameFr: Organisation du traité de l’Atlantique nord
+    kind: military_alliance
+    members:
+      [
+        ALB,
+        BEL,
+        BGR,
+        CAN,
+        HRV,
+        CZE,
+        DNK,
+        EST,
+        FIN,
+        FRA,
+        DEU,
+        GRC,
+        HUN,
+        ISL,
+        ITA,
+        LVA,
+        LTU,
+        LUX,
+        MNE,
+        NLD,
+        MKD,
+        NOR,
+        POL,
+        PRT,
+        ROU,
+        SVK,
+        SVN,
+        ESP,
+        SWE,
+        TUR,
+        GBR,
+        USA,
+      ]
+    rules:
+      {
+        mutual_defense: true,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+        defense_area:
+          'Europe, Amérique du Nord, Atlantique nord au nord du tropique du Cancer (art. 5 et
+          6)',
+      }
+    source: https://www.nato.int/cps/en/natohq/topics_52044.htm
+    date: '2026-09-25'
+    confidence: high
+    note: 32 membres ; sommet d'Ankara (juillet 2026).
+  - id: eu
+    name: European Union
+    nameFr: Union européenne
+    kind: political_union
+    members:
+      [
+        AUT,
+        BEL,
+        BGR,
+        HRV,
+        CYP,
+        CZE,
+        DNK,
+        EST,
+        FIN,
+        FRA,
+        DEU,
+        GRC,
+        HUN,
+        IRL,
+        ITA,
+        LVA,
+        LTU,
+        LUX,
+        MLT,
+        NLD,
+        POL,
+        PRT,
+        ROU,
+        SVK,
+        SVN,
+        ESP,
+        SWE,
+      ]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: true,
+        common_sanctions: true,
+        oil_coordination: false,
+        defense_area: "Clause d'assistance mutuelle (art. 42.7 TUE), sans structure militaire intégrée",
+      }
+    source: https://european-union.europa.eu/principles-countries-history/eu-countries_en
+    date: '2026-09-25'
+    confidence: high
+    note:
+      "Politique commerciale et sanctions communes ; clause d'assistance mutuelle non modélisée comme
+      défense mutuelle (neutres : Autriche, Irlande, Malte, Chypre)."
+  - id: eurozone
+    name: Euro area
+    nameFr: Zone euro
+    kind: monetary_union
+    members:
+      [
+        AUT,
+        BEL,
+        BGR,
+        HRV,
+        CYP,
+        EST,
+        FIN,
+        FRA,
+        DEU,
+        GRC,
+        IRL,
+        ITA,
+        LVA,
+        LTU,
+        LUX,
+        MLT,
+        NLD,
+        PRT,
+        SVK,
+        SVN,
+        ESP,
+      ]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/2026
+    date: '2026-09-25'
+    confidence: high
+    note: La Bulgarie a adopté l’euro le 01/01/2026 (21 membres).
+  - id: csto
+    name: Collective Security Treaty Organization
+    nameFr: Organisation du traité de sécurité collective
+    kind: military_alliance
+    members: [RUS, BLR, KAZ, KGZ, TJK]
+    suspended: [ARM]
+    rules:
+      {
+        mutual_defense: true,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+        defense_area: Territoire des États membres (art. 4),
+      }
+    source: https://en.wikipedia.org/wiki/Collective_Security_Treaty_Organization
+    date: '2026-09-25'
+    confidence: medium
+    note: L’Arménie a gelé sa participation en 2024.
+  - id: sco
+    name: Shanghai Cooperation Organisation
+    nameFr: Organisation de coopération de Shanghai
+    kind: security_forum
+    members: [CHN, RUS, KAZ, KGZ, TJK, UZB, IND, PAK, IRN, BLR]
+    observers: [AFG, MNG]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Shanghai_Cooperation_Organisation
+    date: '2026-09-25'
+    confidence: high
+  - id: brics
+    name: BRICS
+    nameFr: BRICS
+    kind: political_forum
+    members: [BRA, RUS, IND, CHN, ZAF, EGY, ETH, IRN, ARE, IDN, SAU]
+    partners: [BLR, BOL, CUB, KAZ, MYS, NGA, THA, UGA, UZB, VNM]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://www.pib.gov.in/PressNoteDetails.aspx?NoteId=159946&ModuleId=3&reg=3&lang=1 ; https://en.wikipedia.org/wiki/18th_BRICS_summit
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Sommet de New Delhi (12-13/09/2026). L’Arabie saoudite est comptée comme membre par la présidence
+      indienne, mais n’a jamais confirmé son adhésion.
+  - id: asean
+    name: ASEAN
+    nameFr: Association des nations de l’Asie du Sud-Est
+    kind: regional_organization
+    members: [BRN, KHM, IDN, LAO, MYS, MMR, PHL, SGP, THA, VNM, TLS]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://asean.org/member-states/
+    date: '2026-09-25'
+    confidence: high
+    note: Timor oriental membre depuis octobre 2025.
+  - id: au
+    name: African Union
+    nameFr: Union africaine
+    kind: regional_organization
+    members:
+      [
+        DZA,
+        AGO,
+        BEN,
+        BWA,
+        BFA,
+        BDI,
+        CPV,
+        CMR,
+        CAF,
+        TCD,
+        COM,
+        COD,
+        COG,
+        CIV,
+        DJI,
+        EGY,
+        GNQ,
+        ERI,
+        SWZ,
+        ETH,
+        GAB,
+        GMB,
+        GHA,
+        GIN,
+        GNB,
+        KEN,
+        LSO,
+        LBR,
+        LBY,
+        MDG,
+        MWI,
+        MLI,
+        MRT,
+        MUS,
+        MAR,
+        MOZ,
+        NAM,
+        NER,
+        NGA,
+        RWA,
+        STP,
+        SEN,
+        SYC,
+        SLE,
+        SOM,
+        ZAF,
+        SSD,
+        SDN,
+        TZA,
+        TGO,
+        TUN,
+        UGA,
+        ZMB,
+        ZWE,
+        ESH,
+      ]
+    suspended: [BFA, GNB, MDG, MLI, NER, SDN]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Member_states_of_the_African_Union ; https://amaniafrica-et.org/informal-consultation-with-member-states-in-political-transition/
+    date: '2026-09-25'
+    confidence: high
+    note:
+      '55 membres, dont la RASD. Suspendus (février 2026) : Burkina Faso, Guinée-Bissau, Madagascar,
+      Mali, Niger, Soudan ; Guinée réintégrée le 22/01/2026.'
+  - id: arab_league
+    name: Arab League
+    nameFr: Ligue arabe
+    kind: regional_organization
+    members:
+      [
+        DZA,
+        BHR,
+        COM,
+        DJI,
+        EGY,
+        IRQ,
+        JOR,
+        KWT,
+        LBN,
+        LBY,
+        MRT,
+        MAR,
+        OMN,
+        PSE,
+        QAT,
+        SAU,
+        SOM,
+        SDN,
+        SYR,
+        TUN,
+        ARE,
+        YEM,
+      ]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Arab_League
+    date: '2026-09-25'
+    confidence: high
+  - id: gcc
+    name: Gulf Cooperation Council
+    nameFr: Conseil de coopération du Golfe
+    kind: regional_organization
+    members: [BHR, KWT, OMN, QAT, SAU, ARE]
+    rules:
+      {
+        mutual_defense: true,
+        common_trade_policy: true,
+        common_sanctions: false,
+        oil_coordination: false,
+        defense_area: Péninsule arabique (Bouclier de la péninsule),
+      }
+    source: https://en.wikipedia.org/wiki/Gulf_Cooperation_Council
+    date: '2026-09-25'
+    confidence: medium
+    note: Accord de défense commune de 2000 (force du Bouclier de la péninsule) ; union douanière.
+  - id: opec
+    name: OPEC
+    nameFr: Organisation des pays exportateurs de pétrole
+    kind: energy_cartel
+    members: [SAU, IRQ, IRN, KWT, VEN, NGA, LBY, DZA, COG, GNQ, GAB]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: true,
+      }
+    source: https://www.npr.org/2026/04/28/nx-s1-5802735/uae-leaves-opec-oil
+    date: '2026-09-25'
+    confidence: high
+    note: Les Émirats arabes unis ont quitté l’OPEP le 01/05/2026.
+  - id: opec_plus
+    name: OPEC+
+    nameFr: OPEP+
+    kind: energy_cartel
+    members:
+      [
+        SAU,
+        IRQ,
+        IRN,
+        KWT,
+        VEN,
+        NGA,
+        LBY,
+        DZA,
+        COG,
+        GNQ,
+        GAB,
+        RUS,
+        KAZ,
+        OMN,
+        AZE,
+        MEX,
+        MYS,
+        BHR,
+        BRN,
+        SDN,
+        SSD,
+      ]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: true,
+      }
+    source: https://www.opec.org/pr-detail/613-6-september-2026.html
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Déclaration de coopération ; quotas dans country_energy.yaml. Le Brésil a rejoint la Charte de
+      coopération sans quota (non membre ici).
+  - id: g7
+    name: G7
+    nameFr: G7
+    kind: political_forum
+    members: [USA, CAN, GBR, FRA, DEU, ITA, JPN]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/G7
+    date: '2026-09-25'
+    confidence: high
+    note: L’Union européenne y participe (non modélisée comme entité).
+  - id: g20
+    name: G20
+    nameFr: G20
+    kind: political_forum
+    members:
+      [
+        ARG,
+        AUS,
+        BRA,
+        CAN,
+        CHN,
+        FRA,
+        DEU,
+        IND,
+        IDN,
+        ITA,
+        JPN,
+        KOR,
+        MEX,
+        RUS,
+        SAU,
+        ZAF,
+        TUR,
+        GBR,
+        USA,
+      ]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/G20
+    date: '2026-09-25'
+    confidence: high
+    note:
+      L’UE et l’Union africaine sont membres (non modélisées comme entités) ; présidence américaine
+      en 2026.
+  - id: quad
+    name: Quad
+    nameFr: Dialogue quadrilatéral pour la sécurité
+    kind: security_forum
+    members: [USA, JPN, IND, AUS]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Quadrilateral_Security_Dialogue
+    date: '2026-09-25'
+    confidence: high
+  - id: aukus
+    name: AUKUS
+    nameFr: AUKUS
+    kind: security_forum
+    members: [AUS, GBR, USA]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/AUKUS
+    date: '2026-09-25'
+    confidence: high
+    note:
+      Partenariat de sécurité (sous-marins nucléaires) sans clause de défense mutuelle propre ; l’ANZUS
+      lie l’Australie et les États-Unis (treaties.yaml).
+  - id: five_eyes
+    name: Five Eyes
+    nameFr: Five Eyes
+    kind: security_forum
+    members: [USA, GBR, CAN, AUS, NZL]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Five_Eyes
+    date: '2026-09-25'
+    confidence: high
+    note: Alliance de renseignement.
+  - id: mercosur
+    name: Mercosur
+    nameFr: Mercosur
+    kind: trade_agreement
+    members: [ARG, BRA, PRY, URY, BOL]
+    suspended: [VEN]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: true,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Mercosur
+    date: '2026-09-25'
+    confidence: high
+    note: Union douanière ; Venezuela suspendu depuis 2016.
+  - id: ecowas
+    name: ECOWAS
+    nameFr: Communauté économique des États de l’Afrique de l’Ouest
+    kind: regional_organization
+    members: [BEN, CPV, CIV, GMB, GHA, GIN, GNB, LBR, NGA, SEN, SLE, TGO]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: true,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/ECOWAS
+    date: '2026-09-25'
+    confidence: high
+    note: Le Mali, le Burkina Faso et le Niger l’ont quittée le 29/01/2025.
+  - id: aes
+    name: Alliance of Sahel States
+    nameFr: Confédération des États du Sahel
+    kind: military_alliance
+    members: [MLI, BFA, NER]
+    rules:
+      {
+        mutual_defense: true,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+        defense_area: Territoire des trois États (charte du Liptako-Gourma),
+      }
+    source: https://en.wikipedia.org/wiki/Alliance_of_Sahel_States
+    date: '2026-09-25'
+    confidence: high
+  - id: eaeu
+    name: Eurasian Economic Union
+    nameFr: Union économique eurasiatique
+    kind: economic_union
+    members: [RUS, BLR, KAZ, KGZ, ARM]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: true,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Eurasian_Economic_Union
+    date: '2026-09-25'
+    confidence: high
+  - id: usmca
+    name: USMCA
+    nameFr: Accord Canada–États-Unis–Mexique
+    kind: trade_agreement
+    members: [USA, MEX, CAN]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/United_States%E2%80%93Mexico%E2%80%93Canada_Agreement
+    date: '2026-09-25'
+    confidence: high
+    note: Réexamen conjoint prévu en 2026.
+  - id: rcep
+    name: RCEP
+    nameFr: Partenariat régional économique global
+    kind: trade_agreement
+    members: [BRN, KHM, IDN, LAO, MYS, MMR, PHL, SGP, THA, VNM, CHN, JPN, KOR, AUS, NZL]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Regional_Comprehensive_Economic_Partnership
+    date: '2026-09-25'
+    confidence: high
+  - id: cptpp
+    name: CPTPP
+    nameFr: Accord de partenariat transpacifique global et progressiste
+    kind: trade_agreement
+    members: [AUS, BRN, CAN, CHL, JPN, MYS, MEX, NZL, PER, SGP, VNM, GBR]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Comprehensive_and_Progressive_Agreement_for_Trans-Pacific_Partnership
+    date: '2026-09-25'
+    confidence: medium
+  - id: waemu
+    name: WAEMU
+    nameFr: Union économique et monétaire ouest-africaine
+    kind: monetary_union
+    members: [BEN, BFA, CIV, GNB, MLI, NER, SEN, TGO]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: true,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/West_African_Economic_and_Monetary_Union
+    date: '2026-09-25'
+    confidence: high
+    note: Franc CFA (UEMOA), arrimé à l’euro.
+  - id: cemac
+    name: CEMAC
+    nameFr: Communauté économique et monétaire de l’Afrique centrale
+    kind: monetary_union
+    members: [CMR, CAF, TCD, COG, GNQ, GAB]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: true,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Economic_and_Monetary_Community_of_Central_Africa
+    date: '2026-09-25'
+    confidence: high
+    note: Franc CFA (CEMAC), arrimé à l’euro.
+  - id: eccu
+    name: ECCU
+    nameFr: Union monétaire des Caraïbes orientales
+    kind: monetary_union
+    members: [ATG, DMA, GRD, KNA, LCA, VCT]
+    rules:
+      {
+        mutual_defense: false,
+        common_trade_policy: false,
+        common_sanctions: false,
+        oil_coordination: false,
+      }
+    source: https://en.wikipedia.org/wiki/Eastern_Caribbean_Currency_Union
+    date: '2026-09-25'
+    confidence: high
+    note: Dollar des Caraïbes orientales, arrimé au dollar américain.

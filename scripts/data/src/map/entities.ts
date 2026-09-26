@@ -6,7 +6,7 @@ import type { ShapeFeature } from '../io/shapefile.ts';
 import { num, str } from '../io/naturalEarth.ts';
 import { checkProvenance, type CuratedProvenance } from '../config.ts';
 
-export type EntityKind = 'state' | 'de_facto';
+export type EntityKind = 'state' | 'de_facto' | 'faction';
 
 export interface EntityDef {
   /** Index dans les couches `owner` et `sovereign` (1…N ; 0 = aucun). */
@@ -16,7 +16,7 @@ export interface EntityDef {
   name: string;
   nameFr: string;
   kind: EntityKind;
-  /** Code Natural Earth (ADM0_A3) de l'unité principale. */
+  /** Code Natural Earth (ADM0_A3) de l'unité principale ('' pour une entité sans unité propre). */
   neA3: string;
   provenance: CuratedProvenance | null;
 }
@@ -216,4 +216,42 @@ export function buildEntities(
   });
 
   return { entities, units, entityIndex, unitOfFeature };
+}
+
+/** Entité sans unité Natural Earth propre, née d'une zone de contrôle (data/curated/entities.yaml). */
+export interface ExtraEntityDef {
+  id: string;
+  name: string;
+  nameFr: string;
+  kind: 'de_facto' | 'faction';
+  capital: { name: string; lonlat: [number, number] };
+  provenance: CuratedProvenance;
+}
+
+/**
+ * Ajoute les entités de facto et les factions qui n'ont pas d'unité Natural Earth (Abkhazie,
+ * factions des guerres civiles…). Leurs pixels viennent des zones de contrôle ; leur capitale est
+ * ajoutée aux capitales curées.
+ */
+export function appendExtraEntities(
+  table: EntityTable,
+  curated: CuratedUnits,
+  extras: readonly ExtraEntityDef[],
+): void {
+  for (const x of extras) {
+    if (table.entityIndex.has(x.id))
+      throw new Error(`entities.yaml › ${x.id} : entité déjà définie`);
+    const index = table.entities.length + 1;
+    table.entities.push({
+      index,
+      id: x.id,
+      name: x.name,
+      nameFr: x.nameFr,
+      kind: x.kind,
+      neA3: '',
+      provenance: x.provenance,
+    });
+    table.entityIndex.set(x.id, index);
+    curated.capitals[x.id] = { value: x.capital.name, lonlat: x.capital.lonlat, ...x.provenance };
+  }
 }

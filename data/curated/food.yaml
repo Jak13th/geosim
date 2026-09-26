@@ -1,0 +1,37 @@
+# Marchés alimentaires (SPEC §5.2, §8.4) : contexte mondial et parts des exportateurs pour le blé et le
+# riz (USDA, septembre 2026). Autosuffisance et parts d'exportation des céréales par pays :
+# automatisées (FAOSTAT, bilans alimentaires) ; `bloc:eu` désigne l'Union européenne.
+version: 1
+markets:
+  wheat:
+    season: 2026/27
+    world_production_mt: 822.4
+    world_exports_mt: 211.8
+    world_ending_stocks_mt: 276.3
+    export_shares:
+      { RUS: 20.3, 'bloc:eu': 14.6, CAN: 14.2, AUS: 11.1, USA: 10.0, ARG: 7.3, UKR: 5.9 }
+    source: 'USDA, World Agricultural Supply and Demand Estimates (WASDE-676, 11/09/2026) : https://www.usda.gov/oce/commodity/wasde/wasde0926.pdf'
+    date: '2026-09-25'
+    confidence: high
+    note:
+      Parts des exportations mondiales de blé (%) ; l'Inde a levé son interdiction d'exporter en août
+      2026 ; logistique de la mer Noire perturbée.
+  rice:
+    season: 2026/27
+    world_production_mt: 533.9
+    world_exports_mt: 62.6
+    world_ending_stocks_mt: 197.0
+    export_shares: { IND: 39.9, VNM: 12.9, THA: 12.0, PAK: 8.0, USA: 4.0 }
+    source: 'USDA, World Agricultural Supply and Demand Estimates (WASDE-676, 11/09/2026) : https://www.usda.gov/oce/commodity/wasde/wasde0926.pdf'
+    date: '2026-09-25'
+    confidence: high
+  fertilizers:
+    {
+      note:
+        "Parts des exportations d'engrais : automatisées (FAOSTAT, `res.fertilizer_export_share`).
+        La guerre d'Iran perturbe l'urée et l'ammoniac du Golfe (Qatar, Arabie saoudite, Iran), environ
+        un tiers du commerce mondial d'urée.",
+      source: 'https://en.wikipedia.org/wiki/2026_Iran_war',
+      date: '2026-09-25',
+      confidence: medium,
+    }

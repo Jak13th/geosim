@@ -191,3 +191,61 @@ Chaque arête de pixel d'une limite compte pour |n| / (|nx| + |ny|) côté de pi
 ### D27. Données WorldClim : usage local
 
 WorldClim 2.1 est libre pour un usage non commercial, sans redistribution. Les données brutes (`data/raw`) et dérivées (`data/build`) restent locales et ne sont pas versionnées.
+
+## 2026-09-25 — Phase 1b (données pays et fichiers curés)
+
+### D28. Sources automatisées : compléments à D9
+
+- FMI (API DataMapper, World Economic Outlook d'avril 2026) : la valeur retenue est celle de l'année en cours (2026), estimation ou projection du FMI, notée comme telle (confiance `medium`). L'API refuse les requêtes sans en-tête `User-Agent` (403) : le pipeline s'identifie (`GeoSim-data-pipeline/0.1`).
+- WGI : certaines lignes de l'API n'ont pas de code ISO ; elles sont rattachées par le nom du pays (liste des pays de la source 3).
+- Type de régime, démocratie, polarisation : V-Dem via les graphiques d'Our World in Data ; alignement : points idéaux des votes à l'AGNU (Bailey, Strezhnev et Voeten, Harvard Dataverse) ; IDH : PNUD, rapport 2025 ; bilans alimentaires et engrais : FAOSTAT ; commerce : CEPII BACI HS22 V202601 (année 2024), lu en flux dans l'archive (366 Mo décompressés).
+- Indice de capital humain : dernière édition 2020, signalée comme ancienne.
+- Taïwan, absente des données de la Banque mondiale : FMI pour les agrégats macroéconomiques, budget de défense curé, médianes régionales (signalées dans le rapport) pour le reste.
+- _Raison_ : chaque remplacement est tracé dans la provenance de la valeur et dans `data/build/report.md`.
+
+### D29. Chaîne de résolution et replis
+
+Chaque paramètre pays a une règle explicite (`scripts/data/src/country/rules.ts`, vérifiée par un test) : sources dans l'ordre, puis un repli parmi médiane régionale (même région et même revenu, puis revenu, région, monde ; ratio à la population ou au PIB pour les grandeurs extensives), hypothèse par défaut (`defaults.yaml`), zéro documenté, sans objet ou lacune signalée. Une absence dans un fichier curé exhaustif (membres du Conseil de sécurité, monnaies du COFER, réserves gelées, conflits, sanctions) vaut « aucun » avec certitude.
+
+- _Écartées_ : imputation statistique (régression sur le revenu), plus précise mais opaque ; laisser des trous, que le moteur ne sait pas traiter.
+- _Raison_ : chaque valeur estimée reste lisible (« médiane de 12 pays comparables : région SSF, revenu LIC ») et remplaçable par une donnée curée.
+
+### D30. Plages du catalogue élargies et écrêtage
+
+Les plages indicatives de 15 paramètres ont été élargies pour contenir les données réelles (solde courant −50–50, recettes publiques 0–120, dette publique 0–400, IDE −100–200…), comme le prévoit `PARAMETRES.md`. Une valeur encore hors plage est écrêtée à la borne ; la valeur d'origine est conservée (`clampedFrom`) et signalée (IDE du Liechtenstein, −1 303 % du PIB).
+
+Unité de `world.metals_prices` : prix de marché en $/t (uranium : $/lb, usage du marché) au lieu d'« indices », pour citer des cotations datées sans année de base arbitraire.
+
+### D31. Ligne de front ukrainienne : polygone simplifié de DeepStateMap (à valider)
+
+Les territoires ukrainiens occupés (hors Crimée) viennent de la carte DeepStateMap du 24/09/2026, simplifiée (Douglas-Peucker, 18 polygones) et attribuée dans `control_zones.geojson`. Les cartes de l'ISW exigent un consentement et n'ont pas été utilisées.
+
+- _Point à valider_ : les conditions de DeepStateMap (© DEEPSTATEUATECH LLC) encadrent la réutilisation de leurs données ; le polygone dérivé et simplifié est versionné dans le dépôt. Si le dépôt est ou devient public, ou si la licence ne convient pas, le remplacer par un tracé propre (oblasts entiers ou tracé manuel à partir des cartes publiques).
+
+### D32. Sahara occidental : souveraineté de jure à la RASD (à valider)
+
+La partie administrée par le Maroc reste contrôlée par le Maroc (`owner`) avec une souveraineté de jure attribuée à l'entité `ESH` (RASD, reconnue par 45 États membres de l'ONU et membre de l'Union africaine) ; la partie tenue par le Front Polisario est contrôlée par `ESH`. Confiance `low` : statut non réglé (territoire non autonome selon l'ONU), reconnaissances fréquemment retirées ou gelées.
+
+- _Écartée_ : souveraineté marocaine (reconnue par les États-Unis, Israël et plusieurs États, mais pas par l'ONU).
+- _Point à valider_ : le choix a un effet sur la légitimité des revendications en simulation.
+
+### D33. Entités de facto, factions et unités statistiques
+
+Huit entités de facto (dont Abkhazie, Ossétie du Sud et Transnistrie, nouvelles) et cinq factions de guerres civiles (Forces de soutien rapide, Houthis, Armée nationale libyenne, AFC/M23, Armée d'Arakan) s'ajoutent aux États : 208 entités. Leurs territoires viennent des zones de contrôle. Les entités de facto qui publient leurs statistiques sont leur propre unité statistique, retirée des totaux du pays qui les incluait (`includedIn`) ; les factions ne publient rien : leurs pixels comptent dans leur pays, et leur population et leur PIB sont calculés depuis la carte.
+
+- _Écartées_ : ignorer les factions (la guerre au Soudan ou au Yémen n'aurait pas d'acteur) ; les traiter comme des États (double comptage des populations).
+
+### D34. Population par pixel : noyaux urbains et habitabilité rurale
+
+Répartition décrite dans `MODELES.md` §1.10 : noyaux gaussiens autour des villes (écart-type en racine de la population) et zones urbaines Natural Earth pour la part urbaine (taux d'urbanisation de la Banque mondiale), habitabilité biome × relief pour la part rurale ; valeur économique proportionnelle à la population avec une prime urbaine. Totaux conservés exactement.
+
+- _Écartées_ : grilles de population GPW ou WorldPop (fidèles, mais lourdes, sous licence et hors des sources de SPEC §4.2) ; population uniforme (fronts et frappes sans enjeu).
+- _Raison_ : 13 coefficients dans `config/model.yaml`, calibrables ; la comparaison avec une grille de référence est prévue en phase 8.
+
+### D35. Profils décisionnels et relations initiales (à valider)
+
+`profiles.yaml` : 44 profils (pays au niveau complet), 14 valeurs chacun avec une justification d'une ligne tirée des comportements observables, buts stratégiques, et profil d'alternance pour 8 démocraties ; hypothèses sur les gouvernements, jamais sur des personnes (confiance `assumption`). `relations_seed.yaml` : 148 paires clés, asymétriques quand il le faut. Les autres pays reçoivent un profil par défaut selon leur type de régime ; les autres paires viendront du modèle d'affinité (phase 4).
+
+### D36. Construction : `--skip-map` et contrôles bloquants
+
+`npm run data -- --skip-map` réutilise la carte construite pour itérer sur les données pays (40 s au lieu de 4 min). Arrêtent la construction : référence introuvable dans un fichier curé, provenance incomplète, valeur de profil ou de relation hors plage, paire bilatérale en double, zone de contrôle sans pixel (au-delà de 2 pixels de surface), écart aux totaux de population.

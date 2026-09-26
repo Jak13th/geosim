@@ -226,3 +226,11 @@ capitals:
     date: 2026-09-25
     confidence: high
     note: Capitale de fait de Nauru (pas de capitale officielle) ; absente de Natural Earth.
+  YEM:
+    value: Aden
+    source: https://en.wikipedia.org/wiki/Aden
+    date: 2026-09-25
+    confidence: high
+    note: >-
+      Siège du Conseil présidentiel de direction (gouvernement reconnu) ; Sanaa est tenue par les
+      Houthis depuis 2014 (entité HOU, control_zones.geojson).

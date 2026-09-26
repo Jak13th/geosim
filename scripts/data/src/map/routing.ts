@@ -28,6 +28,16 @@ export interface ChokepointDef extends CuratedProvenance {
   gates: Position[][];
   channel?: Position[];
   test: { a: Position; b: Position };
+  /** Statut au jour du build (phase 1b) : ouvert, contesté ou fermé, trafic en % de la normale. */
+  status: ChokepointStatus;
+}
+
+export interface ChokepointStatus extends CuratedProvenance {
+  value: 'open' | 'contested' | 'closed';
+  /** Trafic actuel en % du trafic d'avant crise. */
+  traffic_pct: number;
+  /** Trafic normal (ordre de grandeur), texte libre avec unité. */
+  normal_traffic: string;
 }
 
 export function parseChokepoints(raw: unknown): ChokepointDef[] {
@@ -58,6 +68,16 @@ export function parseChokepoints(raw: unknown): ChokepointDef[] {
     }
     if (!c.test || !isPos(c.test.a) || !isPos(c.test.b))
       throw new Error(`${where} : test invalide`);
+    const st = c.status;
+    checkProvenance(st, `${where}.status`);
+    if (!st || !['open', 'contested', 'closed'].includes(st.value)) {
+      throw new Error(`${where} : status.value doit valoir open, contested ou closed`);
+    }
+    if (typeof st.traffic_pct !== 'number' || st.traffic_pct < 0 || st.traffic_pct > 150) {
+      throw new Error(`${where} : status.traffic_pct invalide`);
+    }
+    if (typeof st.normal_traffic !== 'string')
+      throw new Error(`${where} : status.normal_traffic requis`);
     return c as ChokepointDef;
   });
 }

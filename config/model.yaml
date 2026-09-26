@@ -153,6 +153,79 @@ geo:
       range: [1, 20]
       unit: ''
       description: 'Multiplicateur du coût des trajets au-delà de polar_min_lat pour le choix des routes. La longueur rapportée reste la distance réelle.'
+  population:
+    # Répartition de la population et de la valeur économique par pixel (phase 1b).
+    # Hypothèses à calibrer ; équations : docs/MODELES.md §1.9.
+    city_kernel_sigma_km:
+      value: 8
+      range: [2, 30]
+      unit: 'km'
+      description: "Écart-type du noyau gaussien d'une agglomération d'un million d'habitants ; il croît comme la racine de la population (Paris, 11 M : 27 km)."
+    urban_area_density:
+      value: 2000
+      range: [200, 10000]
+      unit: 'hab./km²'
+      description: 'Densité attribuée aux zones urbaines Natural Earth (villes absentes de la liste des villes), en poids relatif avant normalisation.'
+    habitability_temperate_forest:
+      value: 1
+      range: [0, 2]
+      unit: ''
+      description: 'Habitabilité rurale relative du biome forêt tempérée ou boréale (référence 1 ; inclut les terres agricoles tempérées).'
+    habitability_tropical_forest:
+      value: 0.5
+      range: [0, 2]
+      unit: ''
+      description: 'Habitabilité rurale relative du biome forêt tropicale.'
+    habitability_steppe_savanna:
+      value: 0.6
+      range: [0, 2]
+      unit: ''
+      description: 'Habitabilité rurale relative du biome steppe ou savane.'
+    habitability_desert:
+      value: 0.005
+      range: [0, 0.5]
+      unit: ''
+      description: 'Habitabilité rurale relative du désert, hors fleuves (oasis et vallées sont portées par le bonus fleuve et par les villes).'
+    habitability_tundra:
+      value: 0.01
+      range: [0, 0.5]
+      unit: ''
+      description: 'Habitabilité rurale relative de la toundra.'
+    habitability_wetland:
+      value: 0.5
+      range: [0, 2]
+      unit: ''
+      description: 'Habitabilité rurale relative des zones humides et deltas (deltas du Nil, du Gange, du Mékong…).'
+    terrain_factor_hills:
+      value: 0.6
+      range: [0, 1]
+      unit: ''
+      description: "Multiplicateur d'habitabilité des collines (plaine = 1)."
+    terrain_factor_mountain:
+      value: 0.25
+      range: [0, 1]
+      unit: ''
+      description: "Multiplicateur d'habitabilité de la montagne."
+    terrain_factor_high_mountain:
+      value: 0.05
+      range: [0, 1]
+      unit: ''
+      description: "Multiplicateur d'habitabilité de la haute montagne (plateau tibétain, Altiplano hors villes)."
+    river_bonus:
+      value: 1
+      range: [0, 5]
+      unit: ''
+      description: 'Habitabilité ajoutée aux pixels de fleuve majeur (vallées irriguées : Nil, Indus, Tigre et Euphrate).'
+    coast_factor:
+      value: 1.3
+      range: [0.5, 3]
+      unit: ''
+      description: "Multiplicateur d'habitabilité des pixels côtiers."
+    urban_productivity_premium:
+      value: 1
+      range: [0, 5]
+      unit: ''
+      description: "Prime de productivité de la population urbaine : la valeur économique d'un pixel est proportionnelle à population × (1 + prime × part urbaine)."
 demography: {}
 economy: {}
 trade: {}

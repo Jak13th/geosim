@@ -9,8 +9,10 @@ import {
   Biome,
   MapFlag,
   Terrain,
+  decodeLand,
   decodeMap,
   isLand,
+  landIndex,
   type MapGeo,
   type MapGrid,
   type MapMeta,
@@ -18,6 +20,7 @@ import {
 } from '@geosim/shared';
 import { describe, expect, it } from 'vitest';
 import { BUILD_DIR } from '../paths.ts';
+import { makeGrid, pixelOf } from './grid.ts';
 
 const dir = join(BUILD_DIR, 'map');
 const built = existsSync(join(dir, 'map-4096.bin.gz'));
@@ -159,5 +162,56 @@ describe.skipIf(!built)('carte construite (4096 px)', () => {
     expect(riparians('suez')).toContain('EGY');
     expect(riparians('panama')).toContain('PAN');
     expect(riparians('dover')).toEqual(expect.arrayContaining(['FRA', 'GBR']));
+  });
+
+  it('applique les zones de contrôle : contrôle de facto et souveraineté de jure', () => {
+    const grid = makeGrid(map.header.width);
+    const at = (lon: number, lat: number) => {
+      const p = pixelOf(grid, lon, lat);
+      const id = (i: number) => meta.entities[i - 1]?.id ?? '—';
+      return [id(map.layers.owner[p] as number), id(map.layers.sovereign[p] as number)];
+    };
+    expect(at(37.8, 48.0)).toEqual(['RUS', 'UKR']); // Donetsk
+    expect(at(34.1, 44.95)).toEqual(['RUS', 'UKR']); // Simferopol
+    expect(at(30.52, 50.45)).toEqual(['UKR', 'UKR']); // Kiev
+    expect(at(24.88, 12.05)).toEqual(['RSF', 'SDN']); // Nyala
+    expect(at(44.21, 15.35)).toEqual(['HOU', 'YEM']); // Sanaa
+    expect(at(20.07, 32.12)).toEqual(['LNA', 'LBY']); // Benghazi
+    expect(at(13.19, 32.89)).toEqual(['LBY', 'LBY']); // Tripoli
+    expect(at(29.64, 46.84)).toEqual(['PMR', 'MDA']); // Tiraspol
+    expect(at(-13.2, 27.15)).toEqual(['MAR', 'ESH']); // Laâyoune
+    for (const z of meta.controlZones) {
+      if (z.id !== 'east_jerusalem') expect(z.pixels, z.id).toBeGreaterThan(0);
+    }
+  });
+
+  it('répartit population et valeur économique sur les terres, totaux conservés', () => {
+    const raw = gunzipSync(readFileSync(join(dir, 'land-4096.bin.gz')));
+    const { header, layers } = decodeLand(
+      raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength) as ArrayBuffer,
+    );
+    expect(header.buildId).toBe(map.header.buildId);
+    const index = landIndex(map.layers.terrain);
+    expect(header.count).toBe(index.length);
+    const pop = new Float64Array(meta.entities.length + 1);
+    let bad = 0;
+    for (let k = 0; k < index.length; k++) {
+      const v = layers.population[k] as number;
+      const g = layers.economicValue[k] as number;
+      if (!Number.isFinite(v) || v < 0 || !Number.isFinite(g) || g < 0) bad++;
+      const o = map.layers.owner[index[k] as number] as number;
+      pop[o] = (pop[o] as number) + v;
+    }
+    expect(bad).toBe(0);
+    const world = pop.reduce((s, v) => s + v, 0);
+    expect(world).toBeGreaterThan(7.9e9);
+    expect(world).toBeLessThan(8.5e9);
+    // Les statistiques par entité (propriétaire de facto) sont la somme de leurs pixels.
+    for (const e of meta.entities) {
+      const expected = e.stats.population;
+      expect(Math.abs((pop[e.index] as number) - expected), e.id).toBeLessThanOrEqual(
+        1e-4 * expected + 1,
+      );
+    }
   });
 });

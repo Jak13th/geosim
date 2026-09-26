@@ -1,0 +1,74 @@
+# Paramètres mondiaux au 25/09/2026 (SPEC §5.2, PARAMETRES.md §17) : prix de marché, taux directeur de
+# référence, domination du dollar. Les autres paramètres mondiaux sont des hypothèses (defaults.yaml) ou
+# sont calculés par le moteur.
+version: 1
+values:
+  world.oil_price:
+    {
+      value: 104.37,
+      source: 'Trading Economics, cours du 25/09/2026 : https://tradingeconomics.com/commodities',
+      date: '2026-09-25',
+      confidence: high,
+      note: "Brent ; 72,5 $ avant la guerre d'Iran (27/02/2026).",
+    }
+  world.gas_price:
+    value: { europe: 24.07, asia: 25.41, americas: 3.25 }
+    source:
+      'LNG Price Index (TTF, JKM, Henry Hub), 25/09/2026 : https://lngpriceindex.com/ ; TTF 70,43
+      €/MWh (Trading Economics)'
+    date: '2026-09-25'
+    confidence: high
+  world.coal_price:
+    {
+      value: 143.5,
+      source: 'Trading Economics, cours du 25/09/2026 : https://tradingeconomics.com/commodities',
+      date: '2026-09-25',
+      confidence: high,
+      note: Charbon thermique de Newcastle.,
+    }
+  world.wheat_price:
+    {
+      value: 258.7,
+      source: 'Trading Economics, cours du 25/09/2026 : https://tradingeconomics.com/commodities',
+      date: '2026-09-25',
+      confidence: high,
+      note: 'Blé CBOT à 704 cents le boisseau, converti à 36,744 boisseaux
+        par tonne.',
+    }
+  world.fertilizer_price:
+    {
+      value: 159,
+      source: 'Trading Economics, cours du 25/09/2026 : https://tradingeconomics.com/commodities
+        ; moyennes 2010 de la Banque mondiale (Pink Sheet) : urée 288,6 $/t, DAP 500,7 $/t',
+      date: '2026-09-25',
+      confidence: low,
+      note: "Indice GeoSim (2010 = 100) : moyenne des rapports urée (457,75 $/t) et DAP
+        (802,5 $/t) à leurs moyennes de 2010 ; approximation de l'indice des engrais de la Banque mondiale.",
+    }
+  world.metals_prices:
+    value: { copper: 14760, lithium: 19810, rare_earths: 141000, uranium: 89.45 }
+    source:
+      'Trading Economics, cours du 25/09/2026 : https://tradingeconomics.com/commodities ; USD/CNY
+      6,720 (Trading Economics, 25/09/2026)'
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Cuivre 6,695 $/lb (14 760 $/t) ; carbonate de lithium 133 150 CNY/t ; néodyme 947 500 CNY/t
+      ; uranium 89,45 $/lb (U3O8).
+  world.policy_rate:
+    {
+      value: 3.875,
+      source: 'https://www.cnbc.com/2026/09/16/fed-rate-decision-september-2026.html',
+      date: '2026-09-25',
+      confidence: high,
+      note: 'Fourchette des fonds fédéraux relevée à 3,75–4,00 % le
+        16/09/2026 (première hausse depuis 2023) ; milieu de fourchette.',
+    }
+  world.dollar_dominance:
+    {
+      value: 57.13,
+      source: 'FMI, COFER 2026T1 : https://data.imf.org/en/news/imf%20data%20brief%20july%201',
+      date: '2026-09-25',
+      confidence: high,
+      note: Part du dollar dans les réserves allouées (T1 2026).,
+    }

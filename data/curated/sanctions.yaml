@@ -1,0 +1,701 @@
+# Sanctions, droits de douane spécifiques, réserves gelées et restrictions d'exportation au
+# 25/09/2026 (SPEC §5.2, §8.6). Intensité par volet (0–1) : hypothèse GeoSim fondée sur l'étendue des
+# mesures décrites par les sources ; `secondary` : sanctions secondaires contre les pays tiers.
+# `bloc:<id>` désigne tous les membres d'un bloc (blocs.yaml).
+version: 1
+regimes:
+  - id: west_rus
+    name: Sanctions occidentales contre la Russie
+    target: RUS
+    senders: &id001 ['bloc:eu', USA, GBR, CAN, JPN, AUS, NZL, CHE, NOR, ISL, LIE]
+    tracks: { trade: 0.6, finance: 0.9, technology: 0.9, energy: 0.7, elites: 0.9, transport: 0.7 }
+    secondary: true
+    source: https://en.wikipedia.org/wiki/International_sanctions_during_the_Russo-Ukrainian_war
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      '19 paquets européens et plus, plafond de prix du pétrole, sanctions américaines contre Rosneft
+      et Lukoil (octobre 2025), sanctions secondaires ; intensités : hypothèse GeoSim.'
+  - id: kor_rus
+    name: Contrôles à l'exportation sud-coréens et singapouriens contre la Russie
+    target: RUS
+    senders: [KOR, SGP, TWN]
+    tracks: { technology: 0.6, finance: 0.3 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/International_sanctions_during_the_Russo-Ukrainian_war
+    date: '2026-09-25'
+    confidence: low
+  - id: west_blr
+    name: Sanctions occidentales contre la Biélorussie
+    target: BLR
+    senders: *id001
+    tracks: { trade: 0.5, finance: 0.6, technology: 0.8, energy: 0.3, elites: 0.8, transport: 0.6 }
+    secondary: true
+    source: https://en.wikipedia.org/wiki/International_sanctions_against_Belarus
+    date: '2026-09-25'
+    confidence: medium
+  - id: usa_irn
+    name: Pression maximale américaine et « Economic D-Day » contre l'Iran
+    target: IRN
+    senders: [USA]
+    tracks: { trade: 0.95, finance: 1.0, technology: 1.0, energy: 1.0, elites: 0.9, transport: 0.9 }
+    secondary: true
+    source: https://en.wikipedia.org/wiki/2026 ; https://www.globalsecurity.org/military/ops/iran-war-oprep.htm
+    date: '2026-09-25'
+    confidence: high
+    note:
+      Embargo quasi total, blocus naval des ports iraniens (rétabli en juillet 2026), appel du 20/08/2026
+      à isoler économiquement l'Iran.
+  - id: eu_irn
+    name:
+      Sanctions européennes et britanniques contre l'Iran (sanctions de l'ONU rétablies en septembre
+      2025)
+    target: IRN
+    senders: ['bloc:eu', GBR, CAN, AUS, JPN, CHE, NOR]
+    tracks: { trade: 0.5, finance: 0.7, technology: 0.8, energy: 0.9, elites: 0.8, transport: 0.6 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/Snapback_(Iran)
+    date: '2026-09-25'
+    confidence: medium
+    note: 'Mécanisme de « snapback » du 28/09/2025 : rétablissement des résolutions du Conseil de sécurité.'
+  - id: un_prk
+    name: Sanctions de l'ONU et des alliés contre la Corée du Nord
+    target: PRK
+    senders: ['bloc:eu', USA, GBR, CAN, JPN, KOR, AUS, NZL, CHE, NOR]
+    tracks: { trade: 0.95, finance: 1.0, technology: 1.0, energy: 0.8, elites: 0.9, transport: 0.9 }
+    secondary: true
+    source: https://en.wikipedia.org/wiki/Sanctions_against_North_Korea
+    date: '2026-09-25'
+    confidence: high
+    note:
+      'Résolutions du Conseil de sécurité appliquées aussi, en principe, par les autres États (application
+      très inégale : Chine, Russie).'
+  - id: usa_cub
+    name: Embargo américain contre Cuba et blocus pétrolier de 2026
+    target: CUB
+    senders: [USA]
+    tracks: { trade: 0.9, finance: 0.9, technology: 0.9, energy: 0.9, elites: 0.5, transport: 0.8 }
+    secondary: true
+    source: https://en.wikipedia.org/wiki/United_States_embargo_against_Cuba ; https://en.wikipedia.org/wiki/2026
+    date: '2026-09-25'
+    confidence: medium
+    note: Embargo depuis 1962 ; blocus des livraisons de pétrole en 2026 (négociations en cours).
+  - id: usa_ven
+    name: Sanctions américaines contre le Venezuela (en cours d'allègement)
+    target: VEN
+    senders: [USA]
+    tracks: { trade: 0.3, finance: 0.5, technology: 0.3, energy: 0.3, elites: 0.7, transport: 0.2 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/United_States_sanctions_during_the_Venezuelan_crisis
+    date: '2026-09-25'
+    confidence: medium
+    note: Allègements progressifs depuis le 30/01/2026 (licences pétrolières) après la capture de Maduro.
+  - id: eu_ven
+    name: Sanctions européennes contre le Venezuela
+    target: VEN
+    senders: ['bloc:eu']
+    tracks: { elites: 0.6, technology: 0.2 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/Sanctions_during_the_Venezuelan_crisis
+    date: '2026-09-25'
+    confidence: medium
+    note: Embargo sur les armes et mesures individuelles.
+  - id: west_syr
+    name: Sanctions résiduelles contre la Syrie
+    target: SYR
+    senders: [USA, 'bloc:eu', GBR]
+    tracks: { elites: 0.3, technology: 0.2 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/2026
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Sanctions économiques levées en 2025 ; retrait de la liste américaine des États soutenant le terrorisme
+      le 24/08/2026 ; restent des mesures individuelles.
+  - id: west_mmr
+    name: Sanctions occidentales contre la junte birmane
+    target: MMR
+    senders: [USA, 'bloc:eu', GBR, CAN]
+    tracks: { trade: 0.2, finance: 0.3, energy: 0.3, elites: 0.6 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/International_sanctions_against_Myanmar
+    date: '2026-09-25'
+    confidence: medium
+  - id: usa_afg
+    name: Sanctions américaines et gel des avoirs de l'Afghanistan
+    target: AFG
+    senders: [USA, 'bloc:eu', GBR]
+    tracks: { trade: 0.2, finance: 0.8, elites: 0.8 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/Sanctions_against_Afghanistan
+    date: '2026-09-25'
+    confidence: medium
+  - id: usa_nic
+    name: Sanctions américaines contre le Nicaragua
+    target: NIC
+    senders: [USA, 'bloc:eu']
+    tracks: { finance: 0.3, elites: 0.6 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/Nicaragua%E2%80%93United_States_relations
+    date: '2026-09-25'
+    confidence: medium
+  - id: usa_chn_tech
+    name: Contrôles à l'exportation et restrictions d'investissement américains contre la Chine
+    target: CHN
+    senders: [USA]
+    tracks: { technology: 0.6, finance: 0.2, elites: 0.3, trade: 0.2 }
+    secondary: true
+    source: https://en.wikipedia.org/wiki/United_States_sanctions_against_China
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Puces avancées et équipements de fabrication, liste des entités, restrictions d'investissement
+      sortant.
+  - id: allies_chn_tech
+    name: Contrôles à l'exportation alliés sur les équipements de semi-conducteurs
+    target: CHN
+    senders: [NLD, JPN, KOR, TWN]
+    tracks: { technology: 0.4 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/United_States_sanctions_against_China
+    date: '2026-09-25'
+    confidence: low
+  - id: chn_usa
+    name: Contre-mesures chinoises contre les États-Unis
+    target: USA
+    senders: [CHN]
+    tracks: { technology: 0.2, trade: 0.1, elites: 0.2 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/China%E2%80%93United_States_trade_war
+    date: '2026-09-25'
+    confidence: low
+    note:
+      Liste des entités non fiables, contrôles sur les minerais (en partie suspendus par la trêve de
+      novembre 2025).
+  - id: rus_west
+    name: Contre-sanctions russes (embargo alimentaire, gaz)
+    target: USA
+    senders: [RUS]
+    tracks: { trade: 0.3 }
+    secondary: false
+    source: https://en.wikipedia.org/wiki/Russian_sanctions_against_Western_countries
+    date: '2026-09-25'
+    confidence: low
+    note: Embargo alimentaire depuis 2014 contre les pays qui sanctionnent la Russie.
+tariffs:
+  - {
+      from: USA,
+      to: CHN,
+      rate: 30,
+      source: 'https://en.wikipedia.org/wiki/China%E2%80%93United_States_trade_war
+        ; https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: 'Droits de la section 301 de 2018-2019 et de 2024, plus les
+        droits de la section 301 de juillet 2026 (10–12,5 %) ; moyenne pondérée estimée.',
+    }
+  - {
+      from: CHN,
+      to: USA,
+      rate: 10,
+      source: 'https://en.wikipedia.org/wiki/China%E2%80%93United_States_trade_war',
+      date: '2026-09-25',
+      confidence: low,
+      note: Droits de rétorsion maintenus après la trêve de novembre
+        2025 (estimation).,
+    }
+  - {
+      from: USA,
+      to: JPN,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: KOR,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: TWN,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: VNM,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: IND,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: THA,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: MYS,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: IDN,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: CHE,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: GBR,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: BRA,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: ZAF,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: AUS,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: ISR,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: TUR,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: SGP,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: PHL,
+      rate: 11,
+      source:
+        'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs
+        ; https://gingercontrol.com/blog/section-122-tariffs-explained',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        'Droits de la section 301 de 10 à 12,5 % sur 60 économies depuis le 24/07/2026 (liste exacte non
+        vérifiée) ; les droits sectoriels de la section 232 (acier, aluminium, automobiles) ne sont pas inclus.',
+    }
+  - {
+      from: USA,
+      to: DEU,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: FRA,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: ITA,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: NLD,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: ESP,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: BEL,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: IRL,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: AUT,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: SWE,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: POL,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: CZE,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: DNK,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+  - {
+      from: USA,
+      to: FIN,
+      rate: 11,
+      source: 'https://www.skadden.com/insights/publications/2026/05/us-trade-court-strikes-down-section-122-tariffs',
+      date: '2026-09-25',
+      confidence: low,
+      note: Accord cadre États-Unis–UE (droit plafond de 15 %) puis droits
+        de la section 301 (juillet 2026) ; estimation.,
+    }
+frozen_reserves:
+  RUS:
+    {
+      share: 45,
+      source: 'https://en.wikipedia.org/wiki/Russian_foreign_exchange_reserves',
+      date: '2026-09-25',
+      confidence: medium,
+      note: "≈ 300 Md$ d'avoirs de la banque centrale immobilisés (dont ≈ 210 Md€ dans
+        l'UE, surtout chez Euroclear) sur ≈ 690 Md$ de réserves.",
+    }
+  AFG:
+    {
+      share: 95,
+      source: 'https://en.wikipedia.org/wiki/Da_Afghanistan_Bank',
+      date: '2026-09-25',
+      confidence: medium,
+      note: '≈ 9 Md$ gelés depuis août 2021 (3,5 Md$ transférés au Fonds afghan à Genève).',
+    }
+  IRN:
+    {
+      share: 60,
+      source: 'https://en.wikipedia.org/wiki/2026_Iran_war',
+      date: '2026-09-25',
+      confidence: low,
+      note:
+        "Hypothèse : une grande partie des réserves détenues à l'étranger est inaccessible (sanctions
+        et blocus).",
+    }
+  VEN:
+    {
+      share: 15,
+      source: 'https://en.wikipedia.org/wiki/Venezuelan_gold_at_the_Bank_of_England',
+      date: '2026-09-25',
+      confidence: low,
+      note: Or déposé à la Banque d'Angleterre (≈ 2 Md$) ; statut en cours de réexamen
+        après la transition de 2026.,
+    }
+export_restrictions:
+  - {
+      country: CHN,
+      product: rare_earths,
+      intensity: 0.4,
+      source: 'https://en.wikipedia.org/wiki/Rare-earth_industry_in_China',
+      date: '2026-09-25',
+      confidence: medium,
+      note: Licences d'exportation sur 7 terres rares (avril 2025)
+        ; extension d'octobre 2025 suspendue un an par la trêve sino-américaine.,
+    }
+  - {
+      country: CHN,
+      product: gallium,
+      intensity: 0.4,
+      source: 'https://en.wikipedia.org/wiki/Gallium',
+      date: '2026-09-25',
+      confidence: medium,
+      note: Régime de licences (2023) ; interdiction vers les États-Unis (décembre 2024)
+        suspendue en novembre 2025.,
+    }
+  - {
+      country: CHN,
+      product: germanium,
+      intensity: 0.4,
+      source: 'https://en.wikipedia.org/wiki/Germanium',
+      date: '2026-09-25',
+      confidence: medium,
+      note: Régime de licences (2023) ; interdiction vers les États-Unis
+        suspendue en novembre 2025.,
+    }
+  - {
+      country: CHN,
+      product: graphite,
+      intensity: 0.3,
+      source: 'https://en.wikipedia.org/wiki/Graphite',
+      date: '2026-09-25',
+      confidence: medium,
+      note: Licences d'exportation sur le graphite (décembre 2023).,
+    }
+  - {
+      country: IDN,
+      product: nickel,
+      intensity: 0.8,
+      source: 'https://en.wikipedia.org/wiki/Nickel_mining_in_Indonesia',
+      date: '2026-09-25',
+      confidence: medium,
+      note: Interdiction d'exporter le minerai de nickel brut (2020).,
+    }
+  - {
+      country: COD,
+      product: cobalt,
+      intensity: 0.6,
+      source: 'https://en.wikipedia.org/wiki/Cobalt_mining_in_the_Democratic_Republic_of_the_Congo',
+      date: '2026-09-25',
+      confidence: medium,
+      note: Suspension des exportations de cobalt (février 2025) remplacée
+        par des quotas (octobre 2025).,
+    }
+  - {
+      country: ZWE,
+      product: lithium,
+      intensity: 0.6,
+      source: 'https://en.wikipedia.org/wiki/Lithium_mining_in_Zimbabwe',
+      date: '2026-09-25',
+      confidence: medium,
+      note: "Interdiction d'exporter le minerai de lithium brut (2022,
+        concentrés à partir de 2027).",
+    }
+  - {
+      country: RUS,
+      product: energy,
+      intensity: 0.2,
+      source: 'https://en.wikipedia.org/wiki/Russian_oil_export_ban',
+      date: '2026-09-25',
+      confidence: medium,
+      note: Interdictions temporaires d'exporter l'essence (2025-2026).,
+    }
+  - {
+      country: USA,
+      product: chips,
+      intensity: 0.5,
+      source: 'https://en.wikipedia.org/wiki/United_States_New_Export_Controls_on_Advanced_Computing_and_Semiconductors_to_China',
+      date: '2026-09-25',
+      confidence: medium,
+      note: "Contrôles à l'exportation des puces avancées et des
+        équipements (Chine, pays sous embargo).",
+    }
+  - {
+      country: NLD,
+      product: chip_equipment,
+      intensity: 0.4,
+      source: 'https://en.wikipedia.org/wiki/ASML_Holding',
+      date: '2026-09-25',
+      confidence: medium,
+      note: 'Licences sur les machines de lithographie ASML (EUV,
+        DUV avancée).',
+    }
+  - {
+      country: MYS,
+      product: rare_earths,
+      intensity: 0.3,
+      source: 'https://en.wikipedia.org/wiki/Rare-earth_element',
+      date: '2026-09-25',
+      confidence: medium,
+      note: Interdiction d'exporter les terres rares brutes (2024).,
+    }

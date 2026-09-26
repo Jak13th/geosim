@@ -1,0 +1,349 @@
+{
+  "type": "FeatureCollection",
+  "name": "claims",
+  "description": "Géométries des revendications (SPEC §4.5) : zones disputées Natural Earth désignées par leur nom (BRK_NAME). Intensité (level) et revendiquants (countries) : voir disputes.yaml.",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "jammu_kashmir",
+        "nameFr": "Jammu-et-Cachemire administré par l’Inde",
+        "countries": ["IND", "PAK"],
+        "level": 60,
+        "ne_disputed": ["Jammu and Kashmir", "Siachen Glacier", "Junagadh and Manavadar"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Kashmir_conflict",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "azad_kashmir",
+        "nameFr": "Cachemire administré par le Pakistan",
+        "countries": ["PAK", "IND"],
+        "level": 50,
+        "ne_disputed": ["Azad Kashmir", "Gilgit-Baltistan"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Kashmir_conflict",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "aksai_chin",
+        "nameFr": "Aksai Chin et vallée de Shaksgam",
+        "countries": ["CHN", "IND"],
+        "level": 40,
+        "ne_disputed": ["Aksai Chin", "Shaksam Valley"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Aksai_Chin",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "arunachal",
+        "nameFr": "Arunachal Pradesh",
+        "countries": ["IND", "CHN"],
+        "level": 45,
+        "ne_disputed": [
+          "Arunachal Pradesh",
+          "Demchok",
+          "Samdu Valleys",
+          "Tirpani Valleys",
+          "Bara Hotii Valleys"
+        ],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Arunachal_Pradesh",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "taiwan",
+        "nameFr": "Taïwan (revendication de la RPC)",
+        "countries": ["TWN", "CHN"],
+        "level": 80,
+        "ne_disputed": ["Taiwan"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Political_status_of_Taiwan",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "spratly",
+        "nameFr": "Îles Spratleys",
+        "countries": ["CHN", "TWN", "VNM", "PHL", "MYS", "BRN"],
+        "level": 60,
+        "ne_disputed": ["Spratly Is."],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Spratly_Islands_dispute",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "paracels",
+        "nameFr": "Îles Paracels",
+        "countries": ["CHN", "VNM", "TWN"],
+        "level": 40,
+        "ne_disputed": ["Paracel Is."],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Paracel_Islands",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "scarborough",
+        "nameFr": "Récif de Scarborough",
+        "countries": ["CHN", "PHL", "TWN"],
+        "level": 55,
+        "ne_disputed": ["Scarborough Reef"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Scarborough_Shoal_standoff",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "senkaku",
+        "nameFr": "Îles Senkaku (Diaoyu)",
+        "countries": ["JPN", "CHN", "TWN"],
+        "level": 45,
+        "ne_disputed": ["Pinnacle Is."],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Senkaku_Islands_dispute",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kuril",
+        "nameFr": "Kouriles du Sud",
+        "countries": ["RUS", "JPN"],
+        "level": 25,
+        "ne_disputed": ["Kuril Is."],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Kuril_Islands_dispute",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "dokdo",
+        "nameFr": "Dokdo (Takeshima)",
+        "countries": ["KOR", "JPN"],
+        "level": 15,
+        "ne_disputed": ["Dokdo"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Liancourt_Rocks_dispute",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "essequibo",
+        "nameFr": "Guayana Esequiba",
+        "countries": ["VEN", "GUY"],
+        "level": 35,
+        "ne_disputed": ["West of Essequibo River"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Guayana_Esequiba",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "falklands",
+        "nameFr": "Malouines, Géorgie du Sud et Sandwich du Sud",
+        "countries": ["ARG", "GBR"],
+        "level": 20,
+        "ne_disputed": ["Falkland Is.", "S. Georgia", "S. Sandwich Is."],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Falkland_Islands_sovereignty_dispute",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gibraltar",
+        "nameFr": "Gibraltar",
+        "countries": ["ESP", "GBR"],
+        "level": 10,
+        "ne_disputed": ["Gibraltar"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Disputed_status_of_Gibraltar",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kosovo",
+        "nameFr": "Kosovo",
+        "countries": ["SRB", "XKX"],
+        "level": 35,
+        "ne_disputed": ["Kosovo"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Political_status_of_Kosovo",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "abu_musa",
+        "nameFr": "Abou Moussa et les Tunb",
+        "countries": ["ARE", "IRN"],
+        "level": 30,
+        "ne_disputed": ["Abu Musa I."],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Abu_Musa",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "halaib",
+        "nameFr": "Triangle de Halayeb",
+        "countries": ["SDN", "EGY"],
+        "level": 15,
+        "ne_disputed": ["Halayib Triangle"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Hala%27ib_Triangle",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ilemi",
+        "nameFr": "Triangle d’Ilemi",
+        "countries": ["SSD", "KEN"],
+        "level": 10,
+        "ne_disputed": ["Ilemi Triangle"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Ilemi_Triangle",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "abyei",
+        "nameFr": "Abyei",
+        "countries": ["SDN", "SSD"],
+        "level": 30,
+        "ne_disputed": ["Abyei"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Abyei",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "chagos",
+        "nameFr": "Archipel des Chagos",
+        "countries": ["MUS", "GBR"],
+        "level": 20,
+        "ne_disputed": ["Br. Indian Ocean Ter."],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Chagos_Archipelago_sovereignty_dispute",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "mayotte",
+        "nameFr": "Mayotte",
+        "countries": ["COM", "FRA"],
+        "level": 10,
+        "ne_disputed": ["Mayotte"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Mayotte",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "belize",
+        "nameFr": "Revendication guatémaltèque sur le Belize",
+        "countries": ["GTM", "BLZ"],
+        "level": 10,
+        "ne_disputed": ["Belize", "Sapodilla Cayes"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Guatemalan_claim_to_Belize",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bhutan_china",
+        "nameFr": "Frontière sino-bhoutanaise",
+        "countries": ["CHN", "BTN"],
+        "level": 15,
+        "ne_disputed": ["Bhutan (northwest valleys)", "Bhutan (Chumbi salient)"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Bhutan%E2%80%93China_border",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kalapani",
+        "nameFr": "Kalapani (Om Parvat)",
+        "countries": ["NPL", "IND"],
+        "level": 10,
+        "ne_disputed": ["Near Om Parvat"],
+        "source": "Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Kalapani_territory",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    }
+  ]
+}

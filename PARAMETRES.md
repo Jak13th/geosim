@@ -36,8 +36,8 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `demo.urbanization` | Urbanisation | % · 0–100 | S | WB:SP.URB.TOTL.IN.ZS |
 | `demo.net_migration` | Solde migratoire | ‰/an · −50–50 | I | WB:SM.POP.NETM (÷ population) |
 | `demo.migration_openness` | Ouverture migratoire | 0–100 | I | HYP |
-| `demo.refugees_hosted` | Réfugiés accueillis | personnes | S | WB:SM.POP.REFG |
-| `demo.refugees_abroad` | Réfugiés originaires du pays | personnes | S | WB:SM.POP.REFG.OR |
+| `demo.refugees_hosted` | Réfugiés accueillis | personnes | S | UNHCR (API Refugee Data Finder ; `WB:SM.POP.REFG` supprimé, D9) |
+| `demo.refugees_abroad` | Réfugiés originaires du pays | personnes | S | UNHCR (API Refugee Data Finder ; `WB:SM.POP.REFG.OR` supprimé, D9) |
 | `demo.labor_force` | Population active | personnes | S | WB:SL.TLF.TOTL.IN |
 | `demo.manpower` | Réservoir mobilisable (18–49 ans aptes) | personnes | D | DER (structure par âge × aptitude) |
 | `demo.human_capital` | Capital humain | indice 0–1 | S | WB:HD.HCI.OVRL (repli : WB:SE.TER.ENRR) |
@@ -54,31 +54,31 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `eco.gdp_nominal` | PIB nominal | Md$ · échelle log | S | WB:NY.GDP.MKTP.CD / IMF:NGDPD |
 | `eco.gdp_ppp` | PIB en parité de pouvoir d'achat | Md$ internationaux · log | S | WB:NY.GDP.MKTP.PP.CD |
 | `eco.gdp_per_capita` | PIB par habitant | $ | D | DER |
-| `eco.potential_growth` | Croissance potentielle | %/an · −5–12 | I | IMF:NGDP_RPCH (projections à moyen terme) ; repli : moyenne 10 ans de WB:NY.GDP.MKTP.KD.ZG |
+| `eco.potential_growth` | Croissance potentielle | %/an · −10–20 | I | IMF:NGDP_RPCH (projections à moyen terme) ; repli : moyenne 10 ans de WB:NY.GDP.MKTP.KD.ZG |
 | `eco.growth` | Croissance réelle | %/an | D | DER |
 | `eco.inflation` | Inflation | %/an · −10–1000 (log) | S | IMF:PCPIPCH / WB:FP.CPI.TOTL.ZG |
 | `eco.inflation_target` | Cible d'inflation | % · 0–10 | I | CUR (défaut 2–4 %) |
 | `eco.cb_independence` | Indépendance de la banque centrale | 0–1 | I | CUR (indices publiés) |
-| `eco.unemployment` | Chômage | % · 0–50 | S | IMF:LUR / WB:SL.UEM.TOTL.ZS |
-| `eco.public_debt` | Dette publique brute | % PIB · 0–300 | S | IMF:GGXWDG_NGDP (repli : WB:GC.DOD.TOTL.GD.ZS) |
+| `eco.unemployment` | Chômage | % · 0–70 | S | IMF:LUR / WB:SL.UEM.TOTL.ZS |
+| `eco.public_debt` | Dette publique brute | % PIB · 0–400 | S | IMF:GGXWDG_NGDP (repli : WB:GC.DOD.TOTL.GD.ZS) |
 | `eco.debt_maturity` | Maturité moyenne de la dette | ans · 0,5–20 | I | HYP (défaut 6) |
 | `eco.foreign_held_debt` | Part de la dette détenue par l'étranger | % · 0–100 | I | CUR / HYP |
 | `eco.sovereign_rate` | Taux d'emprunt souverain | % | D | DER |
 | `eco.credit_rating` | Notation souveraine | 0 (défaut) – 20 (AAA) | S | CUR |
 | `eco.reserves` | Réserves de change (or inclus) | Md$ | S | WB:FI.RES.TOTL.CD |
 | `eco.reserves_frozen` | Part des réserves gelées | % · 0–100 | S | CUR |
-| `eco.current_account` | Solde courant | % PIB · −30–30 | S | IMF:BCA_NGDPD / WB:BN.CAB.XOKA.GD.ZS |
+| `eco.current_account` | Solde courant | % PIB · −50–50 | S | IMF:BCA_NGDPD / WB:BN.CAB.XOKA.GD.ZS |
 | `eco.reserve_currency` | Statut de monnaie de réserve | 0–1 | I | CUR (parts COFER du FMI) |
 | `eco.exchange_regime` | Régime de change | flottant / géré / fixe / union monétaire / dollarisé | I | CUR |
 | `eco.manufacturing_share` | Industrie manufacturière | % PIB · 0–50 | S | WB:NV.IND.MANF.ZS |
 | `eco.agriculture_share` | Agriculture | % PIB · 0–60 | S | WB:NV.AGR.TOTL.ZS |
-| `eco.resource_rents` | Rentes des ressources naturelles | % PIB · 0–60 | S | WB:NY.GDP.TOTL.RT.ZS |
+| `eco.resource_rents` | Rentes des ressources naturelles | % PIB · 0–80 | S | WB:NY.GDP.TOTL.RT.ZS |
 | `eco.oil_rents` | Rentes pétrolières | % PIB · 0–60 | S | WB:NY.GDP.PETR.RT.ZS |
 | `eco.gas_rents` | Rentes gazières | % PIB · 0–40 | S | WB:NY.GDP.NGAS.RT.ZS |
 | `eco.gini` | Inégalités (indice de Gini) | 20–70 | I | WB:SI.POV.GINI |
-| `eco.fdi_inflows` | Investissements directs étrangers entrants | % PIB | S | WB:BX.KLT.DINV.WD.GD.ZS |
-| `eco.remittances` | Transferts des émigrés reçus | % PIB | S | WB:BX.TRF.PWKR.DT.GD.ZS |
-| `eco.aid_received` | Aide publique au développement reçue | % RNB | S | WB:DT.ODA.ODAT.GN.ZS |
+| `eco.fdi_inflows` | Investissements directs étrangers entrants | % PIB · −100–200 | S | WB:BX.KLT.DINV.WD.GD.ZS |
+| `eco.remittances` | Transferts des émigrés reçus | % PIB · 0–70 | S | WB:BX.TRF.PWKR.DT.GD.ZS |
+| `eco.aid_received` | Aide publique au développement reçue | % RNB · −5–120 | S | WB:DT.ODA.ODAT.GN.ZS |
 | `eco.financial_integration` | Intégration financière (dollar, SWIFT, marchés) | 0–1 | I | HYP |
 | `eco.sovereign_fund` | Fonds souverain | Md$ | S | CUR |
 | `eco.industrial_capacity` | Capacité industrielle mobilisable | indice | D | DER (WB:NV.IND.MANF.CD × facteurs) |
@@ -88,21 +88,21 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 
 | ID | Paramètre | Unité · plage | Type | Source initiale |
 |---|---|---|---|---|
-| `bud.revenue` | Recettes publiques | % PIB · 5–60 | I | WB:GC.REV.XGRT.GD.ZS (repli : WB:GC.TAX.TOTL.GD.ZS) |
+| `bud.revenue` | Recettes publiques | % PIB · 0–120 | I | WB:GC.REV.XGRT.GD.ZS (repli : WB:GC.TAX.TOTL.GD.ZS) |
 | `bud.tax_efficiency` | Efficacité de collecte | 0–1 | I | DER (corruption, efficacité gouvernementale) |
 | `bud.defense` | Défense | % PIB · 0–40 | I | WB:MS.MIL.XPND.GD.ZS |
 | `bud.defense_procurement` | Part de l'équipement et des munitions dans la défense | % · 5–70 | I | HYP (défaut 25–35 %) |
 | `bud.defense_domains` | Répartition terre / air / mer / frappes / défense aérienne / drones / cyber / espace | % par domaine | I | HYP |
 | `bud.social` | Protection sociale | % PIB · 0–35 | I | CUR (OCDE, OIT) / HYP |
-| `bud.health` | Santé publique | % PIB · 0–15 | I | WB:SH.XPD.GHED.GD.ZS |
-| `bud.education` | Éducation | % PIB · 0–12 | I | WB:SE.XPD.TOTL.GD.ZS |
+| `bud.health` | Santé publique | % PIB · 0–25 | I | WB:SH.XPD.GHED.GD.ZS |
+| `bud.education` | Éducation | % PIB · 0–20 | I | WB:SE.XPD.TOTL.GD.ZS |
 | `bud.rnd` | R&D publique | % PIB · 0–5 | I | HYP (part publique de WB:GB.XPD.RSDV.GD.ZS) |
 | `bud.infrastructure` | Infrastructures | % PIB · 0–10 | I | HYP |
 | `bud.subsidies` | Subventions à l'énergie et à l'alimentation | % PIB · 0–15 | I | CUR (FMI) / HYP |
 | `bud.security` | Sécurité intérieure et renseignement | % PIB · 0–5 | I | HYP |
 | `bud.foreign_aid` | Aide extérieure versée (dont militaire) | % RNB · 0–3 | I | CUR (OCDE-CAD, suivis de l'aide) |
 | `bud.monetization` | Part du déficit monétisée | % · 0–100 | I | HYP (défaut 0) |
-| `bud.balance` | Solde budgétaire | % PIB | D | DER (initialisation : IMF:GGXCNL_NGDP) |
+| `bud.balance` | Solde budgétaire | % PIB · −60–60 | D | DER (initialisation : IMF:GGXCNL_NGDP) |
 
 ## 4. Commerce et dépendances — `trade.*`
 
@@ -110,7 +110,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 |---|---|---|---|---|
 | `trade.exports` | Exportations | % PIB · 0–200 | S | WB:NE.EXP.GNFS.ZS |
 | `trade.imports` | Importations | % PIB · 0–200 | S | WB:NE.IMP.GNFS.ZS |
-| `trade.composition` | Structure des échanges (énergie, alimentation, minerais, puces, manufacturés, services) | % par poste | S | CUR / HYP |
+| `trade.composition` | Structure des échanges (énergie, alimentation, minerais, puces, manufacturés, services) | % par poste | S | BACI (biens, HS 2022) + WB:BX.GSR.NFSV.CD (services) |
 | `trade.hightech_exports` | Exportations de haute technologie | % des exportations manufacturières | S | WB:TX.VAL.TECH.MF.ZS |
 | `trade.tariff_level` | Droits de douane moyens | % · 0–100 | I | WB:TM.TAX.MRCH.WM.AR.ZS |
 | `trade.maritime_share` | Part du commerce par voie maritime | % | D | MAP (routes) |
@@ -217,11 +217,11 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `pol.electoral_democracy` | Démocratie électorale | 0–1 | I | OWID (V-Dem) |
 | `pol.liberal_democracy` | Démocratie libérale | 0–1 | I | OWID (V-Dem) |
 | `pol.regime_type` | Type de régime | démocratie / démocratie imparfaite / régime hybride / autocratie / junte / théocratie / monarchie absolue | I | DER (V-Dem) + CUR |
-| `pol.stability` | Stabilité politique | 0–100 | S | WGI:PV.EST (rééchelonné) |
-| `pol.gov_effectiveness` | Efficacité gouvernementale | 0–100 | I | WGI:GE.EST |
-| `pol.rule_of_law` | État de droit | 0–100 | I | WGI:RL.EST |
-| `pol.corruption_control` | Contrôle de la corruption | 0–100 | I | WGI:CC.EST |
-| `pol.voice_accountability` | Libertés et responsabilité | 0–100 | I | WGI:VA.EST |
+| `pol.stability` | Stabilité politique | 0–100 | S | WGI:GOV_WGI_PV.EST (rééchelonné, D9) |
+| `pol.gov_effectiveness` | Efficacité gouvernementale | 0–100 | I | WGI:GOV_WGI_GE.EST |
+| `pol.rule_of_law` | État de droit | 0–100 | I | WGI:GOV_WGI_RL.EST |
+| `pol.corruption_control` | Contrôle de la corruption | 0–100 | I | WGI:GOV_WGI_CC.EST |
+| `pol.voice_accountability` | Libertés et responsabilité | 0–100 | I | WGI:GOV_WGI_VA.EST |
 | `pol.approval` | Soutien au gouvernement | % · 0–100 | S | CUR (sondages, grands pays) / HYP |
 | `pol.legitimacy` | Légitimité du régime | 0–100 | S | DER |
 | `pol.repression_capacity` | Capacité répressive | 0–100 | I | DER + HYP |
@@ -260,7 +260,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `tech.level` | Niveau technologique général | 0–100 | S | DER (R&D, capital humain, haute technologie) |
 | `tech.ai_compute` | IA et capacité de calcul | 0–100 | S | CUR / HYP |
 | `tech.semiconductors` | Autonomie en semi-conducteurs | 0–100 | S | CUR |
-| `tech.rnd_total` | R&D totale | % PIB · 0–6 | I | WB:GB.XPD.RSDV.GD.ZS |
+| `tech.rnd_total` | R&D totale | % PIB · 0–8 | I | WB:GB.XPD.RSDV.GD.ZS |
 | `tech.internet_users` | Internautes | % | S | WB:IT.NET.USER.ZS |
 | `tech.export_control_exposure` | Exposition aux contrôles à l'export | 0–1 | S | CUR |
 | `tech.info_warfare` | Capacité de guerre informationnelle | 0–100 | I | HYP |
@@ -283,8 +283,8 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 
 | ID | Paramètre | Unité · plage | Type | Source initiale |
 |---|---|---|---|---|
-| `risk.health_spending` | Dépenses de santé | % PIB | S | WB:SH.XPD.CHEX.GD.ZS |
-| `risk.hospital_beds` | Lits d'hôpital | pour 1 000 habitants | S | WB:SH.MED.BEDS.ZS |
+| `risk.health_spending` | Dépenses de santé | % PIB · 0–30 | S | WB:SH.XPD.CHEX.GD.ZS |
+| `risk.hospital_beds` | Lits d'hôpital | pour 1 000 habitants · 0–25 | S | WB:SH.MED.BEDS.ZS |
 | `risk.pandemic_preparedness` | Préparation aux pandémies | 0–100 | I | HYP (indices publics) |
 | `risk.seismic_exposure` | Exposition sismique | 0–1 | I | CUR / HYP |
 | `risk.climate_vulnerability` | Vulnérabilité climatique | 0–100 | I | CUR (ND-GAIN) |
@@ -323,7 +323,7 @@ Toutes ces valeurs sont des **hypothèses** : Claude Code les propose, avec une 
 | `pair.affinity` | Affinité structurelle, décomposée en facteurs | −100 – +100 | D | DER |
 | `pair.trade` | Exportations de i vers j | Md$/an | S | données bilatérales ouvertes ou modèle de gravité |
 | `pair.energy_dependence` | Part des importations énergétiques de i venant de j | % | S | CUR |
-| `pair.critical_dependence` | Dépendances critiques (puces, terres rares, céréales, armement) | % par produit | S | CUR / HYP |
+| `pair.critical_dependence` | Dépendances critiques (puces, terres rares, céréales, armement) | % par produit | S | BACI (parts des importations) |
 | `pair.financial_exposure` | Exposition financière (dette détenue, investissements, réserves déposées) | Md$ | S | CUR / HYP |
 | `pair.treaty` | Traité | aucun / non-agression / partenariat / défense mutuelle | S | CUR |
 | `pair.treaty_credibility` | Crédibilité perçue de l'engagement | 0–1 | S | HYP, puis DER |
@@ -363,7 +363,7 @@ Toutes ces valeurs sont des **hypothèses** : Claude Code les propose, avec une 
 | `world.coal_price` | Charbon | $/t | S | CUR |
 | `world.wheat_price` | Blé | $/t | S | CUR |
 | `world.fertilizer_price` | Engrais | indice | S | CUR |
-| `world.metals_prices` | Cuivre, lithium, terres rares, uranium | indices | S | CUR |
+| `world.metals_prices` | Cuivre, lithium, terres rares, uranium | $/t (uranium : $/lb) | S | CUR |
 | `world.chip_supply` | Offre mondiale de puces avancées | indice 100 | S | DER |
 | `world.policy_rate` | Taux directeur de référence mondial | % | I | CUR |
 | `world.dollar_dominance` | Domination du dollar | 0–100 | I | CUR (COFER) |

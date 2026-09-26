@@ -1,0 +1,371 @@
+# Valeurs pays curées — politique intérieure et diplomatie (SPEC §5.2). Vérifiées au 25/09/2026.
+version: 1
+params:
+  pol.regime_type:
+    source:
+      "Classement GeoSim : juntes (coups d'État au Mali, Burkina Faso, Niger, Soudan, Birmanie,
+      Madagascar en octobre 2025, Guinée-Bissau en novembre 2025), théocraties, monarchies absolues (Koweït
+      : parlement suspendu depuis mai 2024) ; entités non couvertes par V-Dem. Sources : https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government
+      ; https://en.wikipedia.org/wiki/2026"
+    date: '2026-09-25'
+    confidence: medium
+    note: Remplace le classement Regimes of the World de V-Dem pour ces cas particuliers.
+    values:
+      {
+        MLI: junta,
+        BFA: junta,
+        NER: junta,
+        SDN: junta,
+        MMR: junta,
+        MDG: junta,
+        GNB: junta,
+        GIN: autocracy,
+        IRN: theocracy,
+        AFG: theocracy,
+        VAT: theocracy,
+        SAU: absolute_monarchy,
+        OMN: absolute_monarchy,
+        BRN: absolute_monarchy,
+        SWZ: absolute_monarchy,
+        QAT: absolute_monarchy,
+        ARE: absolute_monarchy,
+        KWT: absolute_monarchy,
+        RSF: junta,
+        LNA: junta,
+        M23: junta,
+        AAR: junta,
+        HOU: theocracy,
+        CYN: flawed_democracy,
+        SOL: hybrid,
+        ABK: hybrid,
+        OSS: autocracy,
+        PMR: autocracy,
+        ESH: autocracy,
+      }
+  pol.information_control:
+    source: Reporters sans frontières, Classement mondial de la liberté de la presse 2026 (via https://en.wikipedia.org/wiki/World_Press_Freedom_Index)
+    date: '2026-09-25'
+    confidence: high
+    note: Contrôle de l'information = 100 − score global RSF 2026.
+    values:
+      {
+        AFG: 80.5,
+        AGO: 51.2,
+        ALB: 43.5,
+        AND: 36.1,
+        ARE: 69.1,
+        ARG: 47.6,
+        ARM: 33.0,
+        AUS: 25.4,
+        AUT: 20.6,
+        AZE: 76.0,
+        BDI: 53.9,
+        BEL: 18.8,
+        BEN: 52.6,
+        BFA: 51.5,
+        BGD: 67.0,
+        BGR: 39.7,
+        BHR: 75.2,
+        BIH: 45.7,
+        BLR: 72.3,
+        BLZ: 38.3,
+        BOL: 45.8,
+        BRA: 33.6,
+        BRN: 47.4,
+        BTN: 66.5,
+        BWA: 37.1,
+        CAF: 43.3,
+        CAN: 21.2,
+        CHE: 15.2,
+        CHL: 39.2,
+        CHN: 86.2,
+        CIV: 33.7,
+        CMR: 59.1,
+        COD: 57.8,
+        COG: 38.8,
+        COL: 48.3,
+        COM: 39.8,
+        CPV: 28.0,
+        CRI: 27.7,
+        CUB: 70.8,
+        CYN: 43.4,
+        CYP: 43.1,
+        CZE: 17.0,
+        DEU: 17.8,
+        DJI: 75.0,
+        DNK: 11.5,
+        DOM: 30.3,
+        DZA: 62.6,
+        ECU: 55.6,
+        EGY: 75.1,
+        ERI: 89.8,
+        ESP: 24.6,
+        EST: 11.5,
+        ETH: 65.3,
+        FIN: 13.8,
+        FJI: 23.2,
+        FRA: 23.3,
+        GAB: 29.4,
+        GBR: 20.5,
+        GEO: 59.2,
+        GHA: 27.8,
+        GIN: 51.5,
+        GMB: 30.6,
+        GNB: 48.0,
+        GNQ: 47.2,
+        GRC: 45.0,
+        GTM: 56.8,
+        GUY: 40.4,
+        HND: 59.0,
+        HRV: 33.7,
+        HTI: 49.7,
+        HUN: 40.1,
+        IDN: 57.0,
+        IND: 68.0,
+        IRL: 14.1,
+        IRN: 82.5,
+        IRQ: 71.2,
+        ISL: 17.2,
+        ISR: 53.5,
+        ITA: 34.8,
+        JAM: 24.1,
+        JOR: 60.7,
+        JPN: 37.1,
+        KAZ: 65.6,
+        KEN: 49.5,
+        KGZ: 64.9,
+        KHM: 66.7,
+        KOR: 30.9,
+        KWT: 59.6,
+        LAO: 67.5,
+        LBN: 53.5,
+        LBR: 35.5,
+        LBY: 59.7,
+        LIE: 17.4,
+        LKA: 59.2,
+        LSO: 45.6,
+        LTU: 18.7,
+        LUX: 15.9,
+        LVA: 19,
+        MAR: 49.5,
+        MDA: 25.2,
+        MDG: 49.0,
+        MDV: 50.8,
+        MEX: 54.8,
+        MKD: 30.5,
+        MLI: 54.4,
+        MLT: 38.6,
+        MMR: 73.6,
+        MNE: 28.2,
+        MNG: 44.2,
+        MOZ: 47.7,
+        MRT: 36.6,
+        MUS: 29.1,
+        MWI: 39.0,
+        MYS: 47.3,
+        NAM: 23.0,
+        NER: 54.0,
+        NGA: 51.9,
+        NIC: 75.0,
+        NLD: 11.1,
+        NOR: 7.3,
+        NPL: 45.2,
+        NZL: 22.6,
+        OMN: 56.3,
+        PAK: 67.4,
+        PAN: 37.9,
+        PER: 62.1,
+        PHL: 53.2,
+        PNG: 39.9,
+        POL: 24.5,
+        PRK: 87.3,
+        PRT: 16.3,
+        PRY: 45.3,
+        PSE: 67.9,
+        QAT: 40.2,
+        ROU: 32.3,
+        RUS: 76.8,
+        RWA: 60.4,
+        SAU: 80.9,
+        SDN: 71.0,
+        SEN: 41.9,
+        SGP: 55.4,
+        SLE: 42.9,
+        SLV: 61.1,
+        SOM: 56.2,
+        SRB: 49.2,
+        SSD: 53.8,
+        SUR: 26.8,
+        SVK: 27.3,
+        SVN: 27.1,
+        SWE: 12.4,
+        SWZ: 48.1,
+        SYC: 27.0,
+        SYR: 60.6,
+        TCD: 46.1,
+        TGO: 47.4,
+        THA: 46.0,
+        TJK: 67.8,
+        TKM: 76.9,
+        TLS: 24.7,
+        TON: 33.4,
+        TTO: 25.3,
+        TUN: 59.6,
+        TUR: 72.1,
+        TWN: 24.6,
+        TZA: 53.8,
+        UGA: 58.0,
+        UKR: 33.9,
+        URY: 31.3,
+        USA: 37.4,
+        UZB: 65.0,
+        VEN: 69.5,
+        VNM: 78.8,
+        WSM: 35.5,
+        XKX: 44.1,
+        YEM: 72.1,
+        ZAF: 22.0,
+        ZMB: 41.4,
+        ZWE: 55.6,
+      }
+  pol.leader_tenure:
+    source: https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government ; https://en.wikipedia.org/wiki/2026
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Années écoulées depuis l'arrivée au pouvoir du dirigeant ou du gouvernement en place (détail
+      dans chaque note).
+    values:
+      USA: { value: 1.7, note: Second mandat Trump depuis le 20/01/2025 }
+      CHN: { value: 13.9, note: Xi Jinping secrétaire général depuis le 15/11/2012 }
+      RUS: { value: 26.7, note: Vladimir Poutine au pouvoir depuis le 31/12/1999 }
+      IND: { value: 12.3, note: Narendra Modi depuis le 26/05/2014 }
+      GBR:
+        {
+          value: 2.2,
+          note: Gouvernement travailliste depuis le 05/07/2024 (Andy Burnham Premier ministre
+            depuis le 20/07/2026),
+        }
+      FRA: { value: 9.4, note: Emmanuel Macron depuis le 14/05/2017 }
+      DEU: { value: 1.4, note: Friedrich Merz depuis le 06/05/2025 }
+      JPN: { value: 0.9, note: Sanae Takaichi depuis le 21/10/2025 (PLD au pouvoir depuis 2012) }
+      ITA: { value: 3.9, note: Giorgia Meloni depuis le 22/10/2022 }
+      CAN: { value: 1.5, note: Mark Carney depuis le 14/03/2025 (libéraux depuis 2015) }
+      AUS: { value: 4.3, note: Anthony Albanese depuis le 23/05/2022 }
+      KOR: { value: 1.3, note: Lee Jae-myung depuis le 04/06/2025 }
+      BRA: { value: 3.7, note: Lula depuis le 01/01/2023 }
+      MEX: { value: 2.0, note: Claudia Sheinbaum depuis le 01/10/2024 (Morena depuis 2018) }
+      ARG: { value: 2.8, note: Javier Milei depuis le 10/12/2023 }
+      IDN: { value: 1.9, note: Prabowo Subianto depuis le 20/10/2024 }
+      SAU:
+        { value: 11.7, note: Roi Salmane depuis le 23/01/2015 (Mohammed ben Salmane Premier ministre
+            depuis 2022) }
+      ZAF: { value: 8.6, note: Cyril Ramaphosa depuis le 15/02/2018 }
+      TUR: { value: 23.5, note: Recep Tayyip Erdoğan au pouvoir depuis le 14/03/2003 }
+      UKR: { value: 7.4, note: Volodymyr Zelensky depuis le 20/05/2019 }
+      BLR: { value: 32.2, note: Alexandre Loukachenko depuis le 20/07/1994 }
+      POL: { value: 2.8, note: Donald Tusk depuis le 13/12/2023 }
+      NLD: { value: 0.6, note: Rob Jetten depuis le 23/02/2026 }
+      NOR: { value: 4.9, note: Jonas Gahr Støre depuis le 14/10/2021 }
+      IRN:
+        {
+          value: 0.55,
+          note: Mojtaba Khamenei Guide suprême depuis le 08/03/2026 (République islamique
+            depuis 1979),
+        }
+      ISR: { value: 3.7, note: Benyamin Netanyahou depuis le 29/12/2022 }
+      ARE: { value: 4.4, note: Mohammed ben Zayed président depuis le 14/05/2022 }
+      QAT: { value: 13.3, note: Tamim ben Hamad depuis le 25/06/2013 }
+      EGY: { value: 12.3, note: Abdel Fattah al-Sissi depuis le 08/06/2014 }
+      PAK: { value: 2.6, note: Shehbaz Sharif depuis le 04/03/2024 }
+      PRK: { value: 14.8, note: Kim Jong-un depuis le 17/12/2011 }
+      TWN: { value: 2.4, note: Lai Ching-te depuis le 20/05/2024 }
+      VNM:
+        {
+          value: 2.1,
+          note: Tô Lâm secrétaire général depuis le 03/08/2024 (président depuis le 07/04/2026),
+        }
+      PHL: { value: 3.2, note: Ferdinand Marcos Jr. depuis le 30/06/2022 }
+      SGP: { value: 2.4, note: Lawrence Wong depuis le 15/05/2024 (PAP depuis 1959) }
+      NGA: { value: 3.3, note: Bola Tinubu depuis le 29/05/2023 }
+      ETH: { value: 8.5, note: Abiy Ahmed depuis le 02/04/2018 }
+      SDN: { value: 6.5, note: Abdel Fattah al-Burhane depuis le 12/04/2019 }
+      COD: { value: 7.7, note: Félix Tshisekedi depuis le 24/01/2019 }
+      CHL: { value: 0.5, note: José Antonio Kast depuis le 11/03/2026 }
+      KAZ: { value: 6.5, note: Kassym-Jomart Tokaïev depuis le 20/03/2019 }
+      YEM: { value: 4.5, note: Conseil présidentiel de direction depuis le 07/04/2022 }
+      VEN: { value: 0.7, note: Delcy Rodríguez présidente par intérim depuis le 05/01/2026 }
+      HUN: { value: 0.4, note: Péter Magyar (Tisza) depuis mai 2026 }
+      SYR: { value: 1.8, note: Ahmed al-Charaa depuis le 08/12/2024 }
+      AFG: { value: 5.1, note: Talibans au pouvoir depuis le 15/08/2021 }
+  dip.unsc_seat:
+    source: https://en.wikipedia.org/wiki/List_of_members_of_the_United_Nations_Security_Council
+    date: '2026-09-25'
+    confidence: high
+    note:
+      Membres élus pour 2025-2026 (Danemark, Grèce, Pakistan, Panama, Somalie) et 2026-2027 (Bahreïn,
+      Colombie, RD Congo, Lettonie, Liberia).
+    values:
+      {
+        USA: permanent,
+        RUS: permanent,
+        CHN: permanent,
+        FRA: permanent,
+        GBR: permanent,
+        DNK: elected,
+        GRC: elected,
+        PAK: elected,
+        PAN: elected,
+        SOM: elected,
+        BHR: elected,
+        COL: elected,
+        COD: elected,
+        LVA: elected,
+        LBR: elected,
+      }
+  dip.neutrality:
+    source: https://en.wikipedia.org/wiki/List_of_neutral_countries
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      '1 : neutralité permanente reconnue ; 0,5-0,9 : neutralité constitutionnelle ou traditionnelle
+      ; Serbie : neutralité militaire ; Inde, Singapour : non-alignement.'
+    values:
+      {
+        CHE: 1,
+        AUT: 0.9,
+        IRL: 0.8,
+        MLT: 0.8,
+        CRI: 0.7,
+        TKM: 1,
+        VAT: 1,
+        LIE: 0.8,
+        MDA: 0.6,
+        SRB: 0.6,
+        MNG: 0.5,
+        CYP: 0.5,
+        IND: 0.3,
+        SGP: 0.3,
+      }
+  dip.mediation_capacity:
+    source:
+      "Hypothèse GeoSim fondée sur les médiations récentes : Qatar (Gaza, Afghanistan, RD Congo–M23
+      à Doha), Oman et Pakistan (États-Unis–Iran, pourparlers d'Islamabad 2026), Turquie (Russie–Ukraine),
+      Suisse, Norvège, Égypte, Arabie saoudite"
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      {
+        QAT: 80,
+        OMN: 75,
+        CHE: 70,
+        NOR: 70,
+        TUR: 60,
+        EGY: 55,
+        SAU: 50,
+        PAK: 45,
+        VAT: 50,
+        USA: 60,
+        ARE: 45,
+        KWT: 40,
+      }

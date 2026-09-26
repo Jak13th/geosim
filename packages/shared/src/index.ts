@@ -20,3 +20,13 @@ export {
 export * from './map/layers.ts';
 export * from './map/format.ts';
 export type * from './map/meta.ts';
+export * from './map/land.ts';
+export {
+  CATALOG,
+  CRITICAL_MINERALS,
+  DEFENSE_DOMAINS,
+  REGIME_TYPES,
+  SANCTION_TRACKS,
+  TRADE_SECTORS,
+  paramById,
+} from './params/catalog.ts';

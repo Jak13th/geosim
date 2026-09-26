@@ -1,0 +1,208 @@
+# Forces nucléaires (SPEC §5.2, §8.9) : ogives (stock militaire, déployées), vecteurs par type
+# (lanceurs : silos, lanceurs mobiles, tubes de missiles sur sous-marins, bombardiers), doctrine
+# déclarée, parapluies nucléaires et programmes des États du seuil. Estimations du SIPRI au
+# 01/01/2026 (Yearbook 2026, juin 2026) ; la répartition silos / mobiles est une estimation GeoSim.
+version: 1
+states:
+  USA:
+    warheads_total: 3700
+    warheads_deployed: 1770
+    delivery: { silo: 400, mobile: 0, submarine: 280, bomber: 65 }
+    doctrine: first_use_possible
+    source: 'SIPRI Yearbook 2026, chap. 8 (Kristensen et Korda), tableaux 8A.1 à 8A.10 : https://www.sipri.org/sites/default/files/YB26%2008%20World%20Nuclear%20Forces.pdf'
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      'Stock militaire 3 700 (1 770 déployées) ; lanceurs : 400 silos Minuteman III, 280 tubes Trident
+      (14 SNLE), 65 bombardiers. Pas de doctrine de non-emploi en premier. New START a expiré le 05/02/2026.'
+  RUS:
+    warheads_total: 4400
+    warheads_deployed: 1796
+    delivery: { silo: 132, mobile: 192, submarine: 208, bomber: 60 }
+    doctrine: first_use_possible
+    source: 'SIPRI Yearbook 2026, chap. 8 (Kristensen et Korda), tableaux 8A.1 à 8A.10 : https://www.sipri.org/sites/default/files/YB26%2008%20World%20Nuclear%20Forces.pdf'
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Stock ≈ 4 400 (1 796 déployées) ; 324 ICBM (répartition silos/mobiles estimée), 208 tubes SLBM,
+      60 bombardiers. Doctrine révisée en novembre 2024 (seuil abaissé).
+  GBR:
+    warheads_total: 225
+    warheads_deployed: 120
+    delivery: { silo: 0, mobile: 0, submarine: 64, bomber: 0 }
+    doctrine: first_use_possible
+    source: 'SIPRI Yearbook 2026, chap. 8 (Kristensen et Korda), tableaux 8A.1 à 8A.10 : https://www.sipri.org/sites/default/files/YB26%2008%20World%20Nuclear%20Forces.pdf'
+    date: '2026-09-25'
+    confidence: high
+    note: Uniquement Trident (4 SNLE, 48 missiles en service) ; ambiguïté délibérée sur l'emploi en premier.
+  FRA:
+    warheads_total: 290
+    warheads_deployed: 280
+    delivery: { silo: 0, mobile: 0, submarine: 64, bomber: 50 }
+    doctrine: ambiguous
+    source: 'SIPRI Yearbook 2026, chap. 8 (Kristensen et Korda), tableaux 8A.1 à 8A.10 : https://www.sipri.org/sites/default/files/YB26%2008%20World%20Nuclear%20Forces.pdf'
+    date: '2026-09-25'
+    confidence: high
+    note: 4 SNLE (M51) et 50 Rafale (ASMPA-R) ; doctrine de dissuasion avec « ultime avertissement ».
+  CHN:
+    warheads_total: 620
+    warheads_deployed: 34
+    delivery: { silo: 338, mobile: 437, submarine: 72, bomber: 20 }
+    doctrine: no_first_use
+    source: 'SIPRI Yearbook 2026, chap. 8 (Kristensen et Korda), tableaux 8A.1 à 8A.10 : https://www.sipri.org/sites/default/files/YB26%2008%20World%20Nuclear%20Forces.pdf'
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Stock ≈ 620 en croissance rapide ; silos DF-5/DF-31B, lanceurs mobiles DF-26/DF-31A/DF-41, 6
+      SNLE JL-3, H-6N. Doctrine de non-emploi en premier.
+  IND:
+    warheads_total: 190
+    warheads_deployed: 12
+    delivery: { silo: 0, mobile: 88, submarine: 16, bomber: 48 }
+    doctrine: no_first_use
+    source: 'SIPRI Yearbook 2026, chap. 8 (Kristensen et Korda), tableaux 8A.1 à 8A.10 : https://www.sipri.org/sites/default/files/YB26%2008%20World%20Nuclear%20Forces.pdf'
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Non-emploi en premier (avec exception pour les armes chimiques et biologiques) ; lanceurs Agni
+      et Prithvi, SNLE Arihant.
+  PAK:
+    warheads_total: 170
+    warheads_deployed: 0
+    delivery: { silo: 0, mobile: 126, submarine: 0, bomber: 36 }
+    doctrine: first_use_possible
+    source: 'SIPRI Yearbook 2026, chap. 8 (Kristensen et Korda), tableaux 8A.1 à 8A.10 : https://www.sipri.org/sites/default/files/YB26%2008%20World%20Nuclear%20Forces.pdf'
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Dissuasion à spectre complet, emploi en premier possible ; ogives non montées sur les lanceurs
+      en temps normal.
+  PRK:
+    warheads_total: 60
+    warheads_deployed: 0
+    delivery: { silo: 0, mobile: 150, submarine: 0, bomber: 0 }
+    doctrine: first_use_possible
+    source: 'SIPRI Yearbook 2026, chap. 8 (Kristensen et Korda), tableaux 8A.1 à 8A.10 : https://www.sipri.org/sites/default/files/YB26%2008%20World%20Nuclear%20Forces.pdf'
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      ≈ 60 ogives assemblées, matières pour 30 de plus ; loi de 2022 sur l'emploi préventif. Lanceurs
+      mobiles (estimation).
+  ISR:
+    warheads_total: 90
+    warheads_deployed: 0
+    delivery: { silo: 50, mobile: 0, submarine: 20, bomber: 50 }
+    doctrine: ambiguous
+    source: 'SIPRI Yearbook 2026, chap. 8 (Kristensen et Korda), tableaux 8A.1 à 8A.10 : https://www.sipri.org/sites/default/files/YB26%2008%20World%20Nuclear%20Forces.pdf'
+    date: '2026-09-25'
+    confidence: medium
+    note: Politique d'opacité ; Jericho II/III, missiles de croisière embarqués, F-15/F-16I.
+umbrellas:
+  - provider: USA
+    covered:
+      [
+        ALB,
+        BEL,
+        BGR,
+        CAN,
+        HRV,
+        CZE,
+        DNK,
+        EST,
+        FIN,
+        DEU,
+        GRC,
+        HUN,
+        ISL,
+        ITA,
+        LVA,
+        LTU,
+        LUX,
+        MNE,
+        NLD,
+        MKD,
+        NOR,
+        POL,
+        PRT,
+        ROU,
+        SVK,
+        SVN,
+        ESP,
+        SWE,
+        TUR,
+        JPN,
+        KOR,
+        AUS,
+      ]
+    source: https://www.nato.int/cps/en/natohq/topics_50068.htm ; traités bilatéraux (treaties.yaml)
+    date: '2026-09-25'
+    confidence: high
+    note:
+      'Dissuasion élargie américaine : OTAN (armes B61 en Belgique, Allemagne, Italie, Pays-Bas, Turquie),
+      Japon, Corée du Sud, Australie.'
+  - provider: GBR
+    covered:
+      [
+        ALB,
+        BEL,
+        BGR,
+        CAN,
+        HRV,
+        CZE,
+        DNK,
+        EST,
+        FIN,
+        DEU,
+        GRC,
+        HUN,
+        ISL,
+        ITA,
+        LVA,
+        LTU,
+        LUX,
+        MNE,
+        NLD,
+        MKD,
+        NOR,
+        POL,
+        PRT,
+        ROU,
+        SVK,
+        SVN,
+        ESP,
+        SWE,
+        TUR,
+      ]
+    source: https://www.nato.int/cps/en/natohq/topics_50068.htm
+    date: '2026-09-25'
+    confidence: high
+    note: Forces nucléaires britanniques assignées à l'OTAN.
+  - provider: RUS
+    covered: [BLR]
+    source: https://en.wikipedia.org/wiki/Union_State ; SIPRI Yearbook 2026
+    date: '2026-09-25'
+    confidence: high
+    note:
+      Doctrine russe de 2024 et traité de garanties de sécurité de l'État de l'Union ; armes nucléaires
+      non stratégiques russes stationnées en Biélorussie.
+programs:
+  IRN:
+    {
+      progress: 60,
+      source: 'https://en.wikipedia.org/wiki/2026_Iran_war ; AIEA (constat de non-conformité
+        du 12/06/2025)',
+      date: '2026-09-25',
+      confidence: low,
+      note: "Hypothèse : État du seuil. ≈ 440 kg
+        d'uranium enrichi à 60 % avant les frappes de 2025, dont le sort est incertain ; installations
+        d'enrichissement et d'armement très endommagées en 2025-2026 ; garanties de l'AIEA suspendues
+        ; aucune preuve d'armement selon l'AIEA.",
+    }
+  SAU:
+    {
+      progress: 5,
+      source: 'https://en.wikipedia.org/wiki/Nuclear_program_of_Saudi_Arabia',
+      date: '2026-09-25',
+      confidence: low,
+      note: "Programme civil, ambition déclarée de parité avec l'Iran ; pas d'enrichissement.",
+    }

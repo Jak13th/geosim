@@ -1,8 +1,14 @@
-/** Validité des fichiers versionnés : config/model.yaml et fichiers curés de la phase 1a. */
+/** Validité des fichiers versionnés : config/model.yaml et fichiers curés (phases 1a et 1b). */
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { CATALOG } from '@geosim/shared';
 import { describe, expect, it } from 'vitest';
 import { loadYaml, parseModelConfig } from './config.ts';
+import { loadCountryValues, parseDefaults } from './country/curated.ts';
+import { loadEntitiesFile } from './country/entities.ts';
+import { parseGeoZones } from './country/geozones.ts';
+import { loadTopics } from './country/topics.ts';
+import { parseControlZones } from './map/zones.ts';
 import { parseCuratedUnits } from './map/entities.ts';
 import { chokepointErrors, parseChokepoints } from './map/routing.ts';
 import { CURATED_DIR, MODEL_CONFIG_PATH } from './paths.ts';
@@ -75,5 +81,56 @@ describe('fichiers curés', () => {
         },
       ]),
     ).toHaveLength(3);
+  });
+});
+
+describe('fichiers curés de la phase 1b', () => {
+  const AI = CATALOG.filter((d) => d.id.startsWith('ai.') && d.valueType === 'number').map(
+    (d) => d.id,
+  );
+
+  it('se chargent avec une provenance complète (source, date, confiance)', async () => {
+    const topics = await loadTopics(CURATED_DIR);
+    expect(topics.conflicts.length).toBeGreaterThan(20);
+    const tables = await loadCountryValues(CURATED_DIR);
+    expect(tables.size).toBeGreaterThan(20);
+    const defaults = parseDefaults(await loadYaml(join(CURATED_DIR, 'defaults.yaml')));
+    expect(defaults.rules.size).toBeGreaterThan(50);
+    for (const file of ['separatism.geojson', 'fortifications.geojson', 'claims.geojson']) {
+      expect(parseGeoZones(await loadYaml(join(CURATED_DIR, file)), file).length).toBeGreaterThan(
+        0,
+      );
+    }
+    const zones = parseControlZones(await loadYaml(join(CURATED_DIR, 'control_zones.geojson')));
+    expect(zones.map((z) => z.id)).toContain('ukraine_occupied');
+  });
+
+  it('profils décisionnels : un profil complet et justifié par pays au niveau de détail complet', async () => {
+    const [topics, entities] = await Promise.all([
+      loadTopics(CURATED_DIR),
+      loadEntitiesFile(CURATED_DIR),
+    ]);
+    expect(entities.fullDetail).toHaveLength(44);
+    expect(Object.keys(topics.profiles).sort()).toEqual([...entities.fullDetail].sort());
+    for (const [code, profile] of Object.entries(topics.profiles)) {
+      expect(profile.confidence, code).toBe('assumption');
+      expect(Object.keys(profile.values).sort(), code).toEqual([...AI].sort());
+      expect(profile.strategic_goals.length, code).toBeGreaterThan(0);
+      if (profile.opposition)
+        expect(Object.keys(profile.opposition.values).sort(), code).toEqual([...AI].sort());
+    }
+  });
+
+  it('relations initiales : bornées, justifiées, sans paire en double', async () => {
+    const { relations } = await loadTopics(CURATED_DIR);
+    const seen = new Set<string>();
+    for (const r of relations) {
+      const key = [r.a, r.b].sort().join('-');
+      expect(seen.has(key), key).toBe(false);
+      seen.add(key);
+      expect(r.a).not.toBe(r.b);
+      expect(r.why.trim().length, key).toBeGreaterThan(0);
+      for (const v of [r.value, r.reverse ?? 0]) expect(Math.abs(v)).toBeLessThanOrEqual(100);
+    }
   });
 });

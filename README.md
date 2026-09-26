@@ -2,8 +2,8 @@
 
 Simulation géopolitique **locale** et **temps réel**, inspirée d'[OpenFront.io](https://openfront.io) et alimentée par des données réelles. Chaque paramètre du monde se modifie pendant que la simulation tourne.
 
-> **État du projet : phase 1a (géographie et carte) terminée.**
-> `npm run data` construit la carte du monde (pays, terrain, biomes, fleuves, infrastructures, zones maritimes, voisinages, routes maritimes et détroits). L'application affiche encore une page d'accueil : la carte interactive arrive en phase 2. L'avancement détaillé est dans [`docs/PROGRESS.md`](docs/PROGRESS.md).
+> **État du projet : phase 1b (données pays et fichiers curés) terminée, en attente de validation.**
+> `npm run data` construit la carte du monde (pays, zones de contrôle, terrain, biomes, fleuves, infrastructures, population, zones maritimes, routes maritimes et détroits) et les données de 208 entités (paramètres pays, bilatéraux et mondiaux, avec leur provenance). L'application affiche encore une page d'accueil : la carte interactive arrive en phase 2. L'avancement détaillé est dans [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
 ## Prérequis
 
@@ -68,15 +68,16 @@ Pour l'instant, la commande lit ses arguments et affiche le premier tirage de la
 ## Données
 
 ```bash
-npm run data                          # construit la carte (4096 px) avec les téléchargements en cache
+npm run data                          # construit la carte (4096 px) et les données pays, téléchargements en cache
 npm run data -- --refresh             # force un nouveau téléchargement des sources
 npm run data -- --resolution 2048     # autre résolution : 2048 (rapide), 4096 (défaut), 8192 (expérimental)
+npm run data -- --skip-map            # réutilise la carte déjà construite (itérations sur les données pays)
 ```
 
-- Le premier passage télécharge environ 200 Mo (Natural Earth 10m, WorldClim 2.1) dans `data/raw/` ; les suivants fonctionnent hors ligne. Chaque source est tracée dans `data/manifest.json` (URL, date d'accès, version, licence, empreinte).
-- La construction prend environ 2 min 40 à 4096 px. Elle écrit dans `data/build/map/` : la carte binaire compressée (`map-4096.bin.gz`), ses métadonnées (`map-4096.json`), les voisinages et distances (`geo-4096.json`), les routes maritimes (`routes-4096.json`), un rapport de validation (`report-4096.md`) et des aperçus PNG.
-- Les données curées à la main (rattachement des territoires, capitales, détroits) sont dans `data/curated/`, chaque valeur avec sa source, sa date et son niveau de confiance ; les sources consultées sont listées dans `data/curated/SOURCES.md`.
-- Les seuils de construction (terrain, biomes, zones maritimes, routes) sont des coefficients de `config/model.yaml` (famille `geo`), expliqués dans `docs/MODELES.md` §1.
+- Le premier passage télécharge environ 700 Mo dans `data/raw/` : Natural Earth 10m, WorldClim 2.1, Banque mondiale, FMI, Our World in Data, FAOSTAT, HCR, CEPII BACI, votes à l'AGNU, PNUD. Les suivants fonctionnent hors ligne. Chaque source est tracée dans `data/manifest.json` (URL, date d'accès, version, licence, empreinte).
+- La construction prend environ 4 min à 4096 px. Elle écrit dans `data/build/map/` : la carte binaire compressée (`map-4096.bin.gz`), la population et la valeur économique par pixel (`land-4096.bin.gz`), les métadonnées (`map-4096.json`), les voisinages et distances (`geo-4096.json`), les routes maritimes (`routes-4096.json`), un rapport de validation (`report-4096.md`) et des aperçus PNG ; puis dans `data/build/` : `countries.base.json`, `pairs.base.json`, `world.base.json` et le rapport de couverture `report.md` (sources par paramètre, valeurs estimées, alertes).
+- Les données curées à la main (territoires, zones de contrôle, conflits, sanctions, nucléaire, profils décisionnels…) sont dans `data/curated/`, chaque valeur avec sa source, sa date et son niveau de confiance ; les sources consultées sont listées dans `data/curated/SOURCES.md`.
+- Les coefficients de construction (terrain, biomes, zones maritimes, routes, population) sont dans `config/model.yaml` (famille `geo`), expliqués dans `docs/MODELES.md` §1 ; la résolution des données pays est décrite au §2.
 - `data/raw/` et `data/build/` ne sont pas versionnés (WorldClim interdit la redistribution).
 
 Une fois la carte construite, `npm test` vérifie aussi ses invariants (surfaces, conservation des pixels, frontières, détroits).

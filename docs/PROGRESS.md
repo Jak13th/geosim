@@ -6,8 +6,8 @@
 | -------------------------------------------------- | -------------------------------------- | ---------- |
 | Plan initial (sources vérifiées, architecture)     | validé                                 | 2026-09-25 |
 | 0 — Fondations                                     | terminée                               | 2026-09-25 |
-| 1a — Géographie et carte                           | **terminée**, en attente de validation | 2026-09-25 |
-| 1b — Données pays et fichiers curés                | à faire                                |            |
+| 1a — Géographie et carte                           | terminée                               | 2026-09-25 |
+| 1b — Données pays et fichiers curés                | **terminée**, en attente de validation | 2026-09-25 |
 | 2 — Carte interactive (lecture seule)              | à faire                                |            |
 | 3 — Moteur et temps réel                           | à faire                                |            |
 | 4 — Monde interconnecté                            | à faire                                |            |
@@ -73,9 +73,46 @@ La phase 1 est découpée en deux jalons avec arrêt (voir `DECISIONS.md`).
 - Construction à 4096 px : ≈ 2 min 40, dont 2 min pour les 19 900 routes ; le préréglage 8192 (≈ 4 min, carte de 523 Mo non compressée) reste expérimental.
 - `routes-4096.json` pèse ≈ 10 Mo : à charger à la demande en phase 2.
 
-## Prochaines étapes (phase 1b)
+## Phase 1b — Données pays et fichiers curés (2026-09-25)
 
-1. Données automatisées (§5.1) → `countries.base.json` : Banque mondiale, WGI, FMI, OWID, FAOSTAT, UNHCR, BACI ; codes vérifiés (D9) ; mise à jour de `PARAMETRES.md` et du catalogue.
-2. Population et valeur économique par pixel (noyaux autour des villes + fond rural), totaux nationaux conservés.
-3. Fichiers curés datés (§5.2), dont `control_zones.geojson` (Ukraine, Sahara occidental, Palestine, Abkhazie, Ossétie du Sud, Transnistrie…), `disputes.yaml` (souveraineté de jure, revendications), enrichissement de `chokepoints.yaml` (trafic, statut).
-4. `data/build/report.md` : couverture par paramètre, valeurs estimées, alertes.
+**Fait**
+
+- Catalogue des paramètres (`packages/shared/src/params/catalog.ts`) : 279 paramètres alignés sur `PARAMETRES.md` (identifiants, libellés, types vérifiés par un test), avec unité, plage, source et systèmes consommateurs ; 15 plages élargies aux données réelles (D30).
+- Sources automatisées téléchargées, mises en cache et tracées : Banque mondiale (58 indicateurs WDI, WGI), FMI (WEO d'avril 2026), Our World in Data (énergie, V-Dem), FAOSTAT (bilans céréaliers, engrais), HCR, CEPII BACI HS22 (2024), points idéaux de l'AGNU, PNUD ; codes vérifiés et remplacements documentés (D9, D28).
+- 208 entités : 195 États, 8 entités de facto (dont Abkhazie, Ossétie du Sud, Transnistrie) et 5 factions (Forces de soutien rapide, Houthis, Armée nationale libyenne, AFC/M23, Armée d'Arakan) ; 44 pays au niveau de détail complet.
+- Zones de contrôle (`control_zones.geojson`, 19 zones datées) appliquées à la carte : contrôle de facto (`owner`) et souveraineté de jure (`sovereign`) — Crimée et territoires ukrainiens occupés (ligne de front du 24/09/2026), Sahara occidental, Golan, Liban Sud, Gaza, Darfour, Nord du Yémen et Mokha, Est libyen, Kivu, Arakan…
+- Population et valeur économique par pixel (noyaux urbains + habitabilité rurale ; `land-4096.bin.gz`), totaux nationaux conservés à 10⁻¹² près (8,216 milliards d'habitants).
+- `data/build/countries.base.json` : chaque paramètre pays de chaque entité avec source, année ou date, confiance et méthode (source, repli, curé, dérivé, carte, médiane régionale, hypothèse, zéro documenté, sans objet) ; aucune lacune. `pairs.base.json` : 14 paramètres bilatéraux (commerce, dépendances, traités, sanctions, droits de douane, revendications, bases, guerres, reconnaissance, relations, frontières, distances). `world.base.json` : prix et paramètres mondiaux, blocs, traités, conflits, sanctions, différends, bases, liaisons énergétiques, minerais, semi-conducteurs, céréales, détroits (statut et trafic), zones.
+- Fichiers curés datés et sourcés (§5.2), vérifiés par recherche web au 25/09/2026 : conflits (38), blocs (27), traités (30), nucléaire (SIPRI 2026), capacités militaires, sanctions et droits de douane, différends, revendications, séparatismes, fortifications, élections, bases, liaisons énergétiques, détroits (statut et trafic), minerais (USGS 2026), céréales (WASDE de septembre 2026), semi-conducteurs, prix mondiaux, tables pays (notations, régimes de change, effectifs militaires, contrôle de l'information, fractionnement…), hypothèses par défaut (`defaults.yaml`) ; sources listées dans `data/curated/SOURCES.md`.
+- Profils décisionnels des 44 pays au niveau complet (`profiles.yaml`, une justification par valeur, profils d'alternance pour 8 démocraties) et 148 relations initiales (`relations_seed.yaml`) : **hypothèses à valider**.
+- `data/build/report.md` : couverture par paramètre (source, année médiane, données anciennes, replis), valeurs estimées des pays clés, lacunes, alertes, zones appliquées.
+- `npm run data -- --skip-map` : itérations sur les données pays sans reconstruire la carte (≈ 40 s).
+
+**Vérifications** : `npm run typecheck`, `npm test` (124 tests : unitaires + invariants sur la carte et les données construites : provenance de chaque valeur, pas de NaN ni d'infini, bornes du catalogue, populations ≥ 0 et conservées, paires sans doublon), `npm run lint`, `npm run format:check`, `npm run check:console`. Construction complète depuis zéro, puis second passage hors ligne (aucun téléchargement).
+
+**Comment tester**
+
+1. `npm run data` (≈ 500 Mo de sources supplémentaires au premier passage, puis ≈ 4 min à 4096 px).
+2. Ouvrir `data/build/report.md` (couverture et alertes) et `data/build/map/preview-population-4096.png`.
+3. Consulter une valeur et sa provenance, par exemple : `node -e "const c=require('./data/build/countries.base.json'); console.log(c.entities.find(e=>e.id==='UKR').params['geo.area_controlled'])"`.
+4. `npm test` : les invariants des données construites s'exécutent.
+
+**À valider par toi**
+
+- Profils décisionnels et relations initiales (D35) : hypothèses sur les gouvernements, chacune justifiée.
+- Ligne de front ukrainienne dérivée de DeepStateMap (D31) : licence à confirmer, surtout si le dépôt est public.
+- Souveraineté de jure du Sahara occidental attribuée à la RASD (D32).
+- Estimations de confiance faible signalées dans le rapport (médianes régionales, dont la démographie de Taïwan ; entités de facto).
+
+**Limites connues**
+
+- Données anciennes signalées : rentes des ressources (2021), capital humain (2020), production d'hydrocarbures des petits producteurs (2016).
+- Consommations d'hydrocarbures hors Energy Institute (≈ 130 pays) : médianes régionales par habitant.
+- Paramètres `HYP` du catalogue (cyber, espace, ouverture migratoire, qualité logistique…) : hypothèses par défaut, à calibrer en phase 8.
+- Jérusalem-Est (70 km²) est sous la résolution de la carte : souveraineté de jure consignée dans les métadonnées, sans pixel.
+- Population par pixel non calibrée sur une grille de référence (GPW, WorldPop) ; biomes climatiques.
+- Zones de contrôle statiques jusqu'à la phase 5 (fronts).
+
+## Prochaines étapes (phase 2)
+
+Carte interactive en lecture seule (SPEC §12) : rendu, déplacement et zoom, survol, sélection, couches principales (politique, de jure, terrain, population…) et légendes ; inspecteur de pays généré depuis le catalogue, en lecture seule, avec la source et l'année de chaque paramètre ; recherche de pays.
