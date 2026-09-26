@@ -1,0 +1,1434 @@
+# Relations initiales entre paires clés (SPEC §6.3, pair.relation, −100 à +100) au 2026-09-25.
+# value : attitude de a envers b ; reverse : attitude de b envers a quand elle diffère.
+# HYPOTHÈSES GeoSim sur l'état des relations entre gouvernements, justifiées en une ligne (why). À valider.
+# Les paires absentes seront calculées par le modèle d'affinité (phase 4).
+version: 1
+relations:
+  - {
+      a: USA,
+      b: CHN,
+      value: -45,
+      reverse: -50,
+      why: 'Rivalité stratégique : contrôles technologiques, droits de douane (trêve commerciale fragile depuis fin 2025).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: RUS,
+      value: -40,
+      reverse: -55,
+      why: "Sanctions maintenues et négociations sur l'Ukraine sans accord ; Moscou voit Washington comme adversaire principal.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: IRN,
+      value: -95,
+      reverse: -100,
+      why: 'Guerre ouverte depuis le 28/02/2026 et blocus américain.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: ISR,
+      value: 80,
+      reverse: 85,
+      why: "Alliance étroite, cobelligérance contre l'Iran.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: UKR,
+      value: 30,
+      reverse: 45,
+      why: "Soutien conditionné et pressions pour un accord ; Kiev dépend de l'aide américaine.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: GBR,
+      value: 70,
+      why: 'Relation spéciale, alliance nucléaire et renseignement.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: FRA,
+      value: 40,
+      reverse: 35,
+      why: "Alliés OTAN, désaccords commerciaux et sur l'autonomie européenne.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: DEU,
+      value: 45,
+      reverse: 40,
+      why: 'Alliés OTAN, tensions commerciales (droits de douane).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: JPN,
+      value: 70,
+      why: "Alliance de sécurité pilier de l'Indo-Pacifique.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: KOR,
+      value: 60,
+      why: 'Alliance ; négociations tarifaires et de partage des coûts.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: CAN,
+      value: 25,
+      reverse: 5,
+      why: "Droits de douane et rhétorique d'annexion ont dégradé la relation vue d'Ottawa.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: MEX,
+      value: 20,
+      reverse: 25,
+      why: 'Interdépendance (ACEUM), pressions sur les cartels et les migrations.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: IND,
+      value: 25,
+      why: 'Partenariat stratégique abîmé par les droits de douane de 2025 (achats de pétrole russe).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: SAU,
+      value: 65,
+      why: "Partenariat de sécurité et cobelligérance contre l'Iran.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: ARE,
+      value: 60,
+      why: "Partenaire de sécurité et d'investissement.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: QAT,
+      value: 50,
+      reverse: 55,
+      why: "Base d'Al-Udeid, médiation qatarie.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: TWN,
+      value: 55,
+      reverse: 70,
+      why: 'Soutien militaire sans alliance formelle ; Taïwan dépend de Washington.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: PHL,
+      value: 60,
+      reverse: 65,
+      why: 'Alliance renforcée face à la Chine.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: AUS,
+      value: 65,
+      why: 'Alliance (ANZUS, AUKUS).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: POL,
+      value: 70,
+      reverse: 75,
+      why: 'Allié OTAN le plus proche sur le flanc Est.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: BRA,
+      value: -10,
+      reverse: -20,
+      why: 'Droits de douane de 2025 et désaccords politiques.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: ZAF,
+      value: -30,
+      reverse: -25,
+      why: 'Crise diplomatique depuis 2025 (boycott du G20, droits de douane).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: VEN,
+      value: 20,
+      reverse: 10,
+      why: 'Transition sous tutelle américaine depuis janvier 2026.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: PRK,
+      value: -85,
+      reverse: -90,
+      why: 'Hostilité, sanctions, programme nucléaire nord-coréen.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: CUB,
+      value: -70,
+      reverse: -75,
+      why: 'Embargo et pressions accrues en 2026.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: PAK,
+      value: 30,
+      reverse: 35,
+      why: 'Rapprochement depuis 2025.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: TUR,
+      value: 20,
+      reverse: 15,
+      why: 'Alliés OTAN aux intérêts divergents (Syrie, Russie).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: EGY,
+      value: 40,
+      why: 'Partenariat de sécurité et aide militaire.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: ARG,
+      value: 75,
+      reverse: 80,
+      why: 'Alignement politique étroit et soutien financier américain (2025).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: SYR,
+      value: 30,
+      reverse: 35,
+      why: 'Levée des sanctions (2025) et reconnaissance du nouveau gouvernement.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: DNK,
+      value: 10,
+      reverse: 0,
+      why: 'Pressions américaines sur le Groenland.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: IRQ,
+      value: 25,
+      reverse: 10,
+      why: 'Présence américaine réduite, influence iranienne à Bagdad.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: VNM,
+      value: 30,
+      reverse: 25,
+      why: 'Partenariat stratégique global, droits de douane.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: SGP,
+      value: 45,
+      why: 'Partenaire de sécurité sans alliance.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: USA,
+      b: NLD,
+      value: 40,
+      reverse: 45,
+      why: "Alliés OTAN, contrôles à l'export coordonnés.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: RUS,
+      value: 65,
+      reverse: 70,
+      why: "Partenariat « sans limites » ; soutien économique chinois à l'effort de guerre.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: TWN,
+      value: -70,
+      reverse: -60,
+      why: 'Pression militaire et refus de tout contact avec le gouvernement taïwanais.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: JPN,
+      value: -50,
+      why: 'Crise diplomatique depuis novembre 2025 (déclarations japonaises sur Taïwan, sanctions chinoises).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: IND,
+      value: -15,
+      reverse: -25,
+      why: 'Détente depuis 2024-2025 sur la frontière, méfiance persistante.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: PHL,
+      value: -55,
+      why: 'Affrontements maritimes en mer de Chine méridionale.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: VNM,
+      value: 10,
+      reverse: -5,
+      why: 'Partenariat entre partis communistes, différend maritime.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: PAK,
+      value: 75,
+      reverse: 80,
+      why: 'Partenariat « à toute épreuve » (CPEC, armement).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: PRK,
+      value: 50,
+      reverse: 45,
+      why: 'Alliance formelle (traité de 1961), relation distendue au profit de la Russie.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: IRN,
+      value: 35,
+      reverse: 45,
+      why: "Premier client pétrolier de l'Iran, soutien diplomatique sans intervention.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: KOR,
+      value: 5,
+      why: 'Interdépendance économique, méfiance stratégique.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: AUS,
+      value: -10,
+      reverse: -15,
+      why: 'Relation stabilisée après les sanctions commerciales de 2020-2023.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: BRA,
+      value: 40,
+      reverse: 35,
+      why: 'Premier partenaire commercial, BRICS.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: DEU,
+      value: 5,
+      why: 'Interdépendance économique, « réduction des risques » européenne.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: GBR,
+      value: -5,
+      reverse: -10,
+      why: "Relation pragmatique, soupçons d'espionnage.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: FRA,
+      value: 5,
+      why: 'Relation pragmatique, différends commerciaux (véhicules électriques, cognac).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: KAZ,
+      value: 35,
+      why: 'Partenaire économique majeur (Nouvelles routes de la soie).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: IDN,
+      value: 30,
+      why: 'Premier partenaire commercial et investisseur (nickel).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: SGP,
+      value: 40,
+      why: 'Relation économique étroite.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: CAN,
+      value: -5,
+      why: 'Détente commerciale en 2026 après les droits de douane croisés de 2024-2025.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CHN,
+      b: NLD,
+      value: -15,
+      reverse: -10,
+      why: "Contrôles à l'export sur les équipements de lithographie, affaire Nexperia (2025).",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: UKR,
+      value: -95,
+      reverse: -100,
+      why: 'Guerre de haute intensité depuis 2022.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: BLR,
+      value: 70,
+      reverse: 75,
+      why: "État de l'Union, armes nucléaires russes stationnées.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: POL,
+      value: -70,
+      reverse: -85,
+      why: "Incursions de drones (2025) et soutien polonais à l'Ukraine.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: GBR,
+      value: -70,
+      reverse: -75,
+      why: "Soutien britannique à l'Ukraine, sabotages attribués à la Russie.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: FRA,
+      value: -60,
+      reverse: -65,
+      why: "Soutien français à l'Ukraine, rivalité en Afrique.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: DEU,
+      value: -60,
+      reverse: -65,
+      why: "Rupture énergétique et soutien allemand à l'Ukraine.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: IRN,
+      value: 45,
+      reverse: 40,
+      why: 'Partenariat stratégique (2025) sans assistance militaire en 2026.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: PRK,
+      value: 70,
+      reverse: 75,
+      why: 'Traité de défense mutuelle (2024), troupes nord-coréennes en Russie.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: IND,
+      value: 45,
+      reverse: 40,
+      why: 'Partenariat historique (armement, pétrole).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: TUR,
+      value: 20,
+      reverse: 15,
+      why: 'Coopération énergétique, rivalités régionales.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: GEO,
+      value: -30,
+      reverse: -45,
+      why: "Occupation de l'Abkhazie et de l'Ossétie du Sud.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: KAZ,
+      value: 35,
+      reverse: 30,
+      why: 'Allié formel (OTSC), méfiance kazakhe.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: SAU,
+      value: 20,
+      why: 'Coordination OPEP+.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: JPN,
+      value: -40,
+      reverse: -45,
+      why: 'Sanctions japonaises, différend des Kouriles.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: NOR,
+      value: -40,
+      reverse: -45,
+      why: 'Frontière arctique, sanctions.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: ABK,
+      value: 85,
+      reverse: 90,
+      why: 'Reconnaissance russe (2008), protection militaire.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: OSS,
+      value: 85,
+      reverse: 90,
+      why: 'Reconnaissance russe (2008), protection militaire.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RUS,
+      b: PMR,
+      value: 60,
+      reverse: 80,
+      why: 'Troupes russes stationnées, soutien économique.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: ISR,
+      value: -100,
+      why: 'Guerre directe (2024, 2025, 2026).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: SAU,
+      value: -75,
+      why: 'Cobelligérance saoudienne et frappes iraniennes sur le Golfe.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: ARE,
+      value: -60,
+      why: 'Cobelligérance émirienne.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: QAT,
+      value: 10,
+      reverse: 0,
+      why: 'Champ gazier partagé, Qatar non belligérant mais frappé en 2025.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: IRQ,
+      value: 40,
+      reverse: 20,
+      why: 'Influence iranienne sur Bagdad, neutralité irakienne.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: HOU,
+      value: 80,
+      why: 'Axe de la résistance : cobelligérance houthie.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IRN,
+      b: PAK,
+      value: 10,
+      reverse: 5,
+      why: 'Voisinage tendu (Baloutchistan), médiation pakistanaise (Islamabad).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ISR,
+      b: LBN,
+      value: -60,
+      reverse: -80,
+      why: 'Occupation du Sud-Liban et frappes persistantes.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ISR,
+      b: SYR,
+      value: -30,
+      reverse: -50,
+      why: 'Zone tampon israélienne en Syrie, négociations sécuritaires.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ISR,
+      b: TUR,
+      value: -50,
+      reverse: -60,
+      why: 'Rupture commerciale turque, rivalité en Syrie.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ISR,
+      b: EGY,
+      value: 10,
+      reverse: -10,
+      why: 'Paix froide, tensions sur Gaza.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ISR,
+      b: ARE,
+      value: 25,
+      reverse: 10,
+      why: "Accords d'Abraham, critiques émiriennes sur Gaza.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ISR,
+      b: ARG,
+      value: 70,
+      why: 'Alignement politique étroit.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ISR,
+      b: ZAF,
+      value: -50,
+      reverse: -60,
+      why: 'Plainte sud-africaine pour génocide devant la CIJ.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ISR,
+      b: IND,
+      value: 50,
+      why: 'Partenariat de défense et technologique.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: PAK,
+      value: -80,
+      reverse: -85,
+      why: "Affrontement de mai 2025, Cachemire, traité de l'Indus suspendu.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: JPN,
+      value: 55,
+      why: 'Partenariat stratégique (Quad).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: FRA,
+      value: 60,
+      why: 'Partenariat stratégique (Rafale, sous-marins).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: BGD,
+      value: -20,
+      reverse: -25,
+      why: 'Relation dégradée depuis 2024.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IND,
+      b: CAN,
+      value: 10,
+      why: 'Normalisation depuis 2025 après la crise diplomatique.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: PAK,
+      b: AFG,
+      value: -70,
+      why: 'Guerre ouverte déclarée le 26/02/2026, trêve précaire.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: PAK,
+      b: TUR,
+      value: 70,
+      why: 'Partenariat de défense.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: PAK,
+      value: 70,
+      reverse: 75,
+      why: 'Pacte de défense mutuelle (septembre 2025).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: ARE,
+      value: 20,
+      why: 'Divergences au Yémen (offensive du Conseil de transition du Sud, fin 2025) et au Soudan.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: YEM,
+      value: 70,
+      reverse: 75,
+      why: 'Soutien saoudien au gouvernement reconnu.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: HOU,
+      value: -80,
+      reverse: -85,
+      why: 'Guerre depuis 2015, frappes houthies en 2026.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: QAT,
+      value: 40,
+      why: 'Réconciliation depuis 2021.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: EGY,
+      value: 50,
+      why: 'Soutien financier saoudien.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: SAU,
+      b: TUR,
+      value: 45,
+      why: 'Rapprochement et coopération de défense.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ARE,
+      b: SDN,
+      value: -60,
+      reverse: -75,
+      why: "Soutien émirien aux FSR selon les experts de l'ONU ; rupture soudanaise.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ARE,
+      b: RSF,
+      value: 50,
+      reverse: 60,
+      why: "Soutien aux FSR documenté par les experts de l'ONU (démenti émirien).",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: SDN,
+      b: RSF,
+      value: -100,
+      why: 'Guerre civile depuis avril 2023.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: EGY,
+      b: SDN,
+      value: 50,
+      reverse: 55,
+      why: 'Soutien égyptien aux Forces armées soudanaises.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: EGY,
+      b: ETH,
+      value: -45,
+      reverse: -40,
+      why: 'Différend sur le barrage de la Renaissance.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: YEM,
+      b: HOU,
+      value: -95,
+      why: 'Guerre civile depuis 2014.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: COD,
+      b: RWA,
+      value: -70,
+      reverse: -60,
+      why: "Soutien rwandais au M23 selon l'ONU, accord de Washington (2025) peu appliqué.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: COD,
+      b: M23,
+      value: -95,
+      why: 'Guerre au Kivu, négociations de Doha.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: RWA,
+      b: M23,
+      value: 60,
+      reverse: 70,
+      why: "Soutien militaire rwandais selon les experts de l'ONU.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ETH,
+      b: ERI,
+      value: -60,
+      reverse: -65,
+      why: "Tensions sur l'accès à la mer, risque de guerre.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: KOR,
+      b: PRK,
+      value: -40,
+      reverse: -90,
+      why: 'Séoul propose le dialogue ; Pyongyang désigne le Sud comme « État hostile ».',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: KOR,
+      b: JPN,
+      value: 35,
+      reverse: 30,
+      why: 'Coopération trilatérale avec Washington, contentieux historiques.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: JPN,
+      b: PRK,
+      value: -70,
+      reverse: -80,
+      why: 'Missiles nord-coréens, enlèvements.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: JPN,
+      b: AUS,
+      value: 60,
+      why: 'Partenariat de sécurité.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: JPN,
+      b: PHL,
+      value: 55,
+      why: "Accord d'accès réciproque (2024).",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: JPN,
+      b: TWN,
+      value: 45,
+      reverse: 55,
+      why: 'Soutien japonais croissant à la sécurité du détroit.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: UKR,
+      b: POL,
+      value: 50,
+      reverse: 55,
+      why: 'Soutien polonais, différends agricoles et mémoriels.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: UKR,
+      b: GBR,
+      value: 75,
+      reverse: 70,
+      why: 'Soutien militaire britannique, partenariat de 100 ans.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: UKR,
+      b: FRA,
+      value: 70,
+      reverse: 65,
+      why: 'Soutien militaire, coalition des volontaires.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: UKR,
+      b: DEU,
+      value: 70,
+      reverse: 65,
+      why: 'Premier soutien européen en valeur.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: UKR,
+      b: BLR,
+      value: -60,
+      reverse: -55,
+      why: "Territoire biélorusse utilisé pour l'invasion de 2022.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: GBR,
+      b: FRA,
+      value: 60,
+      why: 'Partenariat de défense (Lancaster House, coalition des volontaires).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: DEU,
+      value: 70,
+      why: 'Couple franco-allemand.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: DEU,
+      b: POL,
+      value: 50,
+      reverse: 45,
+      why: 'Alliés, contentieux mémoriels.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: FRA,
+      b: DZA,
+      value: -40,
+      reverse: -45,
+      why: 'Crise diplomatique depuis 2024 (Sahara occidental).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: GRC,
+      b: TUR,
+      value: -25,
+      why: 'Différends en mer Égée, détente relative.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CYP,
+      b: TUR,
+      value: -60,
+      reverse: -45,
+      why: 'Occupation du Nord de Chypre depuis 1974.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: TUR,
+      b: CYN,
+      value: 90,
+      reverse: 95,
+      why: 'Seule reconnaissance, présence militaire turque.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: CYP,
+      b: CYN,
+      value: -50,
+      why: "Division de l'île, négociations gelées.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: TUR,
+      b: SYR,
+      value: 60,
+      reverse: 55,
+      why: 'Soutien turc au nouveau gouvernement syrien.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ARM,
+      b: AZE,
+      value: -20,
+      reverse: -25,
+      why: 'Accord de paix paraphé en août 2025, méfiance persistante.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: MAR,
+      b: DZA,
+      value: -60,
+      why: 'Relations rompues depuis 2021 (Sahara occidental).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: MAR,
+      b: ESH,
+      value: -90,
+      reverse: -80,
+      why: 'Conflit du Sahara occidental.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: DZA,
+      b: ESH,
+      value: 70,
+      reverse: 75,
+      why: 'Soutien algérien au Front Polisario.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: VEN,
+      b: GUY,
+      value: -40,
+      reverse: -50,
+      why: "Revendication vénézuélienne de l'Essequibo.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: GEO,
+      b: ABK,
+      value: -60,
+      reverse: -70,
+      why: 'Sécession non reconnue par la Géorgie.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: GEO,
+      b: OSS,
+      value: -50,
+      reverse: -60,
+      why: 'Sécession non reconnue par la Géorgie.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: MDA,
+      b: PMR,
+      value: -40,
+      why: 'Sécession non reconnue, conflit gelé.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: LBY,
+      b: LNA,
+      value: -50,
+      why: 'Partition de fait entre Tripoli et Benghazi.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: MMR,
+      b: AAR,
+      value: -90,
+      why: 'Guerre civile en Arakan.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: ARG,
+      b: GBR,
+      value: -20,
+      reverse: 10,
+      why: 'Revendication argentine des Malouines (voie diplomatique).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: BRA,
+      b: ARG,
+      value: -10,
+      why: 'Distance politique entre gouvernements.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IRQ,
+      b: HOU,
+      value: 20,
+      why: "Milices irakiennes et Houthis dans l'axe iranien ; gouvernement irakien distant.",
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: VNM,
+      b: PHL,
+      value: 30,
+      why: 'Coopération prudente en mer de Chine.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: IDN,
+      b: AUS,
+      value: 35,
+      why: 'Accord de sécurité (2025).',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }
+  - {
+      a: NOR,
+      b: GBR,
+      value: 65,
+      why: 'Partenaires OTAN en mer du Nord.',
+      source: Hypothèse GeoSim (état des relations au 2026-09-25),
+      date: '2026-09-25',
+      confidence: assumption,
+    }

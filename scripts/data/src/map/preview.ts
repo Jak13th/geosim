@@ -61,6 +61,10 @@ export function politicalPreview(layers: MapLayers, globe: Uint8Array): Uint8Arr
     }
     const owner = layers.owner[p] as number;
     let c = owner === 0 ? NEUTRAL : colorOf(owner);
+    // Hachures : contrôle de facto différent de la souveraineté de jure (occupation, sécession).
+    if (owner !== layers.sovereign[p] && p % 3 === 0) {
+      c = colorOf(layers.sovereign[p] as number);
+    }
     const f = layers.flags[p] as number;
     if (f & MapFlag.Border)
       c = [Math.round(c[0] * 0.55), Math.round(c[1] * 0.55), Math.round(c[2] * 0.55)];
@@ -158,6 +162,36 @@ export function infrastructurePreview(layers: MapLayers, globe: Uint8Array): Uin
     if (f & MapFlag.Port) c = [0, 230, 230];
     if (f & MapFlag.Airport) c = [230, 0, 230];
     put(rgb, p, c);
+  }
+  return rgb;
+}
+
+/** Densité de population (échelle logarithmique, 1 à 10 000 hab./km²). */
+export function populationPreview(
+  layers: MapLayers,
+  globe: Uint8Array,
+  population: Float64Array,
+  pixelAreaKm2: number,
+): Uint8Array {
+  const n = globe.length;
+  const rgb = new Uint8Array(n * 3);
+  for (let p = 0; p < n; p++) {
+    if (!globe[p]) {
+      put(rgb, p, OFF_GLOBE);
+      continue;
+    }
+    const t = layers.terrain[p] as number;
+    if (!isLand(t)) {
+      put(rgb, p, water(t));
+      continue;
+    }
+    const density = (population[p] as number) / pixelAreaKm2;
+    const x = Math.min(1, Math.max(0, Math.log10(Math.max(density, 0.1) + 1) / 4));
+    put(rgb, p, [
+      Math.round(30 + 225 * x),
+      Math.round(30 + 190 * x * x),
+      Math.round(40 + 60 * (1 - x)),
+    ]);
   }
   return rgb;
 }

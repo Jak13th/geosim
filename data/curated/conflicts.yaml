@@ -1,0 +1,822 @@
+# Conflits en cours au 25/09/2026 (SPEC §5.2, §8.8) : interétatiques, guerres civiles, insurrections,
+# conflits gelés. Intensité 0–100 (hypothèse calibrée sur les morts au combat de 2025-2026 recensées
+# par la liste Wikipedia des conflits en cours, qui s'appuie sur UCDP et ACLED). Camps a et b ; les
+# soutiens extérieurs fournissent armes, financement ou renseignement sans être belligérants.
+# Types : interstate (guerre entre entités), civil_war (faction territoriale), insurgency (sans
+# contrôle territorial modélisé), frozen (conflit gelé). Statut : active, ceasefire, frozen.
+version: 1
+conflicts:
+  - id: russia_ukraine
+    name: Russo-Ukrainian war
+    nameFr: Guerre russo-ukrainienne
+    type: interstate
+    status: active
+    intensity: 85
+    started: '2022-02-24'
+    countries:
+      - UKR
+      - RUS
+    sides:
+      a:
+        - RUS
+      b:
+        - UKR
+    supporters:
+      a:
+        - BLR
+        - PRK
+        - IRN
+      b:
+        - USA
+        - GBR
+        - FRA
+        - DEU
+        - POL
+        - NLD
+        - NOR
+        - SWE
+        - DNK
+        - FIN
+        - CAN
+        - ITA
+        - ESP
+        - CZE
+        - LTU
+        - LVA
+        - EST
+        - JPN
+        - AUS
+    source: https://en.wikipedia.org/wiki/2026_Ukrainian_counteroffensive ; https://acleddata.com/update/ukraine-war-situation-update-29-august-4-september-2026
+    date: '2026-09-25'
+    confidence: high
+    note:
+      'Guerre de haute intensité depuis le 24/02/2022 (conflit depuis 2014) ; 42 000 morts au combat
+      recensés en 2026 ; contre-offensive ukrainienne depuis février 2026 ; pas de négociation active. Ligne
+      de contact : control_zones.geojson.'
+  - id: iran_war_2026
+    name: 2026 Iran war
+    nameFr: Guerre d’Iran de 2026
+    type: interstate
+    status: active
+    intensity: 60
+    started: '2026-02-28'
+    countries:
+      - IRN
+      - ISR
+      - SAU
+      - ARE
+      - KWT
+      - BHR
+      - QAT
+      - OMN
+      - IRQ
+      - JOR
+    sides:
+      a:
+        - USA
+        - ISR
+        - SAU
+        - ARE
+        - KWT
+        - BHR
+      b:
+        - IRN
+        - HOU
+    source: https://en.wikipedia.org/wiki/2026_Iran_war ; https://www.globalsecurity.org/military/ops/iran-war-oprep.htm
+    date: '2026-09-25'
+    confidence: high
+    note:
+      Frappes américano-israéliennes du 28/02/2026 (mort d'Ali Khamenei), fermeture d'Ormuz, blocus
+      américain ; cessez-le-feu d'avril et mémorandum d'Islamabad (juin) rompus le 08/07 ; en septembre,
+      frappes limitées et blocus maintenu (guerre d'usure). Hezbollah et milices irakiennes (non modélisés
+      comme entités) combattent aux côtés de l'Iran.
+  - id: lebanon_2026
+    name: 2026 Lebanon war
+    nameFr: Guerre du Liban de 2026
+    type: interstate
+    status: ceasefire
+    intensity: 35
+    started: '2026-03-02'
+    countries:
+      - LBN
+      - ISR
+    sides:
+      a:
+        - ISR
+      b:
+        - LBN
+    supporters:
+      b:
+        - IRN
+    source: https://en.wikipedia.org/wiki/2026_Lebanon_war ; https://www.aljazeera.com/news/2026/9/25/israeli-shelling-continues-as-lebanons-pm-demands-withdrawal-in-un-speech
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      "Guerre Israël–Hezbollah ; l'État libanais n'est pas belligérant mais son territoire est occupé
+      jusqu'au Litani. Accord-cadre de juin 2026, bombardements israéliens persistants (état : cessez-le-feu
+      violé)."
+  - id: gaza
+    name: Gaza war
+    nameFr: Guerre de Gaza
+    type: insurgency
+    status: ceasefire
+    intensity: 30
+    started: '2023-10-07'
+    countries:
+      - PSE
+    sides:
+      a:
+        - ISR
+      b: []
+    supporters:
+      b:
+        - IRN
+    source: https://israelpolicyforum.org/2026/07/29/israeli-cabinet-approves-framework-for-gaza-stabilization-force-but-what-will-actually-change
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Cessez-le-feu d'octobre 2025 (plan en 20 points) ; l'armée israélienne tient 64 à 70 % de la bande
+      ; Force internationale de stabilisation approuvée en juillet 2026 ; frappes ciblées persistantes.
+  - id: sudan_civil_war
+    name: Sudanese civil war
+    nameFr: Guerre civile soudanaise
+    type: civil_war
+    status: active
+    intensity: 80
+    started: '2023-04-15'
+    countries:
+      - SDN
+    sides:
+      a:
+        - SDN
+      b:
+        - RSF
+    supporters:
+      a:
+        - EGY
+        - TUR
+        - ERI
+        - SAU
+      b:
+        - ARE
+    source: https://news.un.org/en/story/2026/09/1168270 ; https://www.cfr.org/global-conflict-tracker/conflict/power-struggle-sudan
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Forces armées soudanaises contre Forces de soutien rapide ; soutiens extérieurs selon le rapport
+      des experts de l'ONU (septembre 2026), en partie allégués.
+  - id: myanmar_civil_war
+    name: Myanmar civil war
+    nameFr: Guerre civile birmane
+    type: civil_war
+    status: active
+    intensity: 65
+    started: '2021-02-01'
+    countries:
+      - MMR
+    sides:
+      a:
+        - MMR
+      b:
+        - AAR
+    supporters:
+      a:
+        - CHN
+        - RUS
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Junte contre armées ethniques et forces de résistance (Armée d'Arakan seule représentée comme
+      entité) ; 8 300 morts au combat en 2026.
+  - id: yemen_civil_war
+    name: Yemeni civil war
+    nameFr: Guerre civile yéménite
+    type: civil_war
+    status: active
+    intensity: 60
+    started: '2014-09-16'
+    countries:
+      - YEM
+    sides:
+      a:
+        - YEM
+      b:
+        - HOU
+    supporters:
+      a:
+        - SAU
+      b:
+        - IRN
+    source: https://en.wikipedia.org/wiki/Yemeni_civil_war_(2014%E2%80%93present) ; https://www.aljazeera.com/economy/2026/9/13/red-sea-nations-watch-as-houthis-seize-bab-al-mandeb-strait
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Offensive houthie de septembre 2026 sur la côte de la mer Rouge (Mokha, Bab-el-Mandeb) ; le Conseil
+      de transition du Sud s'est dissous en janvier 2026.
+  - id: drc_m23
+    name: M23 offensive (Kivu conflict)
+    nameFr: Conflit du Kivu (AFC/M23)
+    type: civil_war
+    status: active
+    intensity: 50
+    started: '2021-11-01'
+    countries:
+      - COD
+    sides:
+      a:
+        - COD
+      b:
+        - M23
+    supporters:
+      a:
+        - BDI
+      b:
+        - RWA
+    source: https://www.criticalthreats.org/briefs/congo-war-security-review ; https://www.africanews.com/2026/08/24/drc-m23-agree-peace-roadmap-as-doha-talks-seek-to-regain-momentum/
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Soutien rwandais documenté par les experts de l'ONU ; cadre de Doha (novembre 2025) et feuille
+      de route d'août 2026, combats persistants.
+  - id: libya
+    name: Libyan crisis
+    nameFr: Crise libyenne
+    type: civil_war
+    status: frozen
+    intensity: 15
+    started: '2014-05-16'
+    countries:
+      - LBY
+    sides:
+      a:
+        - LBY
+      b:
+        - LNA
+    supporters:
+      a:
+        - TUR
+      b:
+        - RUS
+        - EGY
+        - ARE
+    source: https://en.wikipedia.org/wiki/Libyan_crisis_(2011%E2%80%93present)
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Partition de fait entre Tripoli et Benghazi ; affrontements sporadiques (177 morts au combat en
+      2026).
+  - id: sahel_jihadist
+    name: Jihadist insurgency in the Sahel
+    nameFr: Insurrection djihadiste au Sahel
+    type: insurgency
+    status: active
+    intensity: 70
+    started: '2012-01-16'
+    countries:
+      - MLI
+      - BFA
+      - NER
+    sides:
+      a:
+        - MLI
+        - BFA
+        - NER
+      b: []
+    supporters:
+      a:
+        - RUS
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      JNIM et État islamique au Sahel contre les juntes de l'AES ; 18 000 morts en 2026 pour l'ensemble
+      Maghreb–Sahel.
+  - id: nigeria_conflicts
+    name: Civil conflicts in Nigeria
+    nameFr: Conflits internes au Nigeria
+    type: insurgency
+    status: active
+    intensity: 55
+    started: '2009-07-26'
+    countries:
+      - NGA
+    sides:
+      a:
+        - NGA
+      b: []
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note: Boko Haram, ISWAP, banditisme et violences intercommunautaires.
+  - id: lake_chad
+    name: Boko Haram insurgency (Lake Chad basin)
+    nameFr: Insurrection du bassin du lac Tchad
+    type: insurgency
+    status: active
+    intensity: 30
+    started: '2009-07-26'
+    countries:
+      - TCD
+      - CMR
+    sides:
+      a:
+        - TCD
+        - CMR
+      b: []
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+  - id: somalia
+    name: Somali civil war
+    nameFr: Guerre civile somalienne
+    type: insurgency
+    status: active
+    intensity: 60
+    started: '2009-01-31'
+    countries:
+      - SOM
+    sides:
+      a:
+        - SOM
+      b: []
+    supporters:
+      a:
+        - USA
+        - TUR
+        - ETH
+        - EGY
+        - UGA
+        - KEN
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note: Al-Chabab contre le gouvernement fédéral et la mission de l'Union africaine (AUSSOM).
+  - id: ethiopia_conflicts
+    name: Ethiopian civil conflicts
+    nameFr: Conflits internes éthiopiens
+    type: insurgency
+    status: active
+    intensity: 50
+    started: '2023-04-01'
+    countries:
+      - ETH
+    sides:
+      a:
+        - ETH
+      b: []
+    source: https://en.wikipedia.org/wiki/2026 ; https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Fano en Amhara, OLA en Oromia, affrontements avec le TPLF au Tigré depuis janvier 2026 ; tensions
+      avec l'Érythrée.
+  - id: afghanistan_pakistan_2026
+    name: 2026 Afghanistan–Pakistan war
+    nameFr: Guerre afghano-pakistanaise de 2026
+    type: interstate
+    status: active
+    intensity: 35
+    started: '2026-02-21'
+    countries:
+      - AFG
+      - PAK
+    sides:
+      a:
+        - PAK
+      b:
+        - AFG
+    source: https://en.wikipedia.org/wiki/2026_Afghanistan%E2%80%93Pakistan_war ; https://www.chathamhouse.org/2026/03/afghanistan-and-pakistan-are-facing-open-war-de-escalation-needed
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      « Guerre ouverte » déclarée par le Pakistan le 26/02/2026 ; trêve précaire, affrontements de basse
+      intensité.
+  - id: pakistan_insurgency
+    name: Insurgencies in Pakistan
+    nameFr: Insurrections au Pakistan
+    type: insurgency
+    status: active
+    intensity: 50
+    started: '2007-12-01'
+    countries:
+      - PAK
+    sides:
+      a:
+        - PAK
+      b: []
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note: TTP au Khyber Pakhtunkhwa, séparatistes baloutches (BLA).
+  - id: haiti
+    name: Haitian gang war
+    nameFr: Guerre des gangs en Haïti
+    type: insurgency
+    status: active
+    intensity: 55
+    started: '2018-07-06'
+    countries:
+      - HTI
+    sides:
+      a:
+        - HTI
+      b: []
+    supporters:
+      a:
+        - KEN
+        - USA
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note: Gangs contre l'État et la force de répression des gangs (mandat de l'ONU).
+  - id: mexico_cartels
+    name: Mexican drug war
+    nameFr: Guerre des cartels au Mexique
+    type: insurgency
+    status: active
+    intensity: 45
+    started: '2006-12-11'
+    countries:
+      - MEX
+    sides:
+      a:
+        - MEX
+      b: []
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+  - id: colombia
+    name: Colombian conflict
+    nameFr: Conflit colombien
+    type: insurgency
+    status: active
+    intensity: 35
+    started: '1964-05-27'
+    countries:
+      - COL
+    sides:
+      a:
+        - COL
+      b: []
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note: ELN, dissidences des FARC, Clan del Golfo.
+  - id: ecuador
+    name: Ecuadorian conflict
+    nameFr: Conflit armé en Équateur
+    type: insurgency
+    status: active
+    intensity: 35
+    started: '2024-01-09'
+    countries:
+      - ECU
+    sides:
+      a:
+        - ECU
+      b: []
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+  - id: iran_internal
+    name: Insurgencies and unrest in Iran
+    nameFr: Insurrections et répression en Iran
+    type: insurgency
+    status: active
+    intensity: 45
+    started: '2026-01-08'
+    countries:
+      - IRN
+    sides:
+      a:
+        - IRN
+      b: []
+    source: https://en.wikipedia.org/wiki/2026 ; https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Massacre de manifestants (janvier 2026), insurrections kurdes et baloutches ravivées par la guerre
+      (7 000 morts en 2026).
+  - id: syria_residual
+    name: Aftermath of the Syrian civil war
+    nameFr: Violences résiduelles en Syrie
+    type: insurgency
+    status: active
+    intensity: 25
+    started: '2011-03-15'
+    countries:
+      - SYR
+    sides:
+      a:
+        - SYR
+      b: []
+    supporters:
+      a:
+        - TUR
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note: Intégration des FDS achevée en août 2026 ; État islamique, violences à Soueïda et sur la côte.
+  - id: india_insurgencies
+    name: Insurgencies in India
+    nameFr: Insurrections en Inde
+    type: insurgency
+    status: active
+    intensity: 20
+    started: '1967-05-25'
+    countries:
+      - IND
+    sides:
+      a:
+        - IND
+      b: []
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note: Naxalites, Manipur, Cachemire.
+  - id: kashmir
+    name: Kashmir conflict (India–Pakistan)
+    nameFr: Conflit du Cachemire (Inde–Pakistan)
+    type: frozen
+    status: frozen
+    intensity: 15
+    started: '1947-10-22'
+    countries:
+      - IND
+      - PAK
+    sides:
+      a:
+        - IND
+      b:
+        - PAK
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note: Affrontement de mai 2025 suivi d'un cessez-le-feu ; tension durable.
+  - id: mozambique
+    name: Insurgency in Cabo Delgado
+    nameFr: Insurrection au Cabo Delgado
+    type: insurgency
+    status: active
+    intensity: 30
+    started: '2017-10-05'
+    countries:
+      - MOZ
+    sides:
+      a:
+        - MOZ
+      b: []
+    supporters:
+      a:
+        - RWA
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+  - id: cameroon
+    name: Anglophone crisis
+    nameFr: Crise anglophone
+    type: insurgency
+    status: active
+    intensity: 30
+    started: '2017-09-09'
+    countries:
+      - CMR
+    sides:
+      a:
+        - CMR
+      b: []
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+  - id: car
+    name: Central African Republic civil war
+    nameFr: Guerre civile centrafricaine
+    type: insurgency
+    status: active
+    intensity: 25
+    started: '2012-12-10'
+    countries:
+      - CAF
+    sides:
+      a:
+        - CAF
+      b: []
+    supporters:
+      a:
+        - RUS
+        - RWA
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+  - id: south_sudan
+    name: South Sudanese conflict
+    nameFr: Conflit sud-soudanais
+    type: insurgency
+    status: active
+    intensity: 40
+    started: '2025-03-04'
+    countries:
+      - SSD
+    sides:
+      a:
+        - SSD
+      b: []
+    supporters:
+      a:
+        - UGA
+    source: https://en.wikipedia.org/wiki/2026 ; https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Reprise des violences depuis 2025 (massacre d'Abiemnom, mars 2026) ; élections prévues en décembre
+      2026.
+  - id: philippines
+    name: Civil conflict in the Philippines
+    nameFr: Conflit interne aux Philippines
+    type: insurgency
+    status: active
+    intensity: 15
+    started: '1969-03-29'
+    countries:
+      - PHL
+    sides:
+      a:
+        - PHL
+      b: []
+    source: https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+    date: '2026-09-25'
+    confidence: medium
+  - id: venezuela
+    name: Venezuelan conflict
+    nameFr: Conflit vénézuélien
+    type: insurgency
+    status: active
+    intensity: 20
+    started: '2010-01-01'
+    countries:
+      - VEN
+    sides:
+      a:
+        - VEN
+      b: []
+    source: https://en.wikipedia.org/wiki/2026_United_States_intervention_in_Venezuela
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Transition sous tutelle américaine après la capture de Maduro (03/01/2026) ; présidence intérimaire
+      de Delcy Rodríguez.
+  - id: korea
+    name: Korean conflict
+    nameFr: Conflit coréen
+    type: frozen
+    status: ceasefire
+    intensity: 10
+    started: '1950-06-25'
+    countries:
+      - KOR
+      - PRK
+    sides:
+      a:
+        - KOR
+        - USA
+      b:
+        - PRK
+    source: https://en.wikipedia.org/wiki/Korean_Armistice_Agreement
+    date: '2026-09-25'
+    confidence: high
+    note: Armistice de 1953, pas de traité de paix.
+  - id: georgia
+    name: Georgian–Abkhaz and Georgian–Ossetian conflicts
+    nameFr: Conflits d’Abkhazie et d’Ossétie du Sud
+    type: frozen
+    status: frozen
+    intensity: 5
+    started: '2008-08-07'
+    countries:
+      - GEO
+    sides:
+      a:
+        - GEO
+      b:
+        - ABK
+        - OSS
+        - RUS
+    source: https://en.wikipedia.org/wiki/Russo-Georgian_War
+    date: '2026-09-25'
+    confidence: high
+  - id: transnistria
+    name: Transnistria conflict
+    nameFr: Conflit de Transnistrie
+    type: frozen
+    status: frozen
+    intensity: 5
+    started: '1992-03-02'
+    countries:
+      - MDA
+    sides:
+      a:
+        - MDA
+      b:
+        - PMR
+    supporters:
+      b:
+        - RUS
+    source: https://en.wikipedia.org/wiki/Transnistria_War
+    date: '2026-09-25'
+    confidence: high
+  - id: cyprus
+    name: Cyprus dispute
+    nameFr: Question chypriote
+    type: frozen
+    status: frozen
+    intensity: 5
+    started: '1974-07-20'
+    countries:
+      - CYP
+    sides:
+      a:
+        - CYP
+      b:
+        - CYN
+        - TUR
+    source: https://en.wikipedia.org/wiki/Cyprus_problem
+    date: '2026-09-25'
+    confidence: high
+  - id: western_sahara
+    name: Western Sahara conflict
+    nameFr: Conflit du Sahara occidental
+    type: frozen
+    status: frozen
+    intensity: 10
+    started: '1975-10-31'
+    countries:
+      - ESH
+    sides:
+      a:
+        - MAR
+      b:
+        - ESH
+    supporters:
+      b:
+        - DZA
+    source: https://en.wikipedia.org/wiki/Western_Sahara_conflict
+    date: '2026-09-25'
+    confidence: medium
+    note: Reprise d'hostilités de basse intensité depuis 2020 (5 morts en 2026).
+  - id: armenia_azerbaijan
+    name: Armenia–Azerbaijan conflict
+    nameFr: Conflit arméno-azerbaïdjanais
+    type: frozen
+    status: frozen
+    intensity: 5
+    started: '1988-02-20'
+    countries:
+      - ARM
+      - AZE
+    sides:
+      a:
+        - ARM
+      b:
+        - AZE
+    source: https://en.wikipedia.org/wiki/Armenia%E2%80%93Azerbaijan_peace_process
+    date: '2026-09-25'
+    confidence: medium
+    note: Déclaration de Washington (08/08/2025) et traité paraphé, signature en attente.
+  - id: israel_syria
+    name: Israel–Syria conflict
+    nameFr: Conflit israélo-syrien
+    type: frozen
+    status: frozen
+    intensity: 10
+    started: '1967-06-05'
+    countries:
+      - SYR
+    sides:
+      a:
+        - ISR
+      b:
+        - SYR
+    source: https://en.wikipedia.org/wiki/Israeli_invasion_of_Syria_(2024%E2%80%93present)
+    date: '2026-09-25'
+    confidence: medium
+    note: Occupation israélienne du Golan et de la zone tampon ; négociations sécuritaires intermittentes.
+  - id: thailand_cambodia
+    name: Cambodian–Thai border conflict
+    nameFr: Conflit frontalier cambodgien-thaïlandais
+    type: frozen
+    status: ceasefire
+    intensity: 10
+    started: '2025-07-24'
+    countries:
+      - THA
+      - KHM
+    sides:
+      a:
+        - THA
+      b:
+        - KHM
+    source: https://en.wikipedia.org/wiki/2025_Cambodian%E2%80%93Thai_border_conflict
+    date: '2026-09-25'
+    confidence: low
+    note: Affrontements de juillet et décembre 2025 ; cessez-le-feu, situation en 2026 non vérifiée en détail.

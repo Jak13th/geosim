@@ -1,0 +1,480 @@
+# Liaisons énergétiques et numériques critiques au 25/09/2026 (SPEC §5.2, §8.4) : gazoducs, oléoducs,
+# terminaux de GNL, câbles électriques et de données. Capacité nominale (unité indiquée) et statut :
+# operating, reduced, halted, destroyed, under_construction.
+version: 1
+links:
+  - id: east_west_saudi
+    name: Oléoduc Est-Ouest (Petroline) Abqaiq–Yanbu
+    kind: oil_pipeline
+    countries:
+      - SAU
+    capacity: 7.0
+    unit: Mb/j
+    status: halted
+    source: https://en.wikipedia.org/wiki/2026_East%E2%80%93West_Crude_Oil_Pipeline_attack
+    date: '2026-09-25'
+    confidence: high
+    note:
+      Frappé par des drones depuis l'Irak les 10-11/09/2026 et arrêté ; reprise partielle attendue en
+      quelques jours, pleine capacité en six semaines. Principal contournement d'Ormuz (≈ 5 Mb/j en 2026).
+  - id: habshan_fujairah
+    name: Oléoduc Habshan–Fujaïrah (ADCOP)
+    kind: oil_pipeline
+    countries:
+      - ARE
+    capacity: 1.5
+    unit: Mb/j
+    status: operating
+    source: https://en.wikipedia.org/wiki/Habshan%E2%80%93Fujairah_oil_pipeline
+    date: '2026-09-25'
+    confidence: medium
+    note: Contournement émirien d'Ormuz.
+  - id: kirkuk_ceyhan
+    name: Oléoduc Kirkouk–Ceyhan
+    kind: oil_pipeline
+    countries:
+      - IRQ
+      - TUR
+    capacity: 0.45
+    unit: Mb/j
+    status: operating
+    source: https://en.wikipedia.org/wiki/Kirkuk%E2%80%93Ceyhan_Oil_Pipeline
+    date: '2026-09-25'
+    confidence: medium
+    note: Rouvert en septembre 2025 ; capacité nominale 1,6 Mb/j, débit ≈ 0,2–0,45 Mb/j.
+  - id: goreh_jask
+    name: Oléoduc Goureh–Jask
+    kind: oil_pipeline
+    countries:
+      - IRN
+    capacity: 0.3
+    unit: Mb/j
+    status: reduced
+    source: https://en.wikipedia.org/wiki/Goreh%E2%80%93Jask_oil_pipeline
+    date: '2026-09-25'
+    confidence: low
+    note: Contournement iranien d'Ormuz, peu utilisé ; exportations iraniennes bloquées par le blocus américain.
+  - id: druzhba
+    name: Oléoduc Droujba (branche sud vers la Hongrie et la Slovaquie)
+    kind: oil_pipeline
+    countries:
+      - RUS
+      - BLR
+      - UKR
+      - HUN
+      - SVK
+      - CZE
+    capacity: 0.25
+    unit: Mb/j
+    status: reduced
+    source: https://en.wikipedia.org/wiki/Druzhba_pipeline
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Branche nord (Pologne, Allemagne) arrêtée ; branche sud visée par des frappes ukrainiennes en
+      2025.
+  - id: cpc
+    name: Oléoduc du Consortium de la Caspienne (Tengiz–Novorossiisk)
+    kind: oil_pipeline
+    countries:
+      - KAZ
+      - RUS
+    capacity: 1.5
+    unit: Mb/j
+    status: reduced
+    source: https://en.wikipedia.org/wiki/Caspian_Pipeline_Consortium
+    date: '2026-09-25'
+    confidence: medium
+    note: Terminal visé par des drones en 2025 ; principal débouché du pétrole kazakh.
+  - id: espo
+    name: Oléoduc Sibérie orientale–Pacifique (ESPO)
+    kind: oil_pipeline
+    countries:
+      - RUS
+      - CHN
+    capacity: 1.6
+    unit: Mb/j
+    status: operating
+    source: https://en.wikipedia.org/wiki/Eastern_Siberia%E2%80%93Pacific_Ocean_oil_pipeline
+    date: '2026-09-25'
+    confidence: high
+  - id: kazakhstan_china_oil
+    name: Oléoduc Kazakhstan–Chine
+    kind: oil_pipeline
+    countries:
+      - KAZ
+      - CHN
+    capacity: 0.4
+    unit: Mb/j
+    status: operating
+    source: https://en.wikipedia.org/wiki/Kazakhstan%E2%80%93China_oil_pipeline
+    date: '2026-09-25'
+    confidence: high
+  - id: btc
+    name: Oléoduc Bakou–Tbilissi–Ceyhan
+    kind: oil_pipeline
+    countries:
+      - AZE
+      - GEO
+      - TUR
+    capacity: 1.2
+    unit: Mb/j
+    status: operating
+    source: https://en.wikipedia.org/wiki/Baku%E2%80%93Tbilisi%E2%80%93Ceyhan_pipeline
+    date: '2026-09-25'
+    confidence: high
+  - id: sumed
+    name: Oléoduc SUMED
+    kind: oil_pipeline
+    countries:
+      - EGY
+    capacity: 2.5
+    unit: Mb/j
+    status: operating
+    source: https://en.wikipedia.org/wiki/SUMED_pipeline
+    date: '2026-09-25'
+    confidence: medium
+    note: Contournement de Suez pour les grands pétroliers.
+  - id: power_of_siberia_1
+    name: Force de Sibérie 1
+    kind: gas_pipeline
+    countries:
+      - RUS
+      - CHN
+    capacity: 38
+    unit: Gm³/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/Power_of_Siberia
+    date: '2026-09-25'
+    confidence: high
+  - id: power_of_siberia_2
+    name: Force de Sibérie 2 (via la Mongolie)
+    kind: gas_pipeline
+    countries:
+      - RUS
+      - MNG
+      - CHN
+    capacity: 50
+    unit: Gm³/an
+    status: under_construction
+    source: https://en.wikipedia.org/wiki/Power_of_Siberia_2
+    date: '2026-09-25'
+    confidence: medium
+    note: Accord juridiquement contraignant annoncé en septembre 2025.
+  - id: central_asia_china
+    name: Gazoduc Asie centrale–Chine
+    kind: gas_pipeline
+    countries:
+      - TKM
+      - UZB
+      - KAZ
+      - CHN
+    capacity: 55
+    unit: Gm³/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/Central_Asia%E2%80%93China_gas_pipeline
+    date: '2026-09-25'
+    confidence: high
+  - id: turkstream
+    name: TurkStream
+    kind: gas_pipeline
+    countries:
+      - RUS
+      - TUR
+      - BGR
+      - SRB
+      - HUN
+    capacity: 31.5
+    unit: Gm³/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/TurkStream
+    date: '2026-09-25'
+    confidence: high
+    note: Seule route du gaz russe par gazoduc vers l'UE.
+  - id: nord_stream
+    name: Nord Stream 1 et 2
+    kind: gas_pipeline
+    countries:
+      - RUS
+      - DEU
+    capacity: 110
+    unit: Gm³/an
+    status: destroyed
+    source: https://en.wikipedia.org/wiki/2022_Nord_Stream_pipeline_sabotage
+    date: '2026-09-25'
+    confidence: high
+  - id: ukraine_transit
+    name: Transit gazier par l’Ukraine
+    kind: gas_pipeline
+    countries:
+      - RUS
+      - UKR
+      - SVK
+    capacity: 40
+    unit: Gm³/an
+    status: halted
+    source: https://en.wikipedia.org/wiki/Russia%E2%80%93Ukraine_gas_disputes
+    date: '2026-09-25'
+    confidence: high
+    note: Arrêté le 01/01/2025 à l'expiration du contrat.
+  - id: yamal_europe
+    name: Yamal–Europe
+    kind: gas_pipeline
+    countries:
+      - RUS
+      - BLR
+      - POL
+      - DEU
+    capacity: 33
+    unit: Gm³/an
+    status: halted
+    source: https://en.wikipedia.org/wiki/Yamal%E2%80%93Europe_pipeline
+    date: '2026-09-25'
+    confidence: high
+  - id: baltic_pipe
+    name: Baltic Pipe (Norvège–Danemark–Pologne)
+    kind: gas_pipeline
+    countries:
+      - NOR
+      - DNK
+      - POL
+    capacity: 10
+    unit: Gm³/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/Baltic_Pipe
+    date: '2026-09-25'
+    confidence: high
+  - id: norway_europe
+    name: Réseau norvégien vers l’Europe continentale et le Royaume-Uni (Langeled, Europipe…)
+    kind: gas_pipeline
+    countries:
+      - NOR
+      - DEU
+      - GBR
+      - BEL
+      - FRA
+      - NLD
+    capacity: 120
+    unit: Gm³/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/Gassco
+    date: '2026-09-25'
+    confidence: high
+    note: Premier fournisseur de gaz de l'Europe.
+  - id: tanap_tap
+    name: Corridor gazier sud (TANAP–TAP)
+    kind: gas_pipeline
+    countries:
+      - AZE
+      - GEO
+      - TUR
+      - GRC
+      - ALB
+      - ITA
+    capacity: 16
+    unit: Gm³/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/Southern_Gas_Corridor
+    date: '2026-09-25'
+    confidence: high
+  - id: transmed
+    name: Transmed (Algérie–Tunisie–Italie)
+    kind: gas_pipeline
+    countries:
+      - DZA
+      - TUN
+      - ITA
+    capacity: 33
+    unit: Gm³/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/Trans-Mediterranean_Pipeline
+    date: '2026-09-25'
+    confidence: high
+  - id: medgaz
+    name: Medgaz (Algérie–Espagne)
+    kind: gas_pipeline
+    countries:
+      - DZA
+      - ESP
+    capacity: 10.5
+    unit: Gm³/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/Medgaz
+    date: '2026-09-25'
+    confidence: high
+  - id: greenstream
+    name: Greenstream (Libye–Italie)
+    kind: gas_pipeline
+    countries:
+      - LBY
+      - ITA
+    capacity: 8
+    unit: Gm³/an
+    status: reduced
+    source: https://en.wikipedia.org/wiki/Greenstream_pipeline
+    date: '2026-09-25'
+    confidence: medium
+  - id: arab_gas_pipeline
+    name: Gazoduc arabe et EMG (Israël–Égypte–Jordanie)
+    kind: gas_pipeline
+    countries:
+      - ISR
+      - EGY
+      - JOR
+    capacity: 10
+    unit: Gm³/an
+    status: reduced
+    source: https://en.wikipedia.org/wiki/Arab_Gas_Pipeline
+    date: '2026-09-25'
+    confidence: low
+    note: Exportations israéliennes interrompues à plusieurs reprises pendant les guerres de 2025-2026.
+  - id: dolphin
+    name: Gazoduc Dolphin (Qatar–Émirats–Oman)
+    kind: gas_pipeline
+    countries:
+      - QAT
+      - ARE
+      - OMN
+    capacity: 20
+    unit: Gm³/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/Dolphin_Gas_Project
+    date: '2026-09-25'
+    confidence: medium
+  - id: iran_turkey_gas
+    name: Gazoduc Tabriz–Ankara
+    kind: gas_pipeline
+    countries:
+      - IRN
+      - TUR
+    capacity: 14
+    unit: Gm³/an
+    status: reduced
+    source: https://en.wikipedia.org/wiki/Tabriz%E2%80%93Ankara_pipeline
+    date: '2026-09-25'
+    confidence: low
+  - id: ras_laffan_lng
+    name: GNL du Qatar (Ras Laffan)
+    kind: lng_export
+    countries:
+      - QAT
+    capacity: 77
+    unit: Mt/an
+    status: reduced
+    source:
+      https://www.thenationalnews.com/business/energy/2026/04/09/months-expected-until-qatars-ras-laffan-lng-site-resumes-full-operations/
+      ; https://www.cnbc.com/2026/07/01/qatarenergy-extend-force-majeure-september-italys-edison-iran-war-.html
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Frappé par l'Iran les 02 et 18/03/2026 ; 4 des 7 trains en production début juillet ; exportations
+      bloquées par la quasi-fermeture d'Ormuz.
+  - id: us_lng
+    name: Terminaux d’exportation de GNL des États-Unis
+    kind: lng_export
+    countries:
+      - USA
+    capacity: 115
+    unit: Mt/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/List_of_LNG_terminals
+    date: '2026-09-25'
+    confidence: medium
+    note: Premier exportateur mondial depuis 2023 (Sabine Pass, Corpus Christi, Plaquemines…).
+  - id: australia_lng
+    name: Terminaux d’exportation de GNL de l’Australie
+    kind: lng_export
+    countries:
+      - AUS
+    capacity: 88
+    unit: Mt/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/List_of_LNG_terminals
+    date: '2026-09-25'
+    confidence: medium
+  - id: yamal_lng
+    name: Yamal LNG
+    kind: lng_export
+    countries:
+      - RUS
+    capacity: 17.4
+    unit: Mt/an
+    status: operating
+    source: https://en.wikipedia.org/wiki/Yamal_LNG
+    date: '2026-09-25'
+    confidence: high
+  - id: arctic_lng_2
+    name: Arctic LNG 2
+    kind: lng_export
+    countries:
+      - RUS
+    capacity: 19.8
+    unit: Mt/an
+    status: reduced
+    source: https://en.wikipedia.org/wiki/Arctic_LNG_2
+    date: '2026-09-25'
+    confidence: medium
+    note: Sous sanctions américaines ; exportations via une flotte fantôme.
+  - id: eu_regas
+    name: Terminaux de regazéification de l’Union européenne
+    kind: lng_import
+    countries:
+      - ESP
+      - FRA
+      - ITA
+      - NLD
+      - BEL
+      - DEU
+      - POL
+      - GRC
+      - PRT
+      - LTU
+      - FIN
+      - HRV
+    capacity: 180
+    unit: Mt/an
+    status: operating
+    source: https://www.gie.eu/transparency/databases/lng-database/
+    date: '2026-09-25'
+    confidence: medium
+  - id: estlink_balticconnector
+    name: Câbles et gazoducs de la Baltique (Estlink 2, Balticconnector)
+    kind: power_cable
+    countries:
+      - FIN
+      - EST
+    capacity: 1.0
+    unit: GW
+    status: operating
+    source: https://en.wikipedia.org/wiki/Estlink
+    date: '2026-09-25'
+    confidence: medium
+    note: Endommagés en 2023-2024 (ancres), réparés ; surveillance de l'OTAN (Baltic Sentry).
+  - id: red_sea_cables
+    name: Câbles sous-marins de la mer Rouge (SEA-ME-WE, AAE-1, EIG…)
+    kind: data_cable
+    countries:
+      - EGY
+      - SAU
+      - YEM
+      - DJI
+      - ERI
+    capacity: null
+    unit: Tb/s
+    status: reduced
+    source: https://en.wikipedia.org/wiki/2024_Red_Sea_submarine_cable_disruption
+    date: '2026-09-25'
+    confidence: low
+    note: Coupures de 2024 et 2025 ; zone de Bab-el-Mandeb sous contrôle houthi depuis septembre 2026.
+  - id: taiwan_cables
+    name: Câbles sous-marins de Taïwan (Matsu, Penghu, liaisons internationales)
+    kind: data_cable
+    countries:
+      - TWN
+    capacity: null
+    unit: Tb/s
+    status: operating
+    source: https://en.wikipedia.org/wiki/Submarine_cables_of_Taiwan
+    date: '2026-09-25'
+    confidence: low
+    note: Coupures répétées attribuées à des navires liés à la Chine (2023-2025).

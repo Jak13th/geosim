@@ -1,0 +1,552 @@
+# Hypothèses par défaut (confiance « assumption ») pour les paramètres sans source automatisée ni valeur
+# curée (SPEC §5.3, niveau « standard »). Chaque règle porte une justification ; elle peut être modulée
+# par groupe de revenu (by_income), type de régime (by_regime) ou nature d'entité (by_kind), dans cet
+# ordre de priorité : by_kind, by_regime, by_income, value. Points de départ à calibrer.
+version: 1
+date: '2026-09-25'
+source: Hypothèses GeoSim (voir chaque note)
+params:
+  demo.migration_openness:
+    value: 40
+    note: Ouverture moyenne ; plus forte dans les pays riches demandeurs de main-d'œuvre.
+    by_income: { HIC: 55, UMC: 40, LMC: 30, LIC: 30 }
+  demo.diaspora_weight:
+    { value: 20, note: "Diaspora d'influence moyenne ; à curer pour les grandes diasporas
+        (Inde, Chine, Mexique, Philippines, Liban…)." }
+  eco.inflation_target:
+    value: 3
+    note: 'Cibles usuelles : 2 % dans les pays riches, 3 à 5 % dans les émergents.'
+    by_income: { HIC: 2, UMC: 3.5, LMC: 4.5, LIC: 5 }
+  eco.cb_independence:
+    value: 0.5
+    note:
+      Indépendance de jure plus élevée dans les pays riches, faible sous les régimes autoritaires
+      (indices de Garriga et de Romelli).
+    by_income: { HIC: 0.75, UMC: 0.55, LMC: 0.45, LIC: 0.4 }
+    by_regime:
+      {
+        democracy: 0.8,
+        flawed_democracy: 0.6,
+        hybrid: 0.45,
+        autocracy: 0.3,
+        junta: 0.25,
+        theocracy: 0.3,
+        absolute_monarchy: 0.4,
+      }
+  eco.debt_maturity:
+    value: 6
+    note: Maturité moyenne plus longue dans les pays riches (6 à 8 ans) que dans les pays à faible revenu.
+    by_income: { HIC: 7, UMC: 6, LMC: 5, LIC: 4 }
+  eco.foreign_held_debt:
+    value: 35
+    note:
+      'Ordre de grandeur : un tiers de la dette détenue par des non-résidents ; davantage (prêts officiels)
+      dans les pays à faible revenu.'
+    by_income: { HIC: 30, UMC: 30, LMC: 45, LIC: 60 }
+  eco.credit_rating:
+    value: 8
+    note:
+      'Pays non notés : notation implicite selon le revenu (AA- pour les pays riches, BB pour les
+      revenus intermédiaires supérieurs, B+ puis CCC+).'
+    by_income: { HIC: 16, UMC: 10, LMC: 7, LIC: 4 }
+  eco.exchange_regime:
+    value: managed
+    note:
+      'Régime de fait le plus fréquent hors pays riches : flottement dirigé ; flottement libre dans
+      les pays riches.'
+    by_income: { HIC: floating, UMC: managed, LMC: managed, LIC: managed }
+  eco.financial_integration:
+    value: 0.6
+    note: Dépendance au système financier occidental croissante avec le revenu.
+    by_income: { HIC: 0.9, UMC: 0.7, LMC: 0.5, LIC: 0.3 }
+  bud.defense_procurement:
+    value: 25
+    note:
+      "Part de l'équipement dans le budget de défense (lignes directrices de l'OTAN : 20 % minimum
+      ; plus faible dans les pays pauvres, dominés par la solde)."
+    by_income: { HIC: 28, UMC: 25, LMC: 18, LIC: 12 }
+  bud.defense_domains:
+    value: { land: 38, air: 22, sea: 15, strike: 5, air_defense: 8, drones: 6, cyber: 3, space: 3 }
+    note: Répartition moyenne des investissements (terre prépondérante) ; à curer pour les grandes puissances.
+  bud.social:
+    value: 8
+    note: Ordres de grandeur de l'OIT (World Social Protection Report 2024-2026) selon le revenu.
+    by_income: { HIC: 18, UMC: 9, LMC: 4, LIC: 2 }
+  bud.rnd:
+    value: 0.3
+    note: Part publique de la R&D (≈ 30 % de la R&D totale dans les pays riches).
+    by_income: { HIC: 0.6, UMC: 0.3, LMC: 0.15, LIC: 0.05 }
+  bud.infrastructure:
+    value: 3
+    note: Investissement public d'infrastructure, plus élevé dans les pays émergents en rattrapage.
+    by_income: { HIC: 2.5, UMC: 3.5, LMC: 3, LIC: 2.5 }
+  bud.subsidies:
+    value: 1
+    note: Subventions explicites à l'énergie et à l'alimentation (FMI), plus élevées dans les émergents.
+    by_income: { HIC: 0.5, UMC: 1.5, LMC: 2, LIC: 1 }
+  bud.security:
+    value: 1.2
+    note: 'Police et renseignement : 1 à 1,5 % du PIB.'
+    by_income: { HIC: 1, UMC: 1.2, LMC: 1.3, LIC: 1.3 }
+  bud.foreign_aid:
+    { value: 0, note: Pays non donateur (les donateurs du CAD de l'OCDE et les grands donateurs
+        du Golfe sont curés). }
+  bud.monetization: { value: 0, note: Pas de monétisation du déficit par défaut. }
+  trade.sanction_evasion:
+    { value: 0.3, note: Capacité moyenne de contournement ; élevée pour les pays
+        déjà sanctionnés (curés). }
+  trade.oil_stocks:
+    value: 30
+    note:
+      "Stocks stratégiques : 90 jours d'importations nettes pour les membres de l'AIE (curés), bien
+      moins ailleurs."
+    by_income: { HIC: 60, UMC: 30, LMC: 15, LIC: 10 }
+  trade.grain_stocks:
+    value: 60
+    note: Réserves de céréales en jours de consommation, plus faibles dans les pays pauvres.
+    by_income: { HIC: 60, UMC: 60, LMC: 45, LIC: 30 }
+  energy.grid_resilience:
+    value: 50
+    note: Résilience croissante avec le revenu.
+    by_income: { HIC: 70, UMC: 50, LMC: 35, LIC: 25 }
+  res.food_spending_share:
+    value: 25
+    note:
+      "Part de l'alimentation dans la consommation (ordres de grandeur de l'USDA ERS) : ≈ 10 % dans
+      les pays riches, ≈ 50 % dans les pays pauvres."
+    by_income: { HIC: 12, UMC: 25, LMC: 38, LIC: 50 }
+  res.upstream_dependence:
+    { value: 0.1, note: Dépendance faible par défaut ; les pays des grands bassins
+        transfrontaliers sont curés (AQUASTAT). }
+  mil.conscription:
+    { value: none, note: Armée professionnelle par défaut ; les pays à conscription sont
+        curés. }
+  mil.strike_stock:
+    value: 10
+    note:
+      'Stocks de missiles conventionnels à longue portée : quasi nuls hors grandes puissances (phase
+      5 : à curer).'
+    by_income: { HIC: 50, UMC: 30, LMC: 10, LIC: 0 }
+  mil.air_defense:
+    value: { index: 30, interceptors: 50 }
+    note: Défense aérienne moyenne ; à curer en phase 5.
+    by_income:
+      HIC: { index: 50, interceptors: 200 }
+      UMC: { index: 35, interceptors: 100 }
+      LMC: { index: 20, interceptors: 30 }
+      LIC: { index: 10, interceptors: 0 }
+  mil.drones:
+    value: { index: 30, monthly_production: 0 }
+    note: Capacité en drones moyenne, sans production nationale par défaut.
+    by_income:
+      HIC: { index: 45, monthly_production: 200 }
+      UMC: { index: 35, monthly_production: 100 }
+      LMC: { index: 20, monthly_production: 20 }
+      LIC: { index: 10, monthly_production: 0 }
+  mil.strategic_lift:
+    value: 20
+    note: Transport stratégique limité hors grandes puissances.
+    by_income: { HIC: 40, UMC: 20, LMC: 10, LIC: 5 }
+  mil.munitions_stock:
+    value: 25
+    note:
+      Stocks réduits après les livraisons à l'Ukraine et les guerres de 2025-2026 (quelques semaines
+      de combat intense).
+    by_income: { HIC: 20, UMC: 30, LMC: 30, LIC: 20 }
+  mil.defense_industry:
+    value: { shells: 0, missiles: 0, drones: 0, armored: 0 }
+    note: Pas de production de défense significative par défaut ; à curer en phase 5.
+  mil.ramp_up_time:
+    value: 12
+    note: 'Délai pour doubler la production : environ un an dans les pays industrialisés.'
+    by_income: { HIC: 12, UMC: 12, LMC: 18, LIC: 24 }
+  mil.quality:
+    value: 0.75
+    note: Qualité moyenne des forces selon le revenu (entraînement, maintenance).
+    by_income: { HIC: 1.0, UMC: 0.8, LMC: 0.65, LIC: 0.5 }
+    by_kind: { faction: 0.6 }
+  mil.logistics:
+    value: 40
+    note: Logistique militaire croissante avec le revenu.
+    by_income: { HIC: 60, UMC: 45, LMC: 30, LIC: 20 }
+  mil.doctrine:
+    value: defensive
+    note: Doctrine défensive par défaut ; asymétrique pour les factions.
+    by_kind: { faction: asymmetric }
+  mil.allocation:
+    value: { fronts: 0, garrisons: 20, home_defense: 75, missions: 5 }
+    note: 'Hors guerre : forces surtout affectées à la défense du territoire.'
+  strat.alert_level:
+    { value: 1, note: Niveau d'alerte normal au départ ; relevé par le moteur en cas de
+        crise. }
+  strat.missile_defense:
+    value: 5
+    note: Défense antimissile balistique quasi inexistante hors pays curés.
+    by_income: { HIC: 20, UMC: 10, LMC: 5, LIC: 0 }
+  strat.cyber_offense:
+    value: 20
+    note:
+      Capacités cyber offensives moyennes ; les grandes puissances sont à curer (National Cyber Power
+      Index).
+    by_income: { HIC: 40, UMC: 25, LMC: 10, LIC: 5 }
+  strat.cyber_defense:
+    value: 30
+    note: Capacités cyber défensives croissantes avec le revenu.
+    by_income: { HIC: 55, UMC: 35, LMC: 20, LIC: 10 }
+  strat.space:
+    value: 5
+    note: Capacités spatiales faibles hors puissances spatiales.
+    by_income: { HIC: 20, UMC: 10, LMC: 3, LIC: 0 }
+  strat.intelligence:
+    value: 35
+    note: Qualité du renseignement croissante avec le revenu.
+    by_income: { HIC: 55, UMC: 40, LMC: 30, LIC: 20 }
+  pol.regime_type:
+    value: hybrid
+    note: Régime hybride par défaut quand V-Dem ne couvre pas l'entité ; mouvement armé pour les factions.
+    by_kind: { faction: junta }
+  pol.leader_tenure:
+    value: 5
+    note:
+      'Ancienneté type du pouvoir en place, faute de relevé pour ce pays (les pays au niveau de détail
+      complet sont curés dans country_politics.yaml) : alternances fréquentes en démocratie, pouvoirs durables
+      dans les autocraties et les monarchies absolues.'
+    by_regime:
+      {
+        democracy: 3,
+        flawed_democracy: 4,
+        hybrid: 8,
+        autocracy: 12,
+        junta: 3,
+        theocracy: 20,
+        absolute_monarchy: 10,
+      }
+  pol.approval:
+    value: 45
+    note: Approbation moyenne ; plus élevée (et moins informative) sous les régimes autoritaires.
+    by_regime:
+      {
+        democracy: 42,
+        flawed_democracy: 40,
+        hybrid: 50,
+        autocracy: 60,
+        junta: 55,
+        theocracy: 45,
+        absolute_monarchy: 65,
+      }
+  pol.repression_capacity:
+    value: 40
+    note: Capacité répressive selon le régime.
+    by_regime:
+      {
+        democracy: 20,
+        flawed_democracy: 30,
+        hybrid: 50,
+        autocracy: 75,
+        junta: 75,
+        theocracy: 75,
+        absolute_monarchy: 70,
+      }
+  pol.military_loyalty:
+    value: 80
+    note: Loyauté élevée, plus fragile sous les juntes.
+    by_regime:
+      {
+        democracy: 90,
+        flawed_democracy: 80,
+        hybrid: 70,
+        autocracy: 75,
+        junta: 60,
+        theocracy: 75,
+        absolute_monarchy: 80,
+      }
+  pol.nationalism: { value: 50, note: Nationalisme moyen ; à curer pour les pays en conflit. }
+  pol.casualty_tolerance:
+    value: 45
+    note: Tolérance aux pertes plus faible en démocratie (opinion publique).
+    by_regime:
+      {
+        democracy: 35,
+        flawed_democracy: 40,
+        hybrid: 50,
+        autocracy: 65,
+        junta: 60,
+        theocracy: 70,
+        absolute_monarchy: 55,
+      }
+    by_kind: { faction: 70 }
+  pol.succession_risk:
+    value: 2
+    note: Probabilité annuelle de succession non planifiée, plus élevée sous les juntes.
+    by_regime:
+      {
+        democracy: 1,
+        flawed_democracy: 2,
+        hybrid: 3,
+        autocracy: 4,
+        junta: 8,
+        theocracy: 4,
+        absolute_monarchy: 3,
+      }
+  pol.interference_vulnerability:
+    value: 40
+    note: Démocraties ouvertes plus exposées à l'ingérence informationnelle.
+    by_regime:
+      {
+        democracy: 40,
+        flawed_democracy: 55,
+        hybrid: 55,
+        autocracy: 30,
+        junta: 50,
+        theocracy: 30,
+        absolute_monarchy: 30,
+      }
+  dip.soft_power:
+    value: 15
+    note: Soft power croissant avec le revenu.
+    by_income: { HIC: 35, UMC: 20, LMC: 12, LIC: 8 }
+  dip.commitment_credibility:
+    { value: 0.6, note: Crédibilité moyenne des engagements ; mise à jour par
+        le moteur selon les actes. }
+  dip.mediation_capacity:
+    { value: 20, note: 'Capacité de médiation modeste ; les médiateurs actifs (Qatar,
+        Oman, Turquie, Suisse, Norvège…) sont curés.' }
+  tech.ai_compute:
+    value: 8
+    note: Capacités en IA et en calcul concentrées dans quelques pays (curés).
+    by_income: { HIC: 25, UMC: 12, LMC: 5, LIC: 1 }
+  tech.semiconductors:
+    value: 5
+    note: Autonomie en semi-conducteurs quasi nulle hors pays producteurs (semiconductors.yaml).
+    by_income: { HIC: 10, UMC: 5, LMC: 2, LIC: 0 }
+  tech.info_warfare:
+    value: 20
+    note: Capacité d'influence moyenne ; plus élevée sous les régimes autoritaires.
+    by_regime:
+      {
+        democracy: 20,
+        flawed_democracy: 20,
+        hybrid: 25,
+        autocracy: 40,
+        junta: 25,
+        theocracy: 35,
+        absolute_monarchy: 30,
+      }
+  risk.pandemic_preparedness:
+    value: 45
+    note: Préparation croissante avec le revenu (ordres de grandeur du Global Health Security Index 2021).
+    by_income: { HIC: 65, UMC: 45, LMC: 35, LIC: 25 }
+  risk.seismic_exposure:
+    { value: 0.2, note: Exposition sismique moyenne ; à curer pour les pays de la
+        ceinture de feu et de l'arc alpin-himalayen. }
+  risk.climate_vulnerability:
+    value: 50
+    note: Vulnérabilité décroissante avec le revenu (ordres de grandeur de l'indice ND-GAIN).
+    by_income: { HIC: 30, UMC: 45, LMC: 55, LIC: 65 }
+  risk.disaster_resilience:
+    value: 45
+    note: Résilience croissante avec le revenu.
+    by_income: { HIC: 70, UMC: 50, LMC: 35, LIC: 25 }
+  ai.aggressiveness:
+    value: 30
+    note: Profil par défaut selon le régime ; les factions armées sont offensives.
+    by_regime:
+      {
+        democracy: 20,
+        flawed_democracy: 25,
+        hybrid: 30,
+        autocracy: 40,
+        junta: 45,
+        theocracy: 45,
+        absolute_monarchy: 30,
+      }
+    by_kind: { faction: 60 }
+  ai.risk_aversion:
+    value: 55
+    note: Aversion au risque plus élevée dans les démocraties (coûts électoraux).
+    by_regime:
+      {
+        democracy: 65,
+        flawed_democracy: 60,
+        hybrid: 55,
+        autocracy: 45,
+        junta: 45,
+        theocracy: 45,
+        absolute_monarchy: 60,
+      }
+    by_kind: { faction: 35 }
+  ai.time_horizon:
+    value: 36
+    note: Horizon électoral court en démocratie, long sous les régimes installés.
+    by_regime:
+      {
+        democracy: 36,
+        flawed_democracy: 30,
+        hybrid: 36,
+        autocracy: 60,
+        junta: 24,
+        theocracy: 60,
+        absolute_monarchy: 60,
+      }
+    by_kind: { faction: 12 }
+  ai.revisionism:
+    value: 30
+    note: Volonté de changer le statu quo plus forte sous les régimes autoritaires et idéologiques.
+    by_regime:
+      {
+        democracy: 20,
+        flawed_democracy: 25,
+        hybrid: 35,
+        autocracy: 45,
+        junta: 40,
+        theocracy: 60,
+        absolute_monarchy: 25,
+      }
+    by_kind: { faction: 70 }
+  ai.expansionism:
+    value: 10
+    note: Appétit territorial faible par défaut.
+    by_regime:
+      {
+        democracy: 5,
+        flawed_democracy: 10,
+        hybrid: 15,
+        autocracy: 20,
+        junta: 15,
+        theocracy: 20,
+        absolute_monarchy: 10,
+      }
+    by_kind: { faction: 50 }
+  ai.ideology_weight:
+    value: 35
+    note: Poids de l'idéologie, élevé dans les théocraties.
+    by_regime:
+      {
+        democracy: 30,
+        flawed_democracy: 30,
+        hybrid: 35,
+        autocracy: 45,
+        junta: 30,
+        theocracy: 80,
+        absolute_monarchy: 40,
+      }
+    by_kind: { faction: 60 }
+  ai.regime_survival_weight:
+    value: 55
+    note: Priorité à la survie du régime, forte sous les régimes non démocratiques.
+    by_regime:
+      {
+        democracy: 30,
+        flawed_democracy: 40,
+        hybrid: 60,
+        autocracy: 80,
+        junta: 85,
+        theocracy: 80,
+        absolute_monarchy: 80,
+      }
+    by_kind: { faction: 90 }
+  ai.economy_weight:
+    value: 55
+    note: Priorité à l'économie, plus forte en démocratie.
+    by_regime:
+      {
+        democracy: 70,
+        flawed_democracy: 65,
+        hybrid: 55,
+        autocracy: 45,
+        junta: 35,
+        theocracy: 35,
+        absolute_monarchy: 60,
+      }
+    by_kind: { faction: 30 }
+  ai.prestige_weight:
+    value: 45
+    note: Recherche de statut moyenne.
+    by_regime:
+      {
+        democracy: 40,
+        flawed_democracy: 40,
+        hybrid: 45,
+        autocracy: 55,
+        junta: 45,
+        theocracy: 50,
+        absolute_monarchy: 55,
+      }
+    by_kind: { faction: 30 }
+  ai.alliance_loyalty:
+    value: 55
+    note: Loyauté envers les alliés plus forte dans les démocraties.
+    by_regime:
+      {
+        democracy: 65,
+        flawed_democracy: 60,
+        hybrid: 50,
+        autocracy: 45,
+        junta: 40,
+        theocracy: 45,
+        absolute_monarchy: 55,
+      }
+    by_kind: { faction: 40 }
+  ai.sanction_tolerance:
+    value: 50
+    note: Tolérance aux sanctions plus forte sous les régimes autoritaires.
+    by_regime:
+      {
+        democracy: 30,
+        flawed_democracy: 40,
+        hybrid: 55,
+        autocracy: 70,
+        junta: 70,
+        theocracy: 80,
+        absolute_monarchy: 55,
+      }
+    by_kind: { faction: 80 }
+  ai.nuclear_threshold:
+    { value: 5, note: Seuil d'emploi nucléaire très bas par défaut ; n'a d'effet que
+        pour les puissances nucléaires (profilées). }
+  ai.misperception:
+    value: 0
+    note: Pas de biais par défaut ; légère surestimation de soi sous les régimes fermés.
+    by_regime:
+      {
+        democracy: 0,
+        flawed_democracy: 0,
+        hybrid: 5,
+        autocracy: 10,
+        junta: 10,
+        theocracy: 10,
+        absolute_monarchy: 5,
+      }
+    by_kind: { faction: 15 }
+  ai.unpredictability:
+    value: 25
+    note: Imprévisibilité modérée.
+    by_regime:
+      {
+        democracy: 15,
+        flawed_democracy: 20,
+        hybrid: 25,
+        autocracy: 30,
+        junta: 40,
+        theocracy: 35,
+        absolute_monarchy: 20,
+      }
+    by_kind: { faction: 40 }
+  ai.controller:
+    { value: ai, note: Tous les pays sont pilotés par l'IA au départ (mode observateur). }
+  world.trade_fragmentation:
+    { value: 45, note: "Fragmentation élevée en 2026 : droits de douane américains,
+        sanctions, contrôles à l'exportation, guerres (Ormuz, mer Rouge)." }
+  world.nuclear_taboo:
+    { value: 85, note: "Tabou fort, sans emploi depuis 1945 malgré la guerre d'Iran
+        et la guerre en Ukraine." }
+  world.un_effectiveness:
+    { value: 30, note: "Conseil de sécurité paralysé par les veto sur l'Ukraine,
+        Gaza et l'Iran." }
+  world.alliance_credibility: { value: 1, note: Multiplicateur neutre. }
+  world.climate_scenario: { value: SSP2-4.5, note: Scénario intermédiaire du GIEC (AR6). }
+  world.pandemic_rate:
+    { value: 2.5, note: 'Environ une pandémie majeure tous les 40 ans (grippes de 1957,
+        1968, 2009, COVID-19).' }
+  world.tech_pace: { value: 1, note: Rythme de référence. }
+  world.event_frequency: { value: 1, note: Fréquence de référence des événements aléatoires. }

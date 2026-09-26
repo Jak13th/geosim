@@ -1,0 +1,1390 @@
+# Profils décisionnels (SPEC §6.2, paramètres ai.*) des pays au niveau de détail complet.
+# HYPOTHÈSES GeoSim sur des gouvernements (jamais sur des personnes), fondées sur leurs comportements
+# observables jusqu'au 2026-09-25 ; chaque valeur porte une justification d'une ligne. À valider.
+# Échelles : 0-100, sauf ai.time_horizon (mois, 1-120) et ai.misperception (-50 sous-estime à +50
+# surestime). Les pays absents reçoivent un profil par défaut (defaults.yaml, par type de régime).
+# opposition : profil d'une alternance plausible (démocraties), utilisé en cas de changement de gouvernement.
+version: 1
+profiles:
+  USA:
+    government: 'Exécutif américain 2025-2029 (administration républicaine)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        {
+          value: 60,
+          why: "Frappes contre l'Iran (2025, 2026), capture de Maduro (janvier 2026), frappes en mer des Caraïbes.",
+        }
+      ai.risk_aversion:
+        {
+          value: 40,
+          why: "Opérations militaires directes et guerre tarifaire assumées malgré les risques d'escalade.",
+        }
+      ai.time_horizon:
+        {
+          value: 24,
+          why: 'Décisions rythmées par le cycle électoral (élections de mi-mandat du 03/11/2026).',
+        }
+      ai.revisionism:
+        {
+          value: 45,
+          why: "Remise en cause de l'ordre commercial multilatéral et de certaines alliances (droits de douane, Groenland).",
+        }
+      ai.expansionism:
+        {
+          value: 20,
+          why: 'Pressions sur le Groenland et le canal de Panama, sans annexion (accord de sécurité avec le Danemark, 09/2026).',
+        }
+      ai.ideology_weight:
+        { value: 40, why: 'Doctrine « America First » affirmée, mais arbitrages transactionnels.' }
+      ai.regime_survival_weight:
+        {
+          value: 35,
+          why: 'Démocratie : alternance possible, pas de menace existentielle sur le régime.',
+        }
+      ai.economy_weight:
+        {
+          value: 70,
+          why: 'Droits de douane, accords commerciaux et énergie au cœur de la politique étrangère.',
+        }
+      ai.prestige_weight:
+        { value: 70, why: 'Recherche affichée de la suprématie militaire et économique.' }
+      ai.alliance_loyalty:
+        {
+          value: 45,
+          why: 'Engagements maintenus (OTAN, Japon, Corée, Israël) mais conditionnés et renégociés.',
+        }
+      ai.sanction_tolerance:
+        {
+          value: 60,
+          why: "Supporte le coût des sanctions qu'il impose ; peu exposé aux sanctions des autres.",
+        }
+      ai.nuclear_threshold:
+        {
+          value: 15,
+          why: 'Doctrine sans non-emploi en premier, mais emploi jamais envisagé publiquement en 2025-2026.',
+        }
+      ai.misperception:
+        {
+          value: 10,
+          why: "Tendance à surestimer l'effet de la coercition (droits de douane, blocus).",
+        }
+      ai.unpredictability:
+        {
+          value: 60,
+          why: 'Revirements fréquents (droits de douane, cessez-le-feu annoncés puis rompus).',
+        }
+    strategic_goals:
+      - "Contraindre l'Iran à renoncer à l'enrichissement"
+      - 'Rééquilibrer les échanges (droits de douane)'
+      - 'Contenir la Chine (technologies, Indo-Pacifique)'
+      - "Sécuriser l'hémisphère occidental (Venezuela, Cuba, Panama, Groenland)"
+    opposition:
+      why: 'Administration démocrate : retour au multilatéralisme et aux alliances, moindre recours à la force.'
+      values:
+        ai.aggressiveness: 30
+        ai.risk_aversion: 60
+        ai.time_horizon: 48
+        ai.revisionism: 15
+        ai.expansionism: 5
+        ai.ideology_weight: 35
+        ai.regime_survival_weight: 30
+        ai.economy_weight: 65
+        ai.prestige_weight: 55
+        ai.alliance_loyalty: 75
+        ai.sanction_tolerance: 50
+        ai.nuclear_threshold: 10
+        ai.misperception: 0
+        ai.unpredictability: 20
+  CHN:
+    government: 'Parti communiste chinois (direction centralisée depuis 2012)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        {
+          value: 40,
+          why: 'Pressions militaires croissantes autour de Taïwan et en mer de Chine, sans guerre ouverte.',
+        }
+      ai.risk_aversion:
+        {
+          value: 65,
+          why: 'Évite le conflit direct avec les États-Unis ; privilégie la « zone grise ».',
+        }
+      ai.time_horizon: { value: 120, why: 'Planification de long terme (objectifs 2035, 2049).' }
+      ai.revisionism: { value: 70, why: "Veut réformer l'ordre international et réunifier Taïwan." }
+      ai.expansionism:
+        {
+          value: 55,
+          why: 'Revendications sur Taïwan, la mer de Chine méridionale et des zones himalayennes.',
+        }
+      ai.ideology_weight:
+        {
+          value: 55,
+          why: 'Primauté du Parti et du nationalisme ; pragmatisme économique conservé.',
+        }
+      ai.regime_survival_weight:
+        { value: 90, why: 'Stabilité du régime au-dessus de tout (contrôle social, purges).' }
+      ai.economy_weight:
+        { value: 70, why: 'Croissance et autonomie technologique priorités du plan quinquennal.' }
+      ai.prestige_weight:
+        { value: 70, why: '« Grand renouveau de la nation chinoise », diplomatie de rang.' }
+      ai.alliance_loyalty:
+        {
+          value: 40,
+          why: "Pas d'alliance formelle hors Corée du Nord ; soutien limité à la Russie et à l'Iran.",
+        }
+      ai.sanction_tolerance:
+        {
+          value: 70,
+          why: 'A résisté aux contrôles technologiques américains ; contre-mesures sur les minerais.',
+        }
+      ai.nuclear_threshold: { value: 5, why: 'Non-emploi en premier déclaré.' }
+      ai.misperception:
+        { value: 5, why: 'Perception prudente de ses capacités face aux États-Unis.' }
+      ai.unpredictability: { value: 20, why: 'Politique prévisible, décisions centralisées.' }
+    strategic_goals:
+      - 'Réunification de Taïwan'
+      - 'Contrôle de la mer de Chine méridionale'
+      - 'Autonomie technologique (semi-conducteurs, IA)'
+      - 'Leadership du Sud global (BRICS, OCS)'
+  RUS:
+    government: 'Gouvernement russe (régime présidentiel autoritaire)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        {
+          value: 80,
+          why: "Guerre d'agression contre l'Ukraine depuis 2022, sabotages et drones en Europe (2025-2026).",
+        }
+      ai.risk_aversion:
+        { value: 35, why: "Accepte des risques élevés (guerre longue, confrontation avec l'OTAN)." }
+      ai.time_horizon:
+        { value: 60, why: 'Économie de guerre et objectifs de long terme en Ukraine.' }
+      ai.revisionism:
+        { value: 85, why: "Remise en cause de l'architecture de sécurité européenne." }
+      ai.expansionism:
+        { value: 75, why: 'Annexion de quatre régions ukrainiennes et de la Crimée.' }
+      ai.ideology_weight:
+        { value: 60, why: 'Nationalisme impérial et « valeurs traditionnelles ».' }
+      ai.regime_survival_weight:
+        { value: 90, why: 'Répression intérieure, verrouillage des élections (Douma 09/2026).' }
+      ai.economy_weight: { value: 35, why: "Économie subordonnée à l'effort de guerre." }
+      ai.prestige_weight:
+        { value: 80, why: 'Statut de grande puissance au cœur de la politique étrangère.' }
+      ai.alliance_loyalty:
+        {
+          value: 40,
+          why: "Soutien limité à ses alliés (pas d'intervention pour l'Iran en 2026, Arménie délaissée).",
+        }
+      ai.sanction_tolerance:
+        { value: 85, why: 'Économie adaptée à des sanctions massives depuis 2022.' }
+      ai.nuclear_threshold:
+        { value: 35, why: 'Doctrine révisée en 2024 abaissant le seuil ; menaces répétées.' }
+      ai.misperception: { value: 15, why: 'Surestimation initiale de ses forces (2022).' }
+      ai.unpredictability:
+        {
+          value: 45,
+          why: "Escalades ponctuelles (drones sur la Pologne, l'Allemagne en 2025-2026).",
+        }
+    strategic_goals:
+      - 'Contrôle des régions ukrainiennes annexées'
+      - "Neutralisation et démilitarisation de l'Ukraine"
+      - "Recul de l'OTAN en Europe de l'Est"
+      - 'Levée des sanctions'
+  IND:
+    government: 'Gouvernement indien (BJP, coalition NDA depuis 2014)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        {
+          value: 35,
+          why: "Frappes au Pakistan après l'attentat de Pahalgam (mai 2025), sinon posture défensive.",
+        }
+      ai.risk_aversion: { value: 60, why: 'Escalade contrôlée face au Pakistan et à la Chine.' }
+      ai.time_horizon: { value: 60, why: 'Objectifs de long terme (Viksit Bharat 2047).' }
+      ai.revisionism:
+        { value: 35, why: "Réforme des institutions (siège permanent) sans rupture de l'ordre." }
+      ai.expansionism:
+        { value: 15, why: "Pas d'expansion hors des territoires revendiqués (Cachemire)." }
+      ai.ideology_weight: { value: 50, why: 'Nationalisme hindou marqué.' }
+      ai.regime_survival_weight: { value: 40, why: 'Démocratie électorale dominante.' }
+      ai.economy_weight:
+        { value: 75, why: "Croissance forte, accord de libre-échange avec l'UE (janvier 2026)." }
+      ai.prestige_weight: { value: 65, why: 'Recherche du statut de grande puissance.' }
+      ai.alliance_loyalty:
+        { value: 40, why: 'Autonomie stratégique : ni allié de Washington ni de Moscou.' }
+      ai.sanction_tolerance:
+        {
+          value: 55,
+          why: 'A résisté aux droits de douane américains et aux pressions sur le pétrole russe.',
+        }
+      ai.nuclear_threshold: { value: 5, why: 'Non-emploi en premier.' }
+      ai.misperception: { value: 5, why: 'Évaluation prudente face à la Chine.' }
+      ai.unpredictability: { value: 25, why: 'Politique étrangère lisible.' }
+    strategic_goals:
+      - 'Sécurité face au Pakistan et à la Chine'
+      - 'Siège permanent au Conseil de sécurité'
+      - 'Croissance et industrialisation'
+      - 'Autonomie stratégique'
+    opposition:
+      why: "Coalition d'opposition (INDIA) : nationalisme moins marqué, même autonomie stratégique."
+      values:
+        ai.aggressiveness: 30
+        ai.risk_aversion: 60
+        ai.time_horizon: 48
+        ai.revisionism: 30
+        ai.expansionism: 10
+        ai.ideology_weight: 35
+        ai.regime_survival_weight: 35
+        ai.economy_weight: 75
+        ai.prestige_weight: 55
+        ai.alliance_loyalty: 45
+        ai.sanction_tolerance: 50
+        ai.nuclear_threshold: 5
+        ai.misperception: 0
+        ai.unpredictability: 25
+  GBR:
+    government: 'Gouvernement travailliste britannique (depuis 2024)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        {
+          value: 25,
+          why: "Soutien militaire à l'Ukraine, participation limitée aux frappes, sans engagement au sol.",
+        }
+      ai.risk_aversion: { value: 65, why: 'Prudence budgétaire et militaire.' }
+      ai.time_horizon: { value: 36, why: 'Horizon électoral (élections au plus tard en 2029).' }
+      ai.revisionism: { value: 15, why: "Défenseur de l'ordre international." }
+      ai.expansionism: { value: 5, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 30, why: 'Pragmatisme.' }
+      ai.regime_survival_weight: { value: 30, why: 'Démocratie stable.' }
+      ai.economy_weight: { value: 70, why: 'Priorité à la croissance et aux finances publiques.' }
+      ai.prestige_weight: { value: 55, why: 'Rôle de puissance moyenne mondiale (P5, AUKUS).' }
+      ai.alliance_loyalty:
+        {
+          value: 80,
+          why: "Allié fidèle des États-Unis et de l'OTAN, pilier de l'aide à l'Ukraine.",
+        }
+      ai.sanction_tolerance: { value: 35, why: 'Économie ouverte, sensible aux chocs.' }
+      ai.nuclear_threshold: { value: 10, why: 'Dissuasion strictement défensive.' }
+      ai.misperception: { value: 0, why: 'Pas de biais notable.' }
+      ai.unpredictability:
+        {
+          value: 20,
+          why: 'Politique prévisible malgré le changement de Premier ministre (07/2026).',
+        }
+    strategic_goals:
+      - "Sécurité européenne et soutien à l'Ukraine"
+      - 'Relance de la croissance'
+      - 'Relation spéciale avec les États-Unis'
+    opposition:
+      why: "Gouvernement conservateur ou de Reform UK : plus souverainiste, plus hostile à l'immigration, même atlantisme."
+      values:
+        ai.aggressiveness: 30
+        ai.risk_aversion: 60
+        ai.time_horizon: 36
+        ai.revisionism: 20
+        ai.expansionism: 5
+        ai.ideology_weight: 40
+        ai.regime_survival_weight: 30
+        ai.economy_weight: 70
+        ai.prestige_weight: 60
+        ai.alliance_loyalty: 75
+        ai.sanction_tolerance: 40
+        ai.nuclear_threshold: 10
+        ai.misperception: 0
+        ai.unpredictability: 30
+  FRA:
+    government: 'Exécutif français (mandat présidentiel 2022-2027)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        { value: 25, why: "Soutien à l'Ukraine, bases au Golfe ; retrait militaire du Sahel." }
+      ai.risk_aversion:
+        {
+          value: 60,
+          why: 'Prudence malgré une rhétorique volontariste (troupes en Ukraine évoquées).',
+        }
+      ai.time_horizon:
+        { value: 30, why: 'Fin de mandat en 2027, cohabitation parlementaire difficile.' }
+      ai.revisionism:
+        { value: 20, why: "Défend l'ordre multilatéral, plaide pour l'autonomie européenne." }
+      ai.expansionism: { value: 5, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 35, why: "Pragmatisme, défense de l'autonomie stratégique." }
+      ai.regime_survival_weight:
+        { value: 30, why: "Démocratie stable malgré l'instabilité gouvernementale." }
+      ai.economy_weight: { value: 60, why: 'Contrainte budgétaire forte (dette, déficit).' }
+      ai.prestige_weight: { value: 70, why: 'Recherche du rang (dissuasion, siège permanent).' }
+      ai.alliance_loyalty: { value: 70, why: 'Allié fiable (OTAN, UE), avec une ligne autonome.' }
+      ai.sanction_tolerance: { value: 40, why: 'Économie ouverte.' }
+      ai.nuclear_threshold: { value: 15, why: 'Dissuasion avec « ultime avertissement ».' }
+      ai.misperception: { value: 5, why: 'Légère surestimation de son influence.' }
+      ai.unpredictability: { value: 25, why: 'Initiatives diplomatiques parfois inattendues.' }
+    strategic_goals:
+      - 'Autonomie stratégique européenne'
+      - "Soutien à l'Ukraine"
+      - "Présence dans l'Indo-Pacifique et en Afrique"
+    opposition:
+      why: "Exécutif issu du Rassemblement national (élection de 2027) : souverainiste, plus distant de l'UE et de l'Ukraine."
+      values:
+        ai.aggressiveness: 35
+        ai.risk_aversion: 55
+        ai.time_horizon: 36
+        ai.revisionism: 40
+        ai.expansionism: 5
+        ai.ideology_weight: 60
+        ai.regime_survival_weight: 40
+        ai.economy_weight: 55
+        ai.prestige_weight: 70
+        ai.alliance_loyalty: 45
+        ai.sanction_tolerance: 50
+        ai.nuclear_threshold: 15
+        ai.misperception: 5
+        ai.unpredictability: 40
+  DEU:
+    government: 'Gouvernement fédéral allemand (coalition CDU/CSU–SPD depuis 2025)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 15, why: 'Réarmement massif mais posture défensive.' }
+      ai.risk_aversion: { value: 70, why: 'Culture stratégique prudente.' }
+      ai.time_horizon:
+        {
+          value: 48,
+          why: "Programmes pluriannuels (fonds spécial, frein à l'endettement assoupli).",
+        }
+      ai.revisionism: { value: 10, why: "Défenseur de l'ordre existant." }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 25, why: 'Pragmatisme.' }
+      ai.regime_survival_weight: { value: 30, why: 'Démocratie stable.' }
+      ai.economy_weight:
+        { value: 75, why: 'Économie industrielle en difficulté, priorité à la compétitivité.' }
+      ai.prestige_weight: { value: 45, why: 'Leadership européen assumé.' }
+      ai.alliance_loyalty: { value: 80, why: "Fidélité à l'OTAN et à l'UE ; brigade en Lituanie." }
+      ai.sanction_tolerance:
+        { value: 35, why: 'Économie exportatrice sensible aux sanctions et aux droits de douane.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: -5, why: 'Tendance à sous-estimer ses propres capacités.' }
+      ai.unpredictability: { value: 15, why: 'Très prévisible.' }
+    strategic_goals:
+      - "Sécurité de l'Europe face à la Russie"
+      - 'Compétitivité industrielle'
+      - "Cohésion de l'UE"
+  JPN:
+    government: 'Gouvernement japonais (PLD, supermajorité depuis février 2026)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        {
+          value: 25,
+          why: 'Réarmement (2 % du PIB) et capacités de contre-frappe, posture défensive.',
+        }
+      ai.risk_aversion:
+        { value: 65, why: "Évite l'escalade avec la Chine malgré les tensions de 2025-2026." }
+      ai.time_horizon: { value: 48, why: 'Planification de défense sur 10 ans.' }
+      ai.revisionism:
+        { value: 25, why: "Révision de la posture pacifiste, pas de l'ordre régional." }
+      ai.expansionism:
+        { value: 5, why: 'Aucune ambition territoriale hors Senkaku et Kouriles revendiquées.' }
+      ai.ideology_weight: { value: 40, why: 'Conservatisme nationaliste modéré.' }
+      ai.regime_survival_weight: { value: 30, why: 'Démocratie stable (supermajorité du PLD).' }
+      ai.economy_weight: { value: 70, why: 'Priorité économique (croissance, yen faible).' }
+      ai.prestige_weight: { value: 55, why: 'Rôle régional affirmé.' }
+      ai.alliance_loyalty: { value: 85, why: 'Alliance américaine pilier de la défense.' }
+      ai.sanction_tolerance: { value: 40, why: 'Sensible aux chocs commerciaux.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire, sous parapluie américain.' }
+      ai.misperception: { value: 0, why: 'Pas de biais notable.' }
+      ai.unpredictability: { value: 15, why: 'Politique très prévisible.' }
+    strategic_goals:
+      - 'Dissuasion face à la Chine et à la Corée du Nord'
+      - 'Alliance américaine'
+      - 'Sécurité énergétique (Ormuz)'
+  ITA:
+    government: 'Gouvernement italien (coalition de droite depuis 2022)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 15, why: "Pas d'engagement militaire offensif." }
+      ai.risk_aversion: { value: 70, why: 'Prudence stratégique.' }
+      ai.time_horizon: { value: 36, why: 'Horizon électoral 2027.' }
+      ai.revisionism: { value: 20, why: "Pas de remise en cause de l'ordre international." }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight:
+        { value: 40, why: "Droite nationale-conservatrice, pragmatique à l'international." }
+      ai.regime_survival_weight: { value: 30, why: 'Démocratie stable.' }
+      ai.economy_weight: { value: 70, why: 'Dette élevée, priorité aux finances.' }
+      ai.prestige_weight: { value: 45, why: "Recherche d'influence en Méditerranée." }
+      ai.alliance_loyalty: { value: 70, why: "Atlantiste (OTAN, soutien à l'Ukraine)." }
+      ai.sanction_tolerance: { value: 40, why: 'Économie ouverte.' }
+      ai.nuclear_threshold: { value: 0, why: "Non nucléaire (partage nucléaire de l'OTAN)." }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 20, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Stabilité méditerranéenne et migrations'
+      - "Soutien à l'Ukraine"
+      - 'Finances publiques'
+  CAN:
+    government: 'Gouvernement fédéral canadien (libéral depuis 2015)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Posture défensive.' }
+      ai.risk_aversion: { value: 70, why: 'Prudence.' }
+      ai.time_horizon: { value: 48, why: 'Horizon de législature.' }
+      ai.revisionism: { value: 15, why: "Défenseur de l'ordre multilatéral." }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 30, why: 'Pragmatisme.' }
+      ai.regime_survival_weight: { value: 25, why: 'Démocratie stable.' }
+      ai.economy_weight:
+        { value: 75, why: 'Économie dépendante des États-Unis (droits de douane).' }
+      ai.prestige_weight: { value: 40, why: 'Puissance moyenne.' }
+      ai.alliance_loyalty: { value: 70, why: 'OTAN et NORAD, relation tendue avec Washington.' }
+      ai.sanction_tolerance: { value: 40, why: 'Exposé aux droits de douane américains.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: -5, why: 'Tendance à sous-estimer ses moyens.' }
+      ai.unpredictability: { value: 15, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Diversification commerciale'
+      - 'Souveraineté arctique'
+      - 'OTAN'
+  AUS:
+    government: 'Gouvernement fédéral australien (travailliste depuis 2022)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 15, why: 'Posture défensive, ANZUS.' }
+      ai.risk_aversion: { value: 65, why: 'Prudence.' }
+      ai.time_horizon: { value: 60, why: 'AUKUS : horizon de plusieurs décennies.' }
+      ai.revisionism: { value: 15, why: "Défenseur de l'ordre existant." }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 30, why: 'Pragmatisme.' }
+      ai.regime_survival_weight: { value: 25, why: 'Démocratie stable.' }
+      ai.economy_weight: { value: 70, why: 'Économie dépendante des exportations vers la Chine.' }
+      ai.prestige_weight: { value: 45, why: 'Puissance moyenne régionale.' }
+      ai.alliance_loyalty: { value: 85, why: 'Alliance américaine centrale (AUKUS, ANZUS).' }
+      ai.sanction_tolerance: { value: 45, why: 'A résisté aux sanctions chinoises de 2020-2023.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire, sous parapluie américain.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 15, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Sécurité indo-pacifique'
+      - 'AUKUS'
+      - 'Relations commerciales avec la Chine'
+  KOR:
+    government: 'Gouvernement sud-coréen (Parti démocrate depuis juin 2025)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 15, why: 'Posture défensive face au Nord, dialogue recherché.' }
+      ai.risk_aversion: { value: 70, why: "Évite l'escalade avec Pyongyang." }
+      ai.time_horizon: { value: 36, why: 'Mandat présidentiel unique de 5 ans.' }
+      ai.revisionism: { value: 20, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 5, why: 'Revendication théorique de la péninsule.' }
+      ai.ideology_weight: { value: 35, why: 'Pragmatisme.' }
+      ai.regime_survival_weight:
+        { value: 30, why: 'Démocratie consolidée après la crise de 2024-2025.' }
+      ai.economy_weight: { value: 75, why: 'Économie exportatrice (puces, automobiles).' }
+      ai.prestige_weight: { value: 50, why: 'Puissance moyenne.' }
+      ai.alliance_loyalty: { value: 80, why: 'Alliance américaine.' }
+      ai.sanction_tolerance: { value: 40, why: 'Sensible aux chocs commerciaux.' }
+      ai.nuclear_threshold:
+        {
+          value: 0,
+          why: "Non nucléaire, sous parapluie américain (débat sur l'armement nucléaire).",
+        }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 20, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Dissuasion face à la Corée du Nord'
+      - 'Alliance américaine'
+      - 'Sécurité des chaînes de semi-conducteurs'
+  BRA:
+    government: 'Gouvernement brésilien (Parti des travailleurs depuis 2023)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Aucune posture offensive.' }
+      ai.risk_aversion: { value: 65, why: 'Prudence.' }
+      ai.time_horizon: { value: 36, why: "Élection d'octobre 2026." }
+      ai.revisionism: { value: 40, why: 'Veut réformer la gouvernance mondiale (BRICS).' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 40, why: 'Gauche, non-alignement.' }
+      ai.regime_survival_weight: { value: 30, why: 'Démocratie.' }
+      ai.economy_weight: { value: 70, why: 'Priorité au développement.' }
+      ai.prestige_weight: { value: 60, why: 'Leadership du Sud global.' }
+      ai.alliance_loyalty: { value: 30, why: 'Non-aligné (BRICS sans alliance).' }
+      ai.sanction_tolerance:
+        { value: 55, why: 'A supporté les droits de douane américains de 2025.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire (traité de Tlatelolco).' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 25, why: 'Assez prévisible.' }
+    strategic_goals:
+      - 'Réforme de la gouvernance mondiale'
+      - 'Amazonie et climat'
+      - 'Leadership sud-américain'
+    opposition:
+      why: "Gouvernement de droite (élection d'octobre 2026) : rapprochement avec Washington, moins d'activisme BRICS."
+      values:
+        ai.aggressiveness: 10
+        ai.risk_aversion: 65
+        ai.time_horizon: 36
+        ai.revisionism: 20
+        ai.expansionism: 0
+        ai.ideology_weight: 45
+        ai.regime_survival_weight: 35
+        ai.economy_weight: 70
+        ai.prestige_weight: 50
+        ai.alliance_loyalty: 55
+        ai.sanction_tolerance: 45
+        ai.nuclear_threshold: 0
+        ai.misperception: 0
+        ai.unpredictability: 35
+  MEX:
+    government: 'Gouvernement mexicain (Morena depuis 2018)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Pas de posture offensive ; lutte contre les cartels.' }
+      ai.risk_aversion: { value: 70, why: 'Évite la confrontation avec Washington.' }
+      ai.time_horizon: { value: 36, why: 'Mandat de 6 ans.' }
+      ai.revisionism: { value: 20, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 40, why: 'Gauche nationaliste.' }
+      ai.regime_survival_weight: { value: 35, why: 'Parti dominant.' }
+      ai.economy_weight: { value: 80, why: "Économie dépendante de l'ACEUM." }
+      ai.prestige_weight: { value: 40, why: 'Influence régionale modérée.' }
+      ai.alliance_loyalty: { value: 50, why: 'Relation obligée avec les États-Unis.' }
+      ai.sanction_tolerance: { value: 40, why: 'Très exposé aux droits de douane américains.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 20, why: 'Prévisible.' }
+    strategic_goals:
+      - "Préserver l'accès au marché américain"
+      - 'Sécurité intérieure (cartels)'
+      - 'Souveraineté énergétique'
+  ARG:
+    government: 'Gouvernement argentin (La Libertad Avanza depuis 2023)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 15, why: 'Pas de posture offensive.' }
+      ai.risk_aversion: { value: 50, why: 'Réformes économiques risquées.' }
+      ai.time_horizon: { value: 24, why: 'Horizon électoral 2027.' }
+      ai.revisionism: { value: 30, why: 'Rupture avec la politique étrangère antérieure.' }
+      ai.expansionism:
+        { value: 10, why: 'Revendication des Malouines maintenue par la voie diplomatique.' }
+      ai.ideology_weight: { value: 60, why: 'Libertarianisme affirmé.' }
+      ai.regime_survival_weight: { value: 35, why: 'Démocratie.' }
+      ai.economy_weight: { value: 85, why: 'Stabilisation macroéconomique au centre.' }
+      ai.prestige_weight: { value: 40, why: 'Visibilité internationale.' }
+      ai.alliance_loyalty: { value: 70, why: 'Alignement étroit sur les États-Unis et Israël.' }
+      ai.sanction_tolerance: { value: 40, why: 'Économie fragile.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 5, why: 'Optimisme sur les réformes.' }
+      ai.unpredictability: { value: 45, why: 'Revirements rapides.' }
+    strategic_goals:
+      - 'Stabilisation monétaire'
+      - 'Alignement sur les États-Unis'
+      - 'Revendication des Malouines'
+    opposition:
+      why: 'Gouvernement péroniste : plus protectionniste, non-aligné, revendication plus active des Malouines.'
+      values:
+        ai.aggressiveness: 10
+        ai.risk_aversion: 60
+        ai.time_horizon: 36
+        ai.revisionism: 35
+        ai.expansionism: 15
+        ai.ideology_weight: 50
+        ai.regime_survival_weight: 35
+        ai.economy_weight: 65
+        ai.prestige_weight: 50
+        ai.alliance_loyalty: 35
+        ai.sanction_tolerance: 50
+        ai.nuclear_threshold: 0
+        ai.misperception: 0
+        ai.unpredictability: 30
+  IDN:
+    government: 'Gouvernement indonésien (depuis 2024)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 20, why: 'Non-aligné, posture défensive.' }
+      ai.risk_aversion: { value: 60, why: 'Prudence face à la Chine.' }
+      ai.time_horizon: { value: 60, why: 'Plans de long terme (2045).' }
+      ai.revisionism: { value: 25, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 5, why: 'Aucune ambition territoriale (Natuna défendues).' }
+      ai.ideology_weight: { value: 35, why: 'Nationalisme modéré.' }
+      ai.regime_survival_weight: { value: 45, why: 'Pouvoir présidentiel renforcé.' }
+      ai.economy_weight: { value: 75, why: 'Industrialisation (nickel).' }
+      ai.prestige_weight: { value: 55, why: 'Puissance moyenne (BRICS, G20).' }
+      ai.alliance_loyalty: { value: 30, why: 'Non-aligné.' }
+      ai.sanction_tolerance: { value: 50, why: 'A résisté aux pressions sur le nickel.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 30, why: 'Assez prévisible.' }
+    strategic_goals:
+      - 'Industrialisation des ressources'
+      - 'Non-alignement'
+      - 'Souveraineté maritime (Natuna)'
+  SAU:
+    government: 'Monarchie saoudienne'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        { value: 45, why: "Cobelligérant contre l'Iran (2026), guerre au Yémen depuis 2015." }
+      ai.risk_aversion:
+        { value: 50, why: 'Prudence après les frappes subies, mais implication directe.' }
+      ai.time_horizon: { value: 60, why: 'Vision 2030.' }
+      ai.revisionism:
+        { value: 35, why: "Recomposition régionale (normalisation, rivalité avec l'Iran)." }
+      ai.expansionism: { value: 10, why: "Pas d'ambition territoriale (Yémen : influence)." }
+      ai.ideology_weight: { value: 40, why: 'Conservatisme religieux en recul.' }
+      ai.regime_survival_weight: { value: 85, why: 'Priorité à la stabilité de la monarchie.' }
+      ai.economy_weight: { value: 70, why: 'Diversification économique.' }
+      ai.prestige_weight: { value: 70, why: 'Leadership arabe et islamique.' }
+      ai.alliance_loyalty:
+        {
+          value: 55,
+          why: 'Partenaire américain, pacte avec le Pakistan et la Turquie (2025-2026).',
+        }
+      ai.sanction_tolerance:
+        { value: 55, why: "A supporté des tensions avec l'OPEP+ et des baisses de prix." }
+      ai.nuclear_threshold: { value: 5, why: "Pas d'arme ; ambition de parité avec l'Iran." }
+      ai.misperception: { value: 5, why: 'Légère surestimation.' }
+      ai.unpredictability: { value: 30, why: 'Décisions centralisées, parfois soudaines.' }
+    strategic_goals:
+      - "Endiguer l'Iran"
+      - 'Sécuriser les exportations (Ormuz, mer Rouge)'
+      - 'Vision 2030'
+      - 'Leadership régional'
+  ZAF:
+    government: "Gouvernement sud-africain (gouvernement d'unité nationale depuis 2024)"
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Aucune posture offensive.' }
+      ai.risk_aversion: { value: 65, why: 'Prudence.' }
+      ai.time_horizon: { value: 36, why: 'Horizon de législature.' }
+      ai.revisionism: { value: 35, why: 'Réforme de la gouvernance mondiale (BRICS).' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 40, why: "Tradition de non-alignement et d'anticolonialisme." }
+      ai.regime_survival_weight: { value: 30, why: 'Démocratie de coalition.' }
+      ai.economy_weight: { value: 75, why: 'Croissance faible, chômage élevé.' }
+      ai.prestige_weight: { value: 50, why: "Voix de l'Afrique (G20 2025)." }
+      ai.alliance_loyalty: { value: 30, why: 'Non-aligné.' }
+      ai.sanction_tolerance: { value: 50, why: 'Exposé aux droits de douane américains.' }
+      ai.nuclear_threshold: { value: 0, why: "A renoncé à l'arme nucléaire (1989-1991)." }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 20, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Développement et emploi'
+      - "Représentation de l'Afrique"
+      - 'Non-alignement'
+  TUR:
+    government: 'Gouvernement turc (AKP et alliés, régime présidentiel)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 45, why: "Opérations en Syrie et en Irak, bases à l'étranger." }
+      ai.risk_aversion: { value: 50, why: 'Prises de risque calculées.' }
+      ai.time_horizon: { value: 48, why: 'Ambitions à moyen terme (industrie de défense).' }
+      ai.revisionism: { value: 50, why: 'Veut un rang de puissance régionale autonome.' }
+      ai.expansionism:
+        { value: 25, why: 'Présence militaire en Syrie, à Chypre ; « Patrie bleue ».' }
+      ai.ideology_weight: { value: 50, why: 'Nationalisme et islam politique.' }
+      ai.regime_survival_weight: { value: 75, why: "Répression de l'opposition (2025)." }
+      ai.economy_weight: { value: 60, why: 'Inflation élevée, besoin de capitaux.' }
+      ai.prestige_weight: { value: 75, why: 'Recherche du rang (médiation, défense).' }
+      ai.alliance_loyalty: { value: 45, why: "Membre de l'OTAN au comportement autonome." }
+      ai.sanction_tolerance: { value: 55, why: 'Économie ouverte mais résiliente.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire (armes américaines stationnées).' }
+      ai.misperception: { value: 5, why: 'Légère surestimation de son levier.' }
+      ai.unpredictability: { value: 40, why: 'Revirements diplomatiques fréquents.' }
+    strategic_goals:
+      - 'Autonomie stratégique'
+      - 'Influence en Syrie et au Caucase'
+      - 'Sécurité face au PKK'
+      - 'Médiation Russie–Ukraine'
+  UKR:
+    government: 'Gouvernement ukrainien (en guerre depuis 2022)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        {
+          value: 45,
+          why: 'Frappes en profondeur sur la Russie (raffineries), défense du territoire.',
+        }
+      ai.risk_aversion: { value: 40, why: 'Opérations audacieuses (Koursk 2024, drones).' }
+      ai.time_horizon: { value: 24, why: 'Survie immédiate prioritaire.' }
+      ai.revisionism: { value: 40, why: 'Veut restaurer ses frontières de 1991.' }
+      ai.expansionism: { value: 5, why: 'Reconquête de son territoire, sans ambition au-delà.' }
+      ai.ideology_weight: { value: 50, why: 'Identité nationale mobilisée.' }
+      ai.regime_survival_weight: { value: 95, why: "Survie de l'État en jeu." }
+      ai.economy_weight: { value: 40, why: "Économie de guerre dépendante de l'aide." }
+      ai.prestige_weight: { value: 40, why: 'Soutien international recherché.' }
+      ai.alliance_loyalty: { value: 80, why: 'Fidélité à ses soutiens occidentaux.' }
+      ai.sanction_tolerance: { value: 85, why: 'Supporte blocus et destructions.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 5, why: 'Tendance à surestimer le soutien occidental.' }
+      ai.unpredictability: { value: 30, why: 'Assez prévisible.' }
+    strategic_goals:
+      - "Survie de l'État"
+      - 'Récupération des territoires occupés'
+      - "Adhésion à l'UE"
+      - 'Garanties de sécurité'
+  BLR:
+    government: 'Régime biélorusse (présidentiel autoritaire depuis 1994)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        { value: 30, why: "Territoire prêté à la Russie (2022), pas d'engagement direct." }
+      ai.risk_aversion: { value: 55, why: "Évite l'entrée en guerre." }
+      ai.time_horizon: { value: 36, why: 'Horizon court.' }
+      ai.revisionism: { value: 40, why: 'Aligné sur le révisionnisme russe.' }
+      ai.expansionism: { value: 5, why: 'Aucune ambition territoriale propre.' }
+      ai.ideology_weight: { value: 40, why: 'Idéologie secondaire.' }
+      ai.regime_survival_weight: { value: 95, why: 'Survie du régime au centre.' }
+      ai.economy_weight: { value: 40, why: 'Économie dépendante de la Russie.' }
+      ai.prestige_weight: { value: 30, why: 'Faible.' }
+      ai.alliance_loyalty: { value: 85, why: "Aligné sur la Russie (État de l'Union)." }
+      ai.sanction_tolerance: { value: 80, why: 'Adapté aux sanctions occidentales.' }
+      ai.nuclear_threshold: { value: 20, why: 'Armes nucléaires russes stationnées (2023).' }
+      ai.misperception: { value: 10, why: 'Biais pro-russe.' }
+      ai.unpredictability: { value: 30, why: 'Assez prévisible.' }
+    strategic_goals:
+      - 'Survie du régime'
+      - 'Soutien russe'
+      - 'Allègement des sanctions'
+  POL:
+    government: 'Gouvernement polonais'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        { value: 25, why: 'Réarmement massif (plus de 4 % du PIB), posture défensive.' }
+      ai.risk_aversion: { value: 55, why: 'Fermeté face à la Russie.' }
+      ai.time_horizon: { value: 48, why: "Programmes d'armement pluriannuels." }
+      ai.revisionism: { value: 15, why: "Défend l'ordre européen." }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 45, why: 'Clivages idéologiques internes marqués.' }
+      ai.regime_survival_weight: { value: 30, why: 'Démocratie.' }
+      ai.economy_weight: { value: 65, why: 'Croissance soutenue.' }
+      ai.prestige_weight: { value: 50, why: 'Puissance militaire européenne montante.' }
+      ai.alliance_loyalty: { value: 90, why: 'OTAN et États-Unis au centre de la sécurité.' }
+      ai.sanction_tolerance: { value: 50, why: 'Économie ouverte.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire (demande de partage nucléaire).' }
+      ai.misperception: { value: 5, why: 'Perception de menace élevée.' }
+      ai.unpredictability: { value: 20, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Dissuasion face à la Russie'
+      - "Soutien à l'Ukraine"
+      - 'Présence américaine'
+  NLD:
+    government: 'Gouvernement néerlandais'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Posture défensive.' }
+      ai.risk_aversion: { value: 70, why: 'Prudence.' }
+      ai.time_horizon: { value: 48, why: 'Horizon de législature.' }
+      ai.revisionism: { value: 10, why: "Défenseur de l'ordre international." }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 30, why: 'Pragmatisme.' }
+      ai.regime_survival_weight: { value: 25, why: 'Démocratie stable.' }
+      ai.economy_weight: { value: 75, why: 'Économie commerçante (Rotterdam, ASML).' }
+      ai.prestige_weight: { value: 35, why: 'Rang modeste.' }
+      ai.alliance_loyalty: { value: 85, why: "Fidélité à l'OTAN et à l'UE." }
+      ai.sanction_tolerance: { value: 40, why: "Sensible aux contrôles à l'export (ASML)." }
+      ai.nuclear_threshold: { value: 0, why: "Non nucléaire (partage nucléaire de l'OTAN)." }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 15, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Commerce et ports'
+      - 'OTAN'
+      - 'Contrôle des technologies sensibles'
+  NOR:
+    government: 'Gouvernement norvégien'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Posture défensive.' }
+      ai.risk_aversion: { value: 70, why: 'Prudence.' }
+      ai.time_horizon: { value: 96, why: 'Fonds souverain géré sur le très long terme.' }
+      ai.revisionism: { value: 10, why: 'Défenseur du droit international.' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale (Svalbard administré).' }
+      ai.ideology_weight: { value: 30, why: 'Pragmatisme.' }
+      ai.regime_survival_weight: { value: 25, why: 'Démocratie stable.' }
+      ai.economy_weight: { value: 70, why: "Économie énergétique (gaz vers l'Europe)." }
+      ai.prestige_weight: { value: 35, why: 'Médiation internationale.' }
+      ai.alliance_loyalty: { value: 85, why: "Fidélité à l'OTAN." }
+      ai.sanction_tolerance: { value: 50, why: 'Richesse amortissant les chocs.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 10, why: 'Très prévisible.' }
+    strategic_goals:
+      - 'Sécurité arctique'
+      - "Approvisionnement gazier de l'Europe"
+      - 'Médiation'
+  IRN:
+    government: "République islamique d'Iran (Guide suprême et Gardiens de la révolution)"
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        { value: 70, why: "Riposte aux frappes, fermeture d'Ormuz et attaques régionales (2026)." }
+      ai.risk_aversion: { value: 35, why: "Accepte une guerre d'usure et le blocus." }
+      ai.time_horizon: { value: 60, why: 'Stratégie de long terme (axe de la résistance).' }
+      ai.revisionism: { value: 85, why: "Rejet de l'ordre régional dominé par les États-Unis." }
+      ai.expansionism: { value: 30, why: 'Influence par procuration (Irak, Liban, Yémen).' }
+      ai.ideology_weight: { value: 80, why: 'Idéologie révolutionnaire centrale.' }
+      ai.regime_survival_weight:
+        { value: 95, why: 'Survie du régime au-dessus de tout (répression de janvier 2026).' }
+      ai.economy_weight: { value: 30, why: 'Économie sacrifiée (blocus, inflation).' }
+      ai.prestige_weight: { value: 60, why: 'Rang régional revendiqué.' }
+      ai.alliance_loyalty:
+        { value: 50, why: 'Soutien à ses alliés mais sans intervention directe pour eux.' }
+      ai.sanction_tolerance:
+        { value: 90, why: 'Sanctions et blocus supportés depuis des décennies.' }
+      ai.nuclear_threshold:
+        {
+          value: 40,
+          why: 'Seuil nucléaire (uranium enrichi à 60 %) : tentation accrue après les frappes.',
+        }
+      ai.misperception: { value: 20, why: "Surestime la cohésion de l'axe." }
+      ai.unpredictability: { value: 50, why: 'Succession de 2026, décisions opaques.' }
+    strategic_goals:
+      - 'Survie du régime'
+      - 'Fin du blocus et des frappes'
+      - 'Préserver le programme nucléaire'
+      - "Maintenir l'axe de la résistance"
+  ISR:
+    government: 'Gouvernement israélien (coalition de droite)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        { value: 80, why: 'Guerres à Gaza, au Liban, frappes en Iran, en Syrie et au Yémen.' }
+      ai.risk_aversion: { value: 35, why: 'Prises de risque élevées (frappes profondes).' }
+      ai.time_horizon: { value: 24, why: "Horizon électoral (élections d'octobre 2026)." }
+      ai.revisionism: { value: 40, why: "Veut remodeler l'équilibre régional." }
+      ai.expansionism:
+        { value: 40, why: 'Occupation prolongée (Gaza, Sud-Liban, Syrie, Cisjordanie).' }
+      ai.ideology_weight: { value: 65, why: 'Nationalisme religieux dans la coalition.' }
+      ai.regime_survival_weight: { value: 50, why: 'Démocratie sous tension.' }
+      ai.economy_weight: { value: 40, why: 'Économie résiliente mais sollicitée.' }
+      ai.prestige_weight: { value: 50, why: 'Supériorité militaire recherchée.' }
+      ai.alliance_loyalty: { value: 60, why: 'Alliance américaine vitale.' }
+      ai.sanction_tolerance: { value: 65, why: "Supporte l'isolement diplomatique." }
+      ai.nuclear_threshold: { value: 20, why: "Arsenal non déclaré, doctrine d'ambiguïté." }
+      ai.misperception: { value: 15, why: "Surestime l'efficacité de la force." }
+      ai.unpredictability: { value: 45, why: 'Opérations imprévisibles.' }
+    strategic_goals:
+      - "Neutraliser l'Iran et ses alliés"
+      - 'Sécurité des frontières (Gaza, Liban, Syrie)'
+      - 'Normalisation régionale'
+    opposition:
+      why: "Coalition centriste (élections d'octobre 2026) : moins d'annexions, reprise du dialogue régional, fermeté maintenue face à l'Iran."
+      values:
+        ai.aggressiveness: 55
+        ai.risk_aversion: 50
+        ai.time_horizon: 36
+        ai.revisionism: 25
+        ai.expansionism: 20
+        ai.ideology_weight: 40
+        ai.regime_survival_weight: 40
+        ai.economy_weight: 50
+        ai.prestige_weight: 45
+        ai.alliance_loyalty: 70
+        ai.sanction_tolerance: 55
+        ai.nuclear_threshold: 20
+        ai.misperception: 5
+        ai.unpredictability: 30
+  IRQ:
+    government: 'Gouvernement irakien (coalition parlementaire)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 15, why: "Évite d'être entraîné dans la guerre d'Iran." }
+      ai.risk_aversion: { value: 70, why: 'Très prudent.' }
+      ai.time_horizon: { value: 24, why: 'Horizon court.' }
+      ai.revisionism: { value: 20, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 40, why: 'Clivages confessionnels.' }
+      ai.regime_survival_weight: { value: 60, why: 'Instabilité politique, milices.' }
+      ai.economy_weight: { value: 65, why: 'Rente pétrolière dominante.' }
+      ai.prestige_weight: { value: 30, why: 'Faible.' }
+      ai.alliance_loyalty: { value: 40, why: 'Équilibre entre Washington et Téhéran.' }
+      ai.sanction_tolerance: { value: 45, why: 'Exposé aux sanctions américaines (dollars).' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 35, why: 'Contrôle partiel des milices.' }
+    strategic_goals:
+      - 'Stabilité intérieure'
+      - "Neutralité dans la guerre d'Iran"
+      - 'Exportations pétrolières'
+  ARE:
+    government: 'Fédération des Émirats arabes unis'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        { value: 45, why: "Cobelligérant contre l'Iran (2026), soutien aux FSR au Soudan (ONU)." }
+      ai.risk_aversion: { value: 50, why: 'Prises de risque par procuration.' }
+      ai.time_horizon: { value: 60, why: 'Planification de long terme (diversification).' }
+      ai.revisionism: { value: 40, why: "Recompose l'ordre régional (ports, alliances)." }
+      ai.expansionism: { value: 15, why: "Influence portuaire (Yémen, Corne de l'Afrique)." }
+      ai.ideology_weight: { value: 30, why: 'Idéologie faible.' }
+      ai.regime_survival_weight: { value: 85, why: 'Stabilité monarchique.' }
+      ai.economy_weight: { value: 80, why: 'Hub économique et financier.' }
+      ai.prestige_weight: { value: 70, why: 'Rang régional recherché.' }
+      ai.alliance_loyalty: { value: 55, why: "Partenaire américain, sortie de l'OPEP." }
+      ai.sanction_tolerance: { value: 50, why: 'Exposé aux sanctions secondaires.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 30, why: 'Initiatives inattendues.' }
+    strategic_goals:
+      - "Sécurité face à l'Iran"
+      - 'Hub logistique et financier'
+      - 'Influence en mer Rouge'
+  QAT:
+    government: 'Émirat du Qatar'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Aucune posture offensive.' }
+      ai.risk_aversion: { value: 70, why: "Très prudent (champ gazier partagé avec l'Iran)." }
+      ai.time_horizon: { value: 96, why: 'Contrats gaziers à très long terme.' }
+      ai.revisionism: { value: 10, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 35, why: "Soutien historique à l'islam politique." }
+      ai.regime_survival_weight: { value: 85, why: 'Stabilité de la monarchie.' }
+      ai.economy_weight: { value: 80, why: 'Économie gazière (GNL).' }
+      ai.prestige_weight: { value: 65, why: 'Médiation internationale et soft power.' }
+      ai.alliance_loyalty: { value: 50, why: "Base américaine (Al-Udeid), relation avec l'Iran." }
+      ai.sanction_tolerance: { value: 45, why: 'Richesse amortissant les chocs.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 15, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Exportations de GNL'
+      - 'Médiation (Gaza, Afghanistan, Congo)'
+      - 'Neutralité'
+  EGY:
+    government: 'Gouvernement égyptien (régime présidentiel à dominante militaire)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 15, why: 'Évite les engagements militaires.' }
+      ai.risk_aversion: { value: 70, why: 'Prudence.' }
+      ai.time_horizon: { value: 36, why: 'Horizon moyen.' }
+      ai.revisionism: { value: 15, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 30, why: 'Idéologie faible.' }
+      ai.regime_survival_weight: { value: 90, why: 'Stabilité du régime au centre.' }
+      ai.economy_weight: { value: 70, why: 'Crise économique, dépendance au FMI.' }
+      ai.prestige_weight: { value: 50, why: 'Rang arabe historique.' }
+      ai.alliance_loyalty: { value: 45, why: 'Partenaire américain et du Golfe.' }
+      ai.sanction_tolerance: { value: 45, why: 'Économie fragile.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 20, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Stabilité économique'
+      - 'Recettes du canal de Suez'
+      - "Sécurité de l'eau (barrage éthiopien)"
+  PAK:
+    government: 'Gouvernement pakistanais (civil, sous forte influence militaire)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness:
+        { value: 45, why: "Guerre ouverte avec l'Afghanistan (2026), riposte à l'Inde (2025)." }
+      ai.risk_aversion: { value: 50, why: 'Prises de risque modérées.' }
+      ai.time_horizon: { value: 36, why: 'Horizon moyen.' }
+      ai.revisionism: { value: 40, why: 'Revendique le Cachemire indien.' }
+      ai.expansionism: { value: 15, why: 'Revendication du Cachemire.' }
+      ai.ideology_weight: { value: 50, why: 'Nationalisme et islam.' }
+      ai.regime_survival_weight: { value: 80, why: 'Stabilité du régime (armée).' }
+      ai.economy_weight: { value: 45, why: 'Crise de la dette.' }
+      ai.prestige_weight: { value: 55, why: "Parité stratégique avec l'Inde." }
+      ai.alliance_loyalty:
+        { value: 60, why: "Pacte de défense avec l'Arabie saoudite (2025), partenariat chinois." }
+      ai.sanction_tolerance: { value: 60, why: 'Habitué aux crises financières.' }
+      ai.nuclear_threshold: { value: 40, why: "Doctrine d'emploi en premier face à l'Inde." }
+      ai.misperception: { value: 15, why: 'Surestime ses capacités.' }
+      ai.unpredictability: { value: 45, why: 'Tensions civilo-militaires.' }
+    strategic_goals:
+      - "Dissuasion face à l'Inde"
+      - 'Sécurité face aux Talibans et au TTP'
+      - 'Stabilité financière'
+  PRK:
+    government: 'Régime nord-coréen (Parti du travail)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 60, why: 'Tirs de missiles, troupes en Russie (Koursk).' }
+      ai.risk_aversion: { value: 45, why: 'Prises de risque calculées.' }
+      ai.time_horizon: { value: 60, why: 'Programme nucléaire de long terme.' }
+      ai.revisionism: { value: 70, why: "Rejette l'ordre régional." }
+      ai.expansionism: { value: 30, why: 'Revendication de la péninsule.' }
+      ai.ideology_weight: { value: 80, why: 'Idéologie centrale.' }
+      ai.regime_survival_weight: { value: 100, why: 'Survie du régime absolue.' }
+      ai.economy_weight: { value: 20, why: 'Économie secondaire.' }
+      ai.prestige_weight: { value: 70, why: 'Reconnaissance comme puissance nucléaire.' }
+      ai.alliance_loyalty: { value: 70, why: 'Alliance russe renforcée (2024).' }
+      ai.sanction_tolerance: { value: 95, why: 'Sanctions supportées depuis des décennies.' }
+      ai.nuclear_threshold: { value: 50, why: 'Doctrine nucléaire offensive (2022).' }
+      ai.misperception: { value: 20, why: 'Perception biaisée.' }
+      ai.unpredictability: { value: 60, why: 'Provocations imprévisibles.' }
+    strategic_goals:
+      - 'Survie du régime'
+      - 'Reconnaissance nucléaire'
+      - 'Levée des sanctions'
+  TWN:
+    government: 'Gouvernement de Taïwan (Parti démocrate progressiste)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Posture strictement défensive.' }
+      ai.risk_aversion: { value: 75, why: 'Évite toute provocation.' }
+      ai.time_horizon: { value: 48, why: 'Horizon électoral (2028).' }
+      ai.revisionism: { value: 15, why: 'Statu quo.' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 40, why: 'Identité taïwanaise.' }
+      ai.regime_survival_weight: { value: 60, why: 'Survie face à la Chine.' }
+      ai.economy_weight: { value: 75, why: 'Économie des semi-conducteurs.' }
+      ai.prestige_weight: { value: 30, why: 'Reconnaissance internationale recherchée.' }
+      ai.alliance_loyalty: { value: 80, why: 'Dépend du soutien américain.' }
+      ai.sanction_tolerance: { value: 50, why: 'Exposé aux pressions chinoises.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 15, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Statu quo et sécurité face à la Chine'
+      - 'Soutien américain'
+      - 'Leadership des semi-conducteurs'
+    opposition:
+      why: 'Gouvernement du Kuomintang : rapprochement économique avec la Chine continentale.'
+      values:
+        ai.aggressiveness: 5
+        ai.risk_aversion: 80
+        ai.time_horizon: 48
+        ai.revisionism: 10
+        ai.expansionism: 0
+        ai.ideology_weight: 30
+        ai.regime_survival_weight: 55
+        ai.economy_weight: 80
+        ai.prestige_weight: 25
+        ai.alliance_loyalty: 60
+        ai.sanction_tolerance: 45
+        ai.nuclear_threshold: 0
+        ai.misperception: 0
+        ai.unpredictability: 15
+  VNM:
+    government: 'Parti communiste vietnamien'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 20, why: 'Posture défensive en mer de Chine.' }
+      ai.risk_aversion: { value: 70, why: 'Évite la confrontation avec la Chine.' }
+      ai.time_horizon: { value: 96, why: 'Planification de long terme.' }
+      ai.revisionism: { value: 20, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 10, why: 'Revendications en mer de Chine (Spratleys, Paracels).' }
+      ai.ideology_weight: { value: 50, why: 'Idéologie du Parti.' }
+      ai.regime_survival_weight: { value: 90, why: 'Stabilité du Parti.' }
+      ai.economy_weight: { value: 80, why: 'Croissance tirée par les exportations.' }
+      ai.prestige_weight: { value: 40, why: 'Rang modeste.' }
+      ai.alliance_loyalty: { value: 20, why: 'Diplomatie « du bambou » (non-alignement).' }
+      ai.sanction_tolerance: { value: 50, why: 'Exposé aux droits de douane américains.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 15, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Croissance exportatrice'
+      - 'Souveraineté maritime'
+      - 'Équilibre entre Chine et États-Unis'
+  PHL:
+    government: 'Gouvernement philippin'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 20, why: 'Défense des droits maritimes face à la Chine.' }
+      ai.risk_aversion: { value: 65, why: 'Prudence.' }
+      ai.time_horizon: { value: 36, why: 'Horizon électoral (2028).' }
+      ai.revisionism: { value: 15, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 5, why: 'Revendications en mer de Chine.' }
+      ai.ideology_weight: { value: 30, why: 'Pragmatisme.' }
+      ai.regime_survival_weight: { value: 40, why: 'Démocratie avec rivalités dynastiques.' }
+      ai.economy_weight: { value: 70, why: 'Croissance.' }
+      ai.prestige_weight: { value: 40, why: 'Rang modeste.' }
+      ai.alliance_loyalty: { value: 80, why: 'Alliance américaine renforcée.' }
+      ai.sanction_tolerance: { value: 45, why: 'Économie ouverte.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 25, why: 'Assez prévisible.' }
+    strategic_goals:
+      - 'Souveraineté maritime'
+      - 'Alliance américaine'
+      - 'Croissance'
+  SGP:
+    government: "Gouvernement singapourien (Parti d'action populaire)"
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 5, why: 'Aucune posture offensive.' }
+      ai.risk_aversion: { value: 80, why: 'Très prudent.' }
+      ai.time_horizon: { value: 96, why: 'Planification de très long terme.' }
+      ai.revisionism: { value: 10, why: "Défenseur de l'ordre existant." }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 20, why: 'Pragmatisme.' }
+      ai.regime_survival_weight: { value: 60, why: 'Parti dominant.' }
+      ai.economy_weight: { value: 90, why: 'Économie de hub commercial et financier.' }
+      ai.prestige_weight: { value: 40, why: 'Rang de médiateur.' }
+      ai.alliance_loyalty: { value: 50, why: 'Équilibre entre puissances.' }
+      ai.sanction_tolerance: { value: 40, why: 'Économie très ouverte.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 5, why: 'Très prévisible.' }
+    strategic_goals:
+      - 'Liberté de navigation (Malacca)'
+      - 'Hub commercial'
+      - 'Équilibre des puissances'
+  NGA:
+    government: 'Gouvernement fédéral nigérian'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 30, why: 'Lutte contre les insurrections internes.' }
+      ai.risk_aversion: { value: 55, why: 'Prudence extérieure.' }
+      ai.time_horizon: { value: 24, why: 'Horizon électoral (2027).' }
+      ai.revisionism: { value: 20, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 5, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 30, why: 'Clivages religieux et régionaux.' }
+      ai.regime_survival_weight: { value: 70, why: 'Stabilité intérieure fragile.' }
+      ai.economy_weight: { value: 65, why: 'Rente pétrolière et réformes.' }
+      ai.prestige_weight: { value: 50, why: 'Leadership ouest-africain.' }
+      ai.alliance_loyalty: { value: 30, why: 'Non-aligné.' }
+      ai.sanction_tolerance: { value: 50, why: 'Économie fragile.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 5, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 35, why: 'Assez imprévisible.' }
+    strategic_goals:
+      - 'Sécurité intérieure'
+      - 'Réformes économiques'
+      - 'Leadership ouest-africain'
+  ETH:
+    government: 'Gouvernement fédéral éthiopien (Parti de la prospérité)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 50, why: 'Conflits internes (Amhara, Oromia, Tigré).' }
+      ai.risk_aversion: { value: 45, why: 'Prises de risque (accès à la mer).' }
+      ai.time_horizon: { value: 48, why: 'Grands projets (barrage de la Renaissance).' }
+      ai.revisionism: { value: 50, why: 'Revendique un accès à la mer Rouge.' }
+      ai.expansionism: { value: 30, why: 'Accès à la mer recherché (Érythrée).' }
+      ai.ideology_weight: { value: 40, why: 'Nationalisme panéthiopien.' }
+      ai.regime_survival_weight: { value: 80, why: 'Stabilité du régime face aux rébellions.' }
+      ai.economy_weight: { value: 60, why: 'Croissance et industrialisation.' }
+      ai.prestige_weight: { value: 60, why: "Puissance régionale (siège de l'UA)." }
+      ai.alliance_loyalty: { value: 30, why: 'Non-aligné.' }
+      ai.sanction_tolerance: { value: 55, why: 'Économie fragile.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 15, why: 'Surestime ses capacités.' }
+      ai.unpredictability: { value: 40, why: 'Imprévisible.' }
+    strategic_goals:
+      - 'Accès à la mer'
+      - 'Stabilité intérieure'
+      - 'Barrage de la Renaissance'
+  SDN:
+    government: 'Autorités de Port-Soudan (Forces armées soudanaises)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 75, why: 'Guerre civile totale contre les FSR.' }
+      ai.risk_aversion: { value: 30, why: 'Prises de risque élevées.' }
+      ai.time_horizon: { value: 12, why: 'Horizon très court.' }
+      ai.revisionism: { value: 20, why: 'Pas de révisionnisme extérieur.' }
+      ai.expansionism: { value: 10, why: 'Reconquête du territoire national.' }
+      ai.ideology_weight: { value: 40, why: 'Islamistes influents.' }
+      ai.regime_survival_weight: { value: 95, why: 'Survie du régime militaire.' }
+      ai.economy_weight: { value: 20, why: 'Économie détruite.' }
+      ai.prestige_weight: { value: 30, why: 'Faible.' }
+      ai.alliance_loyalty: { value: 40, why: 'Soutiens égyptien, turc, saoudien.' }
+      ai.sanction_tolerance: { value: 70, why: 'Sanctions supportées.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 15, why: 'Surestime ses capacités.' }
+      ai.unpredictability: { value: 50, why: 'Imprévisible.' }
+    strategic_goals:
+      - 'Victoire contre les FSR'
+      - 'Contrôle de Khartoum et du Kordofan'
+      - 'Soutiens extérieurs'
+  COD:
+    government: 'Gouvernement congolais (Kinshasa)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 40, why: "Guerre contre l'AFC/M23 à l'Est." }
+      ai.risk_aversion: { value: 50, why: 'Prises de risque modérées.' }
+      ai.time_horizon: { value: 24, why: 'Horizon court.' }
+      ai.revisionism: { value: 30, why: 'Veut récupérer le Kivu.' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition hors frontières.' }
+      ai.ideology_weight: { value: 30, why: 'Idéologie faible.' }
+      ai.regime_survival_weight: { value: 80, why: 'Stabilité du régime.' }
+      ai.economy_weight: { value: 50, why: 'Rente minière (cobalt, cuivre).' }
+      ai.prestige_weight: { value: 40, why: 'Faible.' }
+      ai.alliance_loyalty:
+        { value: 40, why: 'Partenariats miniers avec les États-Unis et la Chine.' }
+      ai.sanction_tolerance: { value: 50, why: 'Économie fragile.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 15, why: 'Sous-estime la capacité du M23.' }
+      ai.unpredictability: { value: 45, why: 'Imprévisible.' }
+    strategic_goals:
+      - "Récupérer l'Est"
+      - 'Accords miniers'
+      - 'Stabilité'
+  CHL:
+    government: 'Gouvernement chilien (droite depuis mars 2026)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 5, why: 'Aucune posture offensive.' }
+      ai.risk_aversion: { value: 70, why: 'Prudence.' }
+      ai.time_horizon: { value: 36, why: 'Horizon de mandat.' }
+      ai.revisionism: { value: 10, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 45, why: 'Droite conservatrice.' }
+      ai.regime_survival_weight: { value: 25, why: 'Démocratie stable.' }
+      ai.economy_weight: { value: 80, why: 'Économie minière (cuivre, lithium).' }
+      ai.prestige_weight: { value: 35, why: 'Rang modeste.' }
+      ai.alliance_loyalty: { value: 45, why: 'Relations stables avec les États-Unis.' }
+      ai.sanction_tolerance: { value: 40, why: 'Économie ouverte.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 20, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Exportations minières'
+      - 'Sécurité intérieure'
+      - 'Stabilité'
+  KAZ:
+    government: 'Gouvernement kazakh (régime présidentiel)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Aucune posture offensive.' }
+      ai.risk_aversion: { value: 75, why: 'Très prudent (voisin de la Russie).' }
+      ai.time_horizon: { value: 48, why: 'Horizon moyen.' }
+      ai.revisionism: { value: 10, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 0, why: 'Aucune ambition territoriale.' }
+      ai.ideology_weight: { value: 25, why: 'Idéologie faible.' }
+      ai.regime_survival_weight: { value: 85, why: 'Stabilité du régime (2022).' }
+      ai.economy_weight: { value: 80, why: 'Économie énergétique et minière.' }
+      ai.prestige_weight: { value: 40, why: 'Rang modeste.' }
+      ai.alliance_loyalty: { value: 45, why: 'Diplomatie multivectorielle (OTSC mais autonomie).' }
+      ai.sanction_tolerance: { value: 55, why: 'Exposé aux sanctions secondaires.' }
+      ai.nuclear_threshold: { value: 0, why: "Non nucléaire (a renoncé à l'arsenal soviétique)." }
+      ai.misperception: { value: 0, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 20, why: 'Prévisible.' }
+    strategic_goals:
+      - 'Diplomatie multivectorielle'
+      - 'Exportations (corridor transcaspien)'
+      - 'Stabilité'
+  YEM:
+    government: 'Gouvernement yéménite reconnu (Conseil de direction présidentiel)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 35, why: 'Défense face aux Houthis.' }
+      ai.risk_aversion: { value: 50, why: 'Prudence.' }
+      ai.time_horizon: { value: 12, why: 'Horizon très court.' }
+      ai.revisionism: { value: 20, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 0, why: 'Reconquête du territoire national.' }
+      ai.ideology_weight: { value: 30, why: 'Idéologie faible.' }
+      ai.regime_survival_weight: { value: 90, why: 'Survie du gouvernement.' }
+      ai.economy_weight: { value: 30, why: 'Économie effondrée.' }
+      ai.prestige_weight: { value: 20, why: 'Faible.' }
+      ai.alliance_loyalty: { value: 70, why: "Dépend de l'Arabie saoudite." }
+      ai.sanction_tolerance: { value: 60, why: 'Économie de guerre.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 10, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 40, why: 'Divisions internes (séparatistes du Sud).' }
+    strategic_goals:
+      - 'Survie face aux Houthis'
+      - 'Soutien saoudien'
+      - 'Unité du camp gouvernemental'
+  VEN:
+    government: 'Gouvernement vénézuélien de transition (depuis janvier 2026)'
+    source: Hypothèse GeoSim fondée sur les comportements observables (voir chaque justification)
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      ai.aggressiveness: { value: 10, why: 'Transition sous tutelle américaine.' }
+      ai.risk_aversion: { value: 70, why: 'Très prudent.' }
+      ai.time_horizon: { value: 12, why: 'Horizon très court.' }
+      ai.revisionism: { value: 10, why: 'Pas de révisionnisme.' }
+      ai.expansionism: { value: 5, why: "Revendication de l'Essequibo mise en veille." }
+      ai.ideology_weight: { value: 40, why: 'Chavisme résiduel.' }
+      ai.regime_survival_weight: { value: 85, why: "Survie de l'appareil d'État." }
+      ai.economy_weight: { value: 70, why: 'Relance pétrolière.' }
+      ai.prestige_weight: { value: 20, why: 'Faible.' }
+      ai.alliance_loyalty: { value: 40, why: 'Dépend de Washington.' }
+      ai.sanction_tolerance: { value: 50, why: 'Allègement des sanctions en cours.' }
+      ai.nuclear_threshold: { value: 0, why: 'Non nucléaire.' }
+      ai.misperception: { value: 5, why: 'Pas de biais.' }
+      ai.unpredictability: { value: 45, why: 'Transition instable.' }
+    strategic_goals:
+      - 'Stabilité de la transition'
+      - 'Relance pétrolière'
+      - 'Levée des sanctions'

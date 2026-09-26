@@ -1,0 +1,304 @@
+# Traités bilatéraux et plurilatéraux de défense, garanties de sécurité et partenariats stratégiques
+# (SPEC §5.2, §8.6). La défense mutuelle des blocs (OTAN, OTSC, CCG, AES) est dans blocs.yaml.
+# type : mutual_defense, security_guarantee (unilatérale : `guarantor` protège les autres parties),
+# non_aggression, strategic_partnership, basing, consultation. credibility : crédibilité perçue de
+# l'engagement (0–1), hypothèse à calibrer, justifiée par les notes.
+version: 1
+treaties:
+  - id: us_jpn_1960
+    name: Traité de coopération mutuelle et de sécurité États-Unis–Japon
+    type: mutual_defense
+    parties: [USA, JPN]
+    signed: '1960-01-19'
+    area: Territoires administrés par le Japon (art. 5), îles Senkaku comprises selon Washington
+    credibility: 0.85
+    source: https://en.wikipedia.org/wiki/Treaty_of_Mutual_Cooperation_and_Security_between_the_United_States_and_Japan
+    date: '2026-09-25'
+    confidence: high
+  - id: us_kor_1953
+    name: Traité de défense mutuelle États-Unis–Corée du Sud
+    type: mutual_defense
+    parties: [USA, KOR]
+    signed: '1953-10-01'
+    credibility: 0.85
+    source: https://en.wikipedia.org/wiki/Mutual_Defense_Treaty_(United_States%E2%80%93South_Korea)
+    date: '2026-09-25'
+    confidence: high
+  - id: us_phl_1951
+    name: Traité de défense mutuelle États-Unis–Philippines
+    type: mutual_defense
+    parties: [USA, PHL]
+    signed: '1951-08-30'
+    area:
+      Territoire et forces philippines, y compris en mer de Chine méridionale (position américaine depuis
+      2019)
+    credibility: 0.7
+    source: https://en.wikipedia.org/wiki/Mutual_Defense_Treaty_(United_States%E2%80%93Philippines)
+    date: '2026-09-25'
+    confidence: high
+  - id: anzus
+    name: ANZUS (Australie–États-Unis)
+    type: mutual_defense
+    parties: [AUS, USA]
+    signed: '1951-09-01'
+    credibility: 0.85
+    source: https://en.wikipedia.org/wiki/ANZUS
+    date: '2026-09-25'
+    confidence: high
+    note: Obligations américaines envers la Nouvelle-Zélande suspendues depuis 1986.
+  - id: rus_prk_2024
+    name: Traité de partenariat stratégique global Russie–Corée du Nord
+    type: mutual_defense
+    parties: [RUS, PRK]
+    signed: '2024-06-19'
+    credibility: 0.7
+    source: https://en.wikipedia.org/wiki/2024_North_Korea%E2%80%93Russia_Comprehensive_Strategic_Partnership_Agreement
+    date: '2026-09-25'
+    confidence: high
+    note:
+      Assistance militaire mutuelle (art. 4) ; troupes nord-coréennes engagées dans la région de Koursk
+      en 2024-2025.
+  - id: chn_prk_1961
+    name: Traité d’amitié sino-nord-coréen
+    type: mutual_defense
+    parties: [CHN, PRK]
+    signed: '1961-07-11'
+    credibility: 0.5
+    source: https://en.wikipedia.org/wiki/Sino-North_Korean_Mutual_Aid_and_Cooperation_Friendship_Treaty
+    date: '2026-09-25'
+    confidence: high
+  - id: rus_blr_2024
+    name: Traité sur les garanties de sécurité de l’État de l’Union (Russie–Biélorussie)
+    type: mutual_defense
+    parties: [RUS, BLR]
+    signed: '2024-12-06'
+    credibility: 0.9
+    source: https://en.wikipedia.org/wiki/Union_State
+    date: '2026-09-25'
+    confidence: high
+    note: Garanties de sécurité, y compris nucléaires ; armes nucléaires russes stationnées en Biélorussie.
+  - id: rus_arm_1997
+    name: Traité d’amitié et d’assistance mutuelle Russie–Arménie
+    type: mutual_defense
+    parties: [RUS, ARM]
+    signed: '1997-08-29'
+    credibility: 0.25
+    source: https://en.wikipedia.org/wiki/Armenia%E2%80%93Russia_relations
+    date: '2026-09-25'
+    confidence: medium
+    note: Traité en vigueur, mais l’Arménie s’est éloignée de Moscou (gel de sa participation à l’OTSC).
+  - id: tur_aze_2021
+    name: Déclaration de Choucha (Turquie–Azerbaïdjan)
+    type: mutual_defense
+    parties: [TUR, AZE]
+    signed: '2021-06-15'
+    credibility: 0.7
+    source: https://en.wikipedia.org/wiki/Shusha_Declaration
+    date: '2026-09-25'
+    confidence: high
+  - id: fra_grc_2021
+    name: Partenariat stratégique France–Grèce (clause d’assistance mutuelle)
+    type: mutual_defense
+    parties: [FRA, GRC]
+    signed: '2021-09-28'
+    credibility: 0.65
+    source: https://en.wikipedia.org/wiki/France%E2%80%93Greece_relations
+    date: '2026-09-25'
+    confidence: medium
+  - id: sau_pak_2025
+    name: Accord stratégique de défense mutuelle Arabie saoudite–Pakistan
+    type: mutual_defense
+    parties: [SAU, PAK]
+    signed: '2025-09-17'
+    credibility: 0.6
+    source: https://en.wikipedia.org/wiki/Pakistan%E2%80%93Saudi_Arabia_Strategic_Mutual_Defense_Agreement
+    date: '2026-09-25'
+    confidence: medium
+  - id: mecca_2026
+    name: Accord de défense conjointe de La Mecque (Arabie saoudite, Pakistan, Turquie)
+    type: mutual_defense
+    parties: [SAU, PAK, TUR]
+    signed: '2026-08-07'
+    credibility: 0.55
+    source: https://en.wikipedia.org/wiki/2026
+    date: '2026-09-25'
+    confidence: medium
+    note: Pacte de défense mutuelle signé pendant la guerre d’Iran.
+  - id: us_qat_2025
+    name: Garantie de sécurité américaine au Qatar (décret présidentiel)
+    type: security_guarantee
+    parties: [USA, QAT]
+    guarantor: USA
+    signed: '2025-10-01'
+    credibility: 0.55
+    source: https://en.wikipedia.org/wiki/Qatar%E2%80%93United_States_relations
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      'Décret de l’exécutif (non ratifié) : une attaque contre le Qatar est traitée comme une menace
+      pour les États-Unis.'
+  - id: us_twn_1979
+    name: Taiwan Relations Act
+    type: security_guarantee
+    parties: [USA, TWN]
+    guarantor: USA
+    signed: '1979-04-10'
+    credibility: 0.5
+    source: https://en.wikipedia.org/wiki/Taiwan_Relations_Act
+    date: '2026-09-25'
+    confidence: high
+    note: 'Ambiguïté stratégique : obligation de fournir des armes, pas de garantie explicite d’intervention.'
+  - id: fra_are_2009
+    name: Accord de défense France–Émirats arabes unis
+    type: security_guarantee
+    parties: [FRA, ARE]
+    guarantor: FRA
+    signed: '2009-05-26'
+    credibility: 0.6
+    source: https://en.wikipedia.org/wiki/France%E2%80%93United_Arab_Emirates_relations
+    date: '2026-09-25'
+    confidence: medium
+  - id: fra_dji_2011
+    name: Traité de coopération en matière de défense France–Djibouti
+    type: security_guarantee
+    parties: [FRA, DJI]
+    guarantor: FRA
+    signed: '2011-12-21'
+    credibility: 0.7
+    source: https://en.wikipedia.org/wiki/Djibouti%E2%80%93France_relations
+    date: '2026-09-25'
+    confidence: high
+  - id: us_sau_2025
+    name: Accord de défense stratégique États-Unis–Arabie saoudite
+    type: strategic_partnership
+    parties: [USA, SAU]
+    signed: '2025-11-18'
+    credibility: 0.6
+    source: https://en.wikipedia.org/wiki/Saudi_Arabia%E2%80%93United_States_relations
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Engagements de sécurité sans clause de défense mutuelle ratifiée ; coalition commune contre l’Iran
+      en 2026.
+  - id: us_isr
+    name: Partenariat stratégique États-Unis–Israël (mémorandums)
+    type: strategic_partnership
+    parties: [USA, ISR]
+    signed: '2016-09-14'
+    credibility: 0.9
+    source: https://en.wikipedia.org/wiki/Israel%E2%80%93United_States_relations
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Pas de traité de défense ; aide militaire (mémorandum 2019-2028) et cobelligérance contre l’Iran
+      en 2026.
+  - id: chn_rus_2001
+    name: Traité d’amitié sino-russe
+    type: strategic_partnership
+    parties: [CHN, RUS]
+    signed: '2001-07-16'
+    credibility: 0.6
+    source: https://en.wikipedia.org/wiki/2001_Sino-Russian_Treaty_of_Friendship
+    date: '2026-09-25'
+    confidence: high
+  - id: chn_pak
+    name: Partenariat stratégique de coopération « par tous les temps » Chine–Pakistan
+    type: strategic_partnership
+    parties: [CHN, PAK]
+    signed: '2015-04-20'
+    credibility: 0.7
+    source: https://en.wikipedia.org/wiki/China%E2%80%93Pakistan_relations
+    date: '2026-09-25'
+    confidence: high
+  - id: rus_irn_2025
+    name: Traité de partenariat stratégique global Russie–Iran
+    type: strategic_partnership
+    parties: [RUS, IRN]
+    signed: '2025-01-17'
+    credibility: 0.35
+    source: https://en.wikipedia.org/wiki/Iran%E2%80%93Russia_relations
+    date: '2026-09-25'
+    confidence: high
+    note: Sans clause d’assistance militaire ; la Russie n’est pas intervenue en 2025 ni en 2026.
+  - id: ind_rus
+    name: Partenariat stratégique spécial et privilégié Inde–Russie
+    type: strategic_partnership
+    parties: [IND, RUS]
+    signed: '2010-12-21'
+    credibility: 0.5
+    source: https://en.wikipedia.org/wiki/India%E2%80%93Russia_relations
+    date: '2026-09-25'
+    confidence: medium
+  - id: ind_usa
+    name: Partenariat stratégique global Inde–États-Unis (accords COMCASA, BECA, LEMOA)
+    type: strategic_partnership
+    parties: [IND, USA]
+    signed: '2020-10-27'
+    credibility: 0.45
+    source: https://en.wikipedia.org/wiki/India%E2%80%93United_States_relations
+    date: '2026-09-25'
+    confidence: medium
+    note: Relation dégradée en 2025 (droits de douane américains sur l’Inde).
+  - id: gbr_ukr_2025
+    name: Partenariat centenaire Royaume-Uni–Ukraine
+    type: strategic_partnership
+    parties: [GBR, UKR]
+    signed: '2025-01-16'
+    credibility: 0.6
+    source: https://en.wikipedia.org/wiki/Ukraine%E2%80%93United_Kingdom_relations
+    date: '2026-09-25'
+    confidence: high
+  - id: fra_ukr_2024
+    name: Accord de coopération en matière de sécurité France–Ukraine
+    type: strategic_partnership
+    parties: [FRA, UKR]
+    signed: '2024-02-16'
+    credibility: 0.6
+    source: https://en.wikipedia.org/wiki/France%E2%80%93Ukraine_relations
+    date: '2026-09-25'
+    confidence: high
+  - id: deu_ukr_2024
+    name: Accord de coopération en matière de sécurité Allemagne–Ukraine
+    type: strategic_partnership
+    parties: [DEU, UKR]
+    signed: '2024-02-16'
+    credibility: 0.6
+    source: https://en.wikipedia.org/wiki/Germany%E2%80%93Ukraine_relations
+    date: '2026-09-25'
+    confidence: high
+  - id: jpn_aus_2022
+    name: Déclaration conjointe de coopération de sécurité Japon–Australie
+    type: strategic_partnership
+    parties: [JPN, AUS]
+    signed: '2022-10-22'
+    credibility: 0.6
+    source: https://en.wikipedia.org/wiki/Australia%E2%80%93Japan_relations
+    date: '2026-09-25'
+    confidence: high
+  - id: jpn_phl_2024
+    name: Accord d’accès réciproque Japon–Philippines
+    type: strategic_partnership
+    parties: [JPN, PHL]
+    signed: '2024-07-08'
+    credibility: 0.5
+    source: https://en.wikipedia.org/wiki/Japan%E2%80%93Philippines_relations
+    date: '2026-09-25'
+    confidence: high
+  - id: egy_sdn_2021
+    name: Accord de coopération militaire Égypte–Soudan
+    type: strategic_partnership
+    parties: [EGY, SDN]
+    signed: '2021-03-02'
+    credibility: 0.5
+    source: https://en.wikipedia.org/wiki/Egypt%E2%80%93Sudan_relations
+    date: '2026-09-25'
+    confidence: medium
+  - id: vnm_rus
+    name: Partenariat stratégique global Viêt Nam–Russie
+    type: strategic_partnership
+    parties: [VNM, RUS]
+    signed: '2012-07-27'
+    credibility: 0.3
+    source: https://en.wikipedia.org/wiki/Russia%E2%80%93Vietnam_relations
+    date: '2026-09-25'
+    confidence: medium

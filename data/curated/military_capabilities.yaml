@@ -1,0 +1,707 @@
+# Capacités militaires clés (SPEC §5.2, §8.7) : porte-avions et porte-aéronefs (y compris porte-
+# hélicoptères d'assaut à pont continu), sous-marins d'attaque (nucléaires et classiques), chasseurs de
+# 5e génération, bombardiers stratégiques, défense antimissile de longue portée, satellites militaires
+# (ordre de grandeur), brigades transportables par voie amphibie. Pays absents : zéro (liste
+# exhaustive pour les porte-avions, les sous-marins et les chasseurs de 5e génération).
+version: 1
+countries:
+  USA:
+    carriers: 20
+    attack_submarines: 53
+    fighters_5gen: 800
+    strategic_bombers: 140
+    long_range_missile_defense: true
+    military_satellites: 250
+    amphibious_brigades: 4
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      11 porte-avions nucléaires et 9 porte-aéronefs amphibies ; 49 SSN et 4 SSGN ; F-22 et F-35 ;
+      B-52, B-1B, B-2.
+  CHN:
+    carriers: 7
+    attack_submarines: 57
+    fighters_5gen: 350
+    strategic_bombers: 180
+    long_range_missile_defense: true
+    military_satellites: 150
+    amphibious_brigades: 4
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      3 porte-avions (Liaoning, Shandong, Fujian) et 4 porte-hélicoptères d'assaut Type 075 ; J-20
+      et J-35 ; H-6K/N.
+  RUS:
+    carriers: 1
+    attack_submarines: 37
+    fighters_5gen: 35
+    strategic_bombers: 110
+    long_range_missile_defense: true
+    military_satellites: 110
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      Amiral Kouznetsov en carénage prolongé ; pertes de la flotte de la mer Noire ; Su-57 ; Tu-95MS,
+      Tu-160, Tu-22M3.
+  GBR:
+    carriers: 2
+    attack_submarines: 6
+    fighters_5gen: 37
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 10
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Queen Elizabeth et Prince of Wales ; SSN Astute ; F-35B.
+  FRA:
+    carriers: 4
+    attack_submarines: 6
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 15
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Charles de Gaulle et 3 porte-hélicoptères amphibies Mistral ; SSN Suffren et Rubis.
+  IND:
+    carriers: 2
+    attack_submarines: 16
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: true
+    military_satellites: 20
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Vikramaditya et Vikrant ; sous-marins classiques (Kalvari, Kilo, Type 209).
+  JPN:
+    carriers: 4
+    attack_submarines: 24
+    fighters_5gen: 45
+    strategic_bombers: 0
+    long_range_missile_defense: true
+    military_satellites: 12
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Destroyers porte-hélicoptères Izumo (en conversion F-35B) et Hyuga ; F-35A/B.
+  KOR:
+    carriers: 2
+    attack_submarines: 19
+    fighters_5gen: 40
+    strategic_bombers: 0
+    long_range_missile_defense: true
+    military_satellites: 6
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Dokdo et Marado ; F-35A.
+  ITA:
+    carriers: 2
+    attack_submarines: 8
+    fighters_5gen: 35
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 10
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Cavour et Trieste ; F-35A/B.
+  ESP:
+    carriers: 1
+    attack_submarines: 3
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 5
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Juan Carlos I ; S-80.
+  AUS:
+    carriers: 2
+    attack_submarines: 6
+    fighters_5gen: 72
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 2
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Deux porte-hélicoptères Canberra ; Collins ; F-35A.
+  TUR:
+    carriers: 1
+    attack_submarines: 12
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 4
+    amphibious_brigades: 1
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Anadolu ; KAAN pas encore en service.
+  EGY:
+    carriers: 2
+    attack_submarines: 8
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 2
+    amphibious_brigades: 0.5
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Deux Mistral ; Type 209/1400.
+  BRA:
+    carriers: 1
+    attack_submarines: 7
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 3
+    amphibious_brigades: 0.5
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Atlântico ; Scorpène (Riachuelo) et Tupi.
+  IDN:
+    carriers: 1
+    attack_submarines: 4
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0.3
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: Ex-Garibaldi cédé par l'Italie (2025, à confirmer).
+  THA:
+    carriers: 1
+    attack_submarines: 0
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0.2
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Chakri Naruebet.
+  IRN:
+    carriers: 0
+    attack_submarines: 4
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 3
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note:
+      'Porte-drones Shahid Bagheri : statut incertain après la guerre de 2026 ; 3 Kilo et 1 Fateh
+      (plus des mini-sous-marins).'
+  ISR:
+    carriers: 0
+    attack_submarines: 5
+    fighters_5gen: 45
+    strategic_bombers: 0
+    long_range_missile_defense: true
+    military_satellites: 10
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Dolphin ; F-35I ; Arrow 3.
+  PAK:
+    carriers: 0
+    attack_submarines: 8
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 3
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: Agosta et premiers Hangor (Chine).
+  PRK:
+    carriers: 0
+    attack_submarines: 35
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 2
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: Flotte nombreuse mais ancienne (Romeo, Sang-O) ; sous-marin lanceur en développement.
+  TWN:
+    carriers: 0
+    attack_submarines: 4
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 2
+    amphibious_brigades: 0.3
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Hai Lung, Chien Lung ; Hai Kun en essais.
+  DEU:
+    carriers: 0
+    attack_submarines: 6
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: true
+    military_satellites: 10
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Type 212A ; Arrow 3 opérationnel depuis 2025 ; F-35A attendus à partir de 2026.
+  NLD:
+    carriers: 0
+    attack_submarines: 4
+    fighters_5gen: 40
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 2
+    amphibious_brigades: 0.3
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Walrus ; F-35A.
+  NOR:
+    carriers: 0
+    attack_submarines: 6
+    fighters_5gen: 52
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 2
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Ula ; F-35A.
+  DNK:
+    carriers: 0
+    attack_submarines: 0
+    fighters_5gen: 15
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: F-35A en cours de livraison.
+  POL:
+    carriers: 0
+    attack_submarines: 1
+    fighters_5gen: 8
+    strategic_bombers: 0
+    long_range_missile_defense: true
+    military_satellites: 2
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note:
+      Orzeł ; premiers F-35A livrés en Pologne en 2026 (à confirmer) ; site Aegis Ashore de Redzikowo
+      (américain).
+  BEL:
+    carriers: 0
+    attack_submarines: 0
+    fighters_5gen: 8
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: Premiers F-35A (2025-2026).
+  SWE:
+    carriers: 0
+    attack_submarines: 5
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 2
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Gotland et Södermanland.
+  GRC:
+    carriers: 0
+    attack_submarines: 11
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Type 209/214.
+  SGP:
+    carriers: 0
+    attack_submarines: 4
+    fighters_5gen: 4
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 2
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: Invincible (Type 218SG) ; premiers F-35B (2026, à confirmer).
+  VNM:
+    carriers: 0
+    attack_submarines: 6
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Six Kilo.
+  CHL:
+    carriers: 0
+    attack_submarines: 4
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Scorpène et Type 209.
+  PER:
+    carriers: 0
+    attack_submarines: 6
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 0
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Type 209.
+  CAN:
+    carriers: 0
+    attack_submarines: 4
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 3
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Victoria (disponibilité limitée) ; F-35A commandés.
+  ZAF:
+    carriers: 0
+    attack_submarines: 3
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Type 209 (Heroine).
+  DZA:
+    carriers: 0
+    attack_submarines: 8
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 2
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Kilo.
+  SAU:
+    carriers: 0
+    attack_submarines: 0
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: true
+    military_satellites: 3
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: THAAD en service.
+  ARE:
+    carriers: 0
+    attack_submarines: 0
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: true
+    military_satellites: 3
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: THAAD en service.
+  ROU:
+    carriers: 0
+    attack_submarines: 0
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: true
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: Site Aegis Ashore de Deveselu (américain).
+  MYS:
+    carriers: 0
+    attack_submarines: 2
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Scorpène.
+  PRT:
+    carriers: 0
+    attack_submarines: 2
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 0
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Type 209PN.
+  ECU:
+    carriers: 0
+    attack_submarines: 2
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 0
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Type 209.
+  COL:
+    carriers: 0
+    attack_submarines: 4
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: low
+    note: Type 209 et Type 206.
+  BGD:
+    carriers: 0
+    attack_submarines: 2
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 1
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Deux Ming (Chine).
+  MMR:
+    carriers: 0
+    attack_submarines: 2
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 0
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Kilo et Ming.
+  UKR:
+    carriers: 0
+    attack_submarines: 0
+    fighters_5gen: 0
+    strategic_bombers: 0
+    long_range_missile_defense: false
+    military_satellites: 0
+    amphibious_brigades: 0
+    source:
+      IISS The Military Balance 2026 (via https://en.wikipedia.org/wiki/List_of_aircraft_carriers_in_service,
+      https://en.wikipedia.org/wiki/List_of_submarine_classes_in_service, https://en.wikipedia.org/wiki/Fifth-generation_fighter)
+      ; estimations GeoSim pour satellites et capacité amphibie
+    date: '2026-09-25'
+    confidence: medium
+    note: Pas de sous-marin ni de porte-aéronefs ; moyens navals de surface limités, drones navals.

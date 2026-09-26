@@ -1,0 +1,42 @@
+# Semi-conducteurs (SPEC §5.2, §8.3) : parts de la fabrication de puces avancées et autonomie par pays.
+# Ces parts ne sont publiées que ponctuellement (confiance faible) ; le commerce de puces (SH 8542) est
+# automatisé (BACI, dépendances bilatérales).
+version: 1
+advanced_fab_share:
+  year: 2025
+  shares: { TWN: 65, KOR: 12, USA: 12, CHN: 9, JPN: 1, IRL: 1 }
+  source:
+    'SIA et BCG, « Emerging Resilience in the Semiconductor Supply Chain » (mai 2024), capacités
+    < 10 nm en 2022 (Taïwan 69 %, Corée 13 %, États-Unis 12 %…), actualisées pour 2025 (usines TSMC et
+    Samsung en Arizona et au Texas, 7 nm de SMIC) : https://www.semiconductors.org/emerging-resilience-in-the-semiconductor-supply-chain/'
+  date: '2026-09-25'
+  confidence: low
+  note: 'Parts de la capacité mondiale de gravure ≤ 10 nm ; actualisation 2025 : estimation GeoSim.'
+autonomy:
+  values:
+    {
+      USA: 45,
+      CHN: 35,
+      TWN: 70,
+      KOR: 55,
+      JPN: 50,
+      NLD: 30,
+      DEU: 25,
+      FRA: 20,
+      GBR: 15,
+      ISR: 25,
+      SGP: 30,
+      MYS: 20,
+      IRL: 20,
+      IND: 10,
+      RUS: 10,
+      ITA: 15,
+    }
+  source:
+    Hypothèse GeoSim fondée sur la répartition des maillons (conception, équipements, gravure, assemblage)
+    décrite par SIA/BCG (2024) et le CSIS
+  date: '2026-09-25'
+  confidence: assumption
+  note:
+    Aptitude à produire les puces dont le pays a besoin (0–100) ; les autres pays prennent la valeur
+    par défaut de leur groupe de revenu.

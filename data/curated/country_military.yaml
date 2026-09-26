@@ -1,0 +1,769 @@
+# Valeurs pays curées — forces armées (SPEC §5.2). Effectifs : IISS The Military Balance (via la liste
+# Wikipedia, édition par pays). Conscription, mobilisation, qualité et doctrine : voir chaque note.
+version: 1
+params:
+  mil.active:
+    source:
+      https://en.wikipedia.org/wiki/List_of_countries_by_number_of_military_and_paramilitary_personnel
+      (IISS, The Military Balance 2024-2026)
+    date: '2026-09-25'
+    confidence: medium
+    note: Effectifs (militaires d'active) selon l'IISS ; édition indiquée par pays.
+    values:
+      AFG: { value: 172000, note: IISS 2025 }
+      AGO: { value: 107000, note: IISS 2024 }
+      ALB: { value: 7500, note: IISS 2024 }
+      ARE: { value: 63000, note: IISS 2025 }
+      ARG: { value: 83000, note: IISS 2024 }
+      ARM: { value: 42900, note: IISS 2024 }
+      ATG: { value: 200, note: IISS 2024 }
+      AUS: { value: 58540, note: IISS 2024 }
+      AUT: { value: 22200, note: IISS 2024 }
+      AZE: { value: 68200, note: IISS 2026 }
+      BDI: { value: 30050, note: IISS 2025 }
+      BEL: { value: 23500, note: IISS 2025 }
+      BEN: { value: 12300, note: IISS 2025 }
+      BFA: { value: 7000, note: IISS 2024 }
+      BGD: { value: 171250, note: IISS 2024 }
+      BGR: { value: 36950, note: IISS 2025 }
+      BHR: { value: 8200, note: IISS 2025 }
+      BHS: { value: 1500, note: IISS 2025 }
+      BIH: { value: 10650, note: IISS 2025 }
+      BLR: { value: 48600, note: IISS 2026 }
+      BLZ: { value: 2000, note: IISS }
+      BOL: { value: 34100, note: IISS 2025 }
+      BRA: { value: 374500, note: IISS 2026 }
+      BRB: { value: 610, note: IISS 2025 }
+      BRN: { value: 7200, note: IISS 2024 }
+      BTN: { value: 16000, note: IISS }
+      BWA: { value: 9000, note: IISS 2025 }
+      CAF: { value: 9150, note: IISS 2024 }
+      CAN: { value: 62300, note: IISS 2025 }
+      CHE: { value: 21300, note: IISS 2024 }
+      CHL: { value: 68500, note: IISS 2025 }
+      CHN: { value: 2035000, note: IISS 2026 }
+      CIV: { value: 27400, note: IISS 2025 }
+      CMR: { value: 25400, note: IISS 2024 }
+      COD: { value: 128350, note: IISS 2025 }
+      COG: { value: 10000, note: IISS 2025 }
+      COL: { value: 285000, note: IISS 2026 }
+      COM: { value: 1000, note: IISS }
+      CPV: { value: 1200, note: IISS 2025 }
+      CRI: { value: 0, note: IISS 2025 }
+      CUB: { value: 49000, note: IISS 2024 }
+      CYP: { value: 12000, note: IISS 2024 }
+      CZE: { value: 26600, note: IISS 2025 }
+      DEU: { value: 179850, note: IISS 2025 }
+      DJI: { value: 8450, note: IISS 2024 }
+      DNK: { value: 13100, note: IISS 2025 }
+      DOM: { value: 56800, note: IISS 2025 }
+      DZA: { value: 139000, note: IISS 2026 }
+      ECU: { value: 39600, note: IISS 2025 }
+      EGY: { value: 438500, note: IISS 2026 }
+      ERI: { value: 301750, note: IISS 2026 }
+      ESP: { value: 122200, note: IISS 2025 }
+      EST: { value: 7100, note: IISS 2025 }
+      ETH: { value: 503000, note: IISS 2026 }
+      FJI: { value: 4040, note: IISS 2025 }
+      FRA: { value: 203900, note: IISS 2026 }
+      GAB: { value: 4700, note: IISS 2025 }
+      GBR: { value: 141100, note: IISS 2025 }
+      GEO: { value: 20650, note: IISS 2025 }
+      GHA: { value: 19000, note: IISS 2025 }
+      GIN: { value: 9700, note: IISS 2025 }
+      GMB: { value: 4100, note: IISS 2025 }
+      GNB: { value: 4450, note: IISS 2025 }
+      GNQ: { value: 1750, note: IISS 2025 }
+      GRC: { value: 131650, note: IISS 2026 }
+      GTM: { value: 18050, note: IISS 2025 }
+      GUY: { value: 3400, note: IISS 2025 }
+      HND: { value: 14950, note: IISS 2025 }
+      HRV: { value: 16800, note: IISS 2025 }
+      HTI: { value: 700, note: IISS 2025 }
+      HUN: { value: 32150, note: IISS 2025 }
+      IDN: { value: 1632000, note: IISS 2026 }
+      IND: { value: 1500700, note: IISS 2026 }
+      IRL: { value: 9500, note: IISS 2025 }
+      IRN: { value: 610000, note: IISS 2026 }
+      IRQ: { value: 193000, note: IISS 2026 }
+      ISR: { value: 169500, note: IISS 2026 }
+      ITA: { value: 160400, note: IISS 2026 }
+      JAM: { value: 5950, note: IISS 2025 }
+      JOR: { value: 100500, note: IISS 2024 }
+      JPN: { value: 247150, note: IISS 2026 }
+      KAZ: { value: 39000, note: IISS 2025 }
+      KEN: { value: 24100, note: IISS 2025 }
+      KGZ: { value: 10900, note: IISS 2025 }
+      KHM: { value: 124300, note: IISS 2024 }
+      KNA: { value: 300, note: IISS }
+      KOR: { value: 450000, note: IISS 2026 }
+      KWT: { value: 17500, note: IISS 2025 }
+      LAO: { value: 29100, note: IISS 2024 }
+      LBN: { value: 60000, note: IISS 2024 }
+      LBR: { value: 2010, note: IISS 2025 }
+      LKA: { value: 260450, note: IISS 2026 }
+      LSO: { value: 2000, note: IISS 2025 }
+      LTU: { value: 16100, note: IISS 2025 }
+      LVA: { value: 6600, note: IISS 2025 }
+      MAR: { value: 195800, note: IISS 2026 }
+      MCO: { value: 250, note: IISS }
+      MDA: { value: 5150, note: IISS 2025 }
+      MDG: { value: 13500, note: IISS 2025 }
+      MDV: { value: 4000, note: IISS 2024 }
+      MEX: { value: 301000, note: IISS 2026 }
+      MKD: { value: 8000, note: IISS 2025 }
+      MLI: { value: 21000, note: IISS 2024 }
+      MLT: { value: 1700, note: IISS 2025 }
+      MMR: { value: 134000, note: IISS 2025 }
+      MNE: { value: 2885, note: IISS 2024 }
+      MNG: { value: 9700, note: IISS 2024 }
+      MOZ: { value: 11200, note: IISS 2024 }
+      MRT: { value: 15850, note: IISS 2025 }
+      MUS: { value: 0, note: IISS 2024 }
+      MWI: { value: 10700, note: IISS }
+      MYS: { value: 113000, note: IISS 2026 }
+      NAM: { value: 11600, note: IISS 2025 }
+      NER: { value: 39100, note: IISS 2025 }
+      NGA: { value: 143000, note: IISS 2024 }
+      NIC: { value: 12000, note: IISS 2025 }
+      NLD: { value: 33650, note: IISS 2025 }
+      NOR: { value: 25400, note: IISS 2025 }
+      NPL: { value: 96600, note: IISS 2025 }
+      NZL: { value: 8700, note: IISS 2025 }
+      OMN: { value: 42600, note: IISS 2024 }
+      PAK: { value: 660000, note: IISS 2026 }
+      PAN: { value: 0, note: IISS 2025 }
+      PER: { value: 81000, note: IISS 2026 }
+      PHL: { value: 162450, note: IISS 2026 }
+      PNG: { value: 4000, note: IISS 2025 }
+      POL: { value: 173000, note: IISS 2026 }
+      PRK: { value: 1280000, note: IISS 2026 }
+      PRT: { value: 26050, note: IISS 2024 }
+      PRY: { value: 13950, note: IISS 2024 }
+      QAT: { value: 16500, note: IISS 2025 }
+      ROU: { value: 69900, note: IISS 2025 }
+      RUS: { value: 1264000, note: IISS 2026 }
+      RWA: { value: 33000, note: IISS 2025 }
+      SAU: { value: 257000, note: IISS 2026 }
+      SDN: { value: 104300, note: IISS 2025 }
+      SEN: { value: 13600, note: IISS 2024 }
+      SLE: { value: 8500, note: IISS }
+      SLV: { value: 2600, note: IISS 2025 }
+      SMR: { value: 445, note: IISS }
+      SOM: { value: 25000, note: IISS 2024 }
+      SRB: { value: 28150, note: IISS 2025 }
+      SSD: { value: 90000, note: IISS 2024 }
+      STP: { value: 300, note: IISS }
+      SUR: { value: 1840, note: IISS 2025 }
+      SVK: { value: 15850, note: IISS }
+      SVN: { value: 6200, note: IISS 2025 }
+      SWE: { value: 14850, note: IISS 2025 }
+      SYC: { value: 420, note: IISS 2025 }
+      TCD: { value: 33250, note: IISS 2024 }
+      TGO: { value: 13750, note: IISS 2025 }
+      THA: { value: 360850, note: IISS 2026 }
+      TJK: { value: 8800, note: IISS 2025 }
+      TKM: { value: 36500, note: IISS 2025 }
+      TLS: { value: 2250, note: IISS 2025 }
+      TON: { value: 750, note: IISS }
+      TTO: { value: 4050, note: IISS }
+      TUN: { value: 35800, note: IISS 2024 }
+      TUR: { value: 355200, note: IISS 2026 }
+      TWN: { value: 170600, note: IISS 2026 }
+      TZA: { value: 27000, note: IISS 2025 }
+      UGA: { value: 45000, note: IISS 2025 }
+      UKR: { value: 677000, note: IISS 2026 }
+      URY: { value: 21100, note: IISS 2025 }
+      USA: { value: 1340150, note: IISS 2026 }
+      UZB: { value: 48000, note: IISS 2025 }
+      VEN: { value: 123000, note: IISS 2026 }
+      VNM: { value: 450000, note: IISS 2026 }
+      XKX: { value: 3000, note: IISS 2025 }
+      YEM: { value: 40000, note: IISS 2024 }
+      ZAF: { value: 69200, note: IISS 2025 }
+      ZMB: { value: 17100, note: IISS 2025 }
+      ZWE: { value: 29000, note: IISS 2025 }
+  mil.reserves:
+    source:
+      https://en.wikipedia.org/wiki/List_of_countries_by_number_of_military_and_paramilitary_personnel
+      (IISS, The Military Balance 2024-2026)
+    date: '2026-09-25'
+    confidence: medium
+    note: Effectifs (réservistes) selon l'IISS ; édition indiquée par pays.
+    values:
+      AFG: { value: 0, note: IISS 2025 }
+      AGO: { value: 0, note: IISS 2024 }
+      ALB: { value: 0, note: IISS 2024 }
+      ARE: { value: 0, note: IISS 2025 }
+      ARG: { value: 0, note: IISS 2024 }
+      ARM: { value: 210000, note: IISS 2024 }
+      ATG: { value: 80, note: IISS 2024 }
+      AUS: { value: 21450, note: IISS 2024 }
+      AUT: { value: 109200, note: IISS 2024 }
+      AZE: { value: 300000, note: IISS 2026 }
+      BDI: { value: 0, note: IISS 2025 }
+      BEL: { value: 5900, note: IISS 2025 }
+      BEN: { value: 0, note: IISS 2025 }
+      BFA: { value: 0, note: IISS 2024 }
+      BGD: { value: 0, note: IISS 2024 }
+      BGR: { value: 3000, note: IISS 2025 }
+      BHR: { value: 0, note: IISS 2025 }
+      BHS: { value: 0, note: IISS 2025 }
+      BIH: { value: 6000, note: IISS 2025 }
+      BLR: { value: 289500, note: IISS 2026 }
+      BLZ: { value: 850, note: IISS }
+      BOL: { value: 0, note: IISS 2025 }
+      BRA: { value: 124600, note: IISS 2026 }
+      BRB: { value: 430, note: IISS 2025 }
+      BRN: { value: 700, note: IISS 2024 }
+      BTN: { value: 60000, note: IISS }
+      BWA: { value: 0, note: IISS 2025 }
+      CAF: { value: 0, note: IISS 2024 }
+      CAN: { value: 29100, note: IISS 2025 }
+      CHE: { value: 196450, note: IISS 2024 }
+      CHL: { value: 19100, note: IISS 2025 }
+      CHN: { value: 510000, note: IISS 2026 }
+      CIV: { value: 0, note: IISS 2025 }
+      CMR: { value: 0, note: IISS 2024 }
+      COD: { value: 0, note: IISS 2025 }
+      COG: { value: 0, note: IISS 2025 }
+      COL: { value: 34950, note: IISS 2026 }
+      COM: { value: 0, note: IISS }
+      CPV: { value: 0, note: IISS 2025 }
+      CRI: { value: 0, note: IISS 2025 }
+      CUB: { value: 39000, note: IISS 2024 }
+      CYP: { value: 60000, note: IISS 2024 }
+      CZE: { value: 0, note: IISS 2025 }
+      DEU: { value: 34100, note: IISS 2025 }
+      DJI: { value: 0, note: IISS 2024 }
+      DNK: { value: 44200, note: IISS 2025 }
+      DOM: { value: 0, note: IISS 2025 }
+      DZA: { value: 150000, note: IISS 2026 }
+      ECU: { value: 118000, note: IISS 2025 }
+      EGY: { value: 479000, note: IISS 2026 }
+      ERI: { value: 0, note: IISS 2026 }
+      ESP: { value: 13800, note: IISS 2025 }
+      EST: { value: 41200, note: IISS 2025 }
+      ETH: { value: 0, note: IISS 2026 }
+      FJI: { value: 6000, note: IISS 2025 }
+      FRA: { value: 38100, note: IISS 2026 }
+      GAB: { value: 0, note: IISS 2025 }
+      GBR: { value: 70450, note: IISS 2025 }
+      GEO: { value: 0, note: IISS 2025 }
+      GHA: { value: 0, note: IISS 2025 }
+      GIN: { value: 0, note: IISS 2025 }
+      GMB: { value: 0, note: IISS 2025 }
+      GNB: { value: 0, note: IISS 2025 }
+      GNQ: { value: 0, note: IISS 2025 }
+      GRC: { value: 264500, note: IISS 2026 }
+      GTM: { value: 63850, note: IISS 2025 }
+      GUY: { value: 670, note: IISS 2025 }
+      HND: { value: 60000, note: IISS 2025 }
+      HRV: { value: 2100, note: IISS 2025 }
+      HTI: { value: 0, note: IISS 2025 }
+      HUN: { value: 20000, note: IISS 2025 }
+      IDN: { value: 603000, note: IISS 2026 }
+      IND: { value: 1155000, note: IISS 2026 }
+      IRL: { value: 4050, note: IISS 2025 }
+      IRN: { value: 350000, note: IISS 2026 }
+      IRQ: { value: 0, note: IISS 2026 }
+      ISR: { value: 465000, note: IISS 2026 }
+      ITA: { value: 14500, note: IISS 2026 }
+      JAM: { value: 2580, note: IISS 2025 }
+      JOR: { value: 65000, note: IISS 2024 }
+      JPN: { value: 55900, note: IISS 2026 }
+      KAZ: { value: 0, note: IISS 2025 }
+      KEN: { value: 0, note: IISS 2025 }
+      KGZ: { value: 0, note: IISS 2025 }
+      KHM: { value: 0, note: IISS 2024 }
+      KNA: { value: 0, note: IISS }
+      KOR: { value: 3100000, note: IISS 2026 }
+      KWT: { value: 23700, note: IISS 2025 }
+      LAO: { value: 0, note: IISS 2024 }
+      LBN: { value: 0, note: IISS 2024 }
+      LBR: { value: 0, note: IISS 2025 }
+      LKA: { value: 5500, note: IISS 2026 }
+      LSO: { value: 0, note: IISS 2025 }
+      LTU: { value: 12950, note: IISS 2025 }
+      LVA: { value: 16000, note: IISS 2025 }
+      MAR: { value: 150000, note: IISS 2026 }
+      MCO: { value: 0, note: IISS }
+      MDA: { value: 58000, note: IISS 2025 }
+      MDG: { value: 0, note: IISS 2025 }
+      MDV: { value: 0, note: IISS 2024 }
+      MEX: { value: 81500, note: IISS 2026 }
+      MKD: { value: 4850, note: IISS 2025 }
+      MLI: { value: 0, note: IISS 2024 }
+      MLT: { value: 260, note: IISS 2025 }
+      MMR: { value: 0, note: IISS 2025 }
+      MNE: { value: 2800, note: IISS 2024 }
+      MNG: { value: 137000, note: IISS 2024 }
+      MOZ: { value: 0, note: IISS 2024 }
+      MRT: { value: 0, note: IISS 2025 }
+      MUS: { value: 0, note: IISS 2024 }
+      MWI: { value: 0, note: IISS }
+      MYS: { value: 53600, note: IISS 2026 }
+      NAM: { value: 0, note: IISS 2025 }
+      NER: { value: 0, note: IISS 2025 }
+      NGA: { value: 0, note: IISS 2024 }
+      NIC: { value: 0, note: IISS 2025 }
+      NLD: { value: 6350, note: IISS 2025 }
+      NOR: { value: 40000, note: IISS 2025 }
+      NPL: { value: 0, note: IISS 2025 }
+      NZL: { value: 3270, note: IISS 2025 }
+      OMN: { value: 0, note: IISS 2024 }
+      PAK: { value: 0, note: IISS 2026 }
+      PAN: { value: 0, note: IISS 2025 }
+      PER: { value: 188000, note: IISS 2026 }
+      PHL: { value: 131000, note: IISS 2026 }
+      PNG: { value: 0, note: IISS 2025 }
+      POL: { value: 37500, note: IISS 2026 }
+      PRK: { value: 600000, note: IISS 2026 }
+      PRT: { value: 23500, note: IISS 2024 }
+      PRY: { value: 164500, note: IISS 2024 }
+      QAT: { value: 0, note: IISS 2025 }
+      ROU: { value: 55000, note: IISS 2025 }
+      RUS: { value: 1500000, note: IISS 2026 }
+      RWA: { value: 0, note: IISS 2025 }
+      SAU: { value: 0, note: IISS 2026 }
+      SDN: { value: 0, note: IISS 2025 }
+      SEN: { value: 0, note: IISS 2024 }
+      SLE: { value: 0, note: IISS }
+      SLV: { value: 9900, note: IISS 2025 }
+      SMR: { value: 0, note: IISS }
+      SOM: { value: 0, note: IISS 2024 }
+      SRB: { value: 50150, note: IISS 2025 }
+      SSD: { value: 0, note: IISS 2024 }
+      STP: { value: 0, note: IISS }
+      SUR: { value: 0, note: IISS 2025 }
+      SVK: { value: 0, note: IISS }
+      SVN: { value: 950, note: IISS 2025 }
+      SWE: { value: 21500, note: IISS 2025 }
+      SYC: { value: 0, note: IISS 2025 }
+      TCD: { value: 0, note: IISS 2024 }
+      TGO: { value: 0, note: IISS 2025 }
+      THA: { value: 200000, note: IISS 2026 }
+      TJK: { value: 20000, note: IISS 2025 }
+      TKM: { value: 0, note: IISS 2025 }
+      TLS: { value: 0, note: IISS 2025 }
+      TON: { value: 0, note: IISS }
+      TTO: { value: 0, note: IISS }
+      TUN: { value: 0, note: IISS 2024 }
+      TUR: { value: 378700, note: IISS 2026 }
+      TWN: { value: 1657000, note: IISS 2026 }
+      TZA: { value: 80000, note: IISS 2025 }
+      UGA: { value: 10000, note: IISS 2025 }
+      UKR: { value: 0, note: IISS 2026 }
+      URY: { value: 0, note: IISS 2025 }
+      USA: { value: 804800, note: IISS 2026 }
+      UZB: { value: 0, note: IISS 2025 }
+      VEN: { value: 8000, note: IISS 2026 }
+      VNM: { value: 5000000, note: IISS 2026 }
+      XKX: { value: 0, note: IISS 2025 }
+      YEM: { value: 0, note: IISS 2024 }
+      ZAF: { value: 15050, note: IISS 2025 }
+      ZMB: { value: 3000, note: IISS 2025 }
+      ZWE: { value: 0, note: IISS 2025 }
+  mil.paramilitary:
+    source:
+      https://en.wikipedia.org/wiki/List_of_countries_by_number_of_military_and_paramilitary_personnel
+      (IISS, The Military Balance 2024-2026)
+    date: '2026-09-25'
+    confidence: medium
+    note: Effectifs (paramilitaires) selon l'IISS ; édition indiquée par pays.
+    values:
+      AFG: { value: 0, note: IISS 2025 }
+      AGO: { value: 10000, note: IISS 2024 }
+      ALB: { value: 0, note: IISS 2024 }
+      ARE: { value: 0, note: IISS 2025 }
+      ARG: { value: 31250, note: IISS 2024 }
+      ARM: { value: 4300, note: IISS 2024 }
+      ATG: { value: 0, note: IISS 2024 }
+      AUS: { value: 0, note: IISS 2024 }
+      AUT: { value: 0, note: IISS 2024 }
+      AZE: { value: 15000, note: IISS 2026 }
+      BDI: { value: 1000, note: IISS 2025 }
+      BEL: { value: 0, note: IISS 2025 }
+      BEN: { value: 4800, note: IISS 2025 }
+      BFA: { value: 4450, note: IISS 2024 }
+      BGD: { value: 63900, note: IISS 2024 }
+      BGR: { value: 0, note: IISS 2025 }
+      BHR: { value: 11260, note: IISS 2025 }
+      BHS: { value: 0, note: IISS 2025 }
+      BIH: { value: 0, note: IISS 2025 }
+      BLR: { value: 110000, note: IISS 2026 }
+      BLZ: { value: 630, note: IISS }
+      BOL: { value: 37100, note: IISS 2025 }
+      BRA: { value: 395000, note: IISS 2026 }
+      BRB: { value: 0, note: IISS 2025 }
+      BRN: { value: 450, note: IISS 2024 }
+      BTN: { value: 0, note: IISS }
+      BWA: { value: 0, note: IISS 2025 }
+      CAF: { value: 1000, note: IISS 2024 }
+      CAN: { value: 0, note: IISS 2025 }
+      CHE: { value: 0, note: IISS 2024 }
+      CHL: { value: 44700, note: IISS 2025 }
+      CHN: { value: 500000, note: IISS 2026 }
+      CIV: { value: 0, note: IISS 2025 }
+      CMR: { value: 9000, note: IISS 2024 }
+      COD: { value: 0, note: IISS 2025 }
+      COG: { value: 3500, note: IISS 2025 }
+      COL: { value: 165050, note: IISS 2026 }
+      COM: { value: 0, note: IISS }
+      CPV: { value: 0, note: IISS 2025 }
+      CRI: { value: 9950, note: IISS 2025 }
+      CUB: { value: 26500, note: IISS 2024 }
+      CYP: { value: 0, note: IISS 2024 }
+      CZE: { value: 0, note: IISS 2025 }
+      DEU: { value: 0, note: IISS 2025 }
+      DJI: { value: 4650, note: IISS 2024 }
+      DNK: { value: 0, note: IISS 2025 }
+      DOM: { value: 15000, note: IISS 2025 }
+      DZA: { value: 187200, note: IISS 2026 }
+      ECU: { value: 500, note: IISS 2025 }
+      EGY: { value: 397000, note: IISS 2026 }
+      ERI: { value: 0, note: IISS 2026 }
+      ESP: { value: 87450, note: IISS 2025 }
+      EST: { value: 21200, note: IISS 2025 }
+      ETH: { value: 0, note: IISS 2026 }
+      FJI: { value: 0, note: IISS 2025 }
+      FRA: { value: 126600, note: IISS 2026 }
+      GAB: { value: 2000, note: IISS 2025 }
+      GBR: { value: 0, note: IISS 2025 }
+      GEO: { value: 5400, note: IISS 2025 }
+      GHA: { value: 0, note: IISS 2025 }
+      GIN: { value: 2600, note: IISS 2025 }
+      GMB: { value: 0, note: IISS 2025 }
+      GNB: { value: 0, note: IISS 2025 }
+      GNQ: { value: 0, note: IISS 2025 }
+      GRC: { value: 7400, note: IISS 2026 }
+      GTM: { value: 25000, note: IISS 2025 }
+      GUY: { value: 0, note: IISS 2025 }
+      HND: { value: 8000, note: IISS 2025 }
+      HRV: { value: 0, note: IISS 2025 }
+      HTI: { value: 9000, note: IISS 2025 }
+      HUN: { value: 0, note: IISS 2025 }
+      IDN: { value: 250000, note: IISS 2026 }
+      IND: { value: 2532050, note: IISS 2026 }
+      IRL: { value: 0, note: IISS 2025 }
+      IRN: { value: 40000, note: IISS 2026 }
+      IRQ: { value: 266000, note: IISS 2026 }
+      ISR: { value: 8000, note: IISS 2026 }
+      ITA: { value: 179250, note: IISS 2026 }
+      JAM: { value: 0, note: IISS 2025 }
+      JOR: { value: 15000, note: IISS 2024 }
+      JPN: { value: 14800, note: IISS 2026 }
+      KAZ: { value: 31500, note: IISS 2025 }
+      KEN: { value: 5000, note: IISS 2025 }
+      KGZ: { value: 9500, note: IISS 2025 }
+      KHM: { value: 67000, note: IISS 2024 }
+      KNA: { value: 0, note: IISS }
+      KOR: { value: 13500, note: IISS 2026 }
+      KWT: { value: 7100, note: IISS 2025 }
+      LAO: { value: 100000, note: IISS 2024 }
+      LBN: { value: 20000, note: IISS 2024 }
+      LBR: { value: 0, note: IISS 2025 }
+      LKA: { value: 94050, note: IISS 2026 }
+      LSO: { value: 0, note: IISS 2025 }
+      LTU: { value: 18400, note: IISS 2025 }
+      LVA: { value: 0, note: IISS 2025 }
+      MAR: { value: 50000, note: IISS 2026 }
+      MCO: { value: 0, note: IISS }
+      MDA: { value: 900, note: IISS 2025 }
+      MDG: { value: 8100, note: IISS 2025 }
+      MDV: { value: 0, note: IISS 2024 }
+      MEX: { value: 136900, note: IISS 2026 }
+      MKD: { value: 7600, note: IISS 2025 }
+      MLI: { value: 20000, note: IISS 2024 }
+      MLT: { value: 0, note: IISS 2025 }
+      MMR: { value: 70000, note: IISS 2025 }
+      MNE: { value: 4100, note: IISS 2024 }
+      MNG: { value: 7500, note: IISS 2024 }
+      MOZ: { value: 0, note: IISS 2024 }
+      MRT: { value: 5000, note: IISS 2025 }
+      MUS: { value: 2550, note: IISS 2024 }
+      MWI: { value: 4200, note: IISS }
+      MYS: { value: 267200, note: IISS 2026 }
+      NAM: { value: 6000, note: IISS 2025 }
+      NER: { value: 48000, note: IISS 2025 }
+      NGA: { value: 80000, note: IISS 2024 }
+      NIC: { value: 0, note: IISS 2025 }
+      NLD: { value: 6800, note: IISS 2025 }
+      NOR: { value: 0, note: IISS 2025 }
+      NPL: { value: 15000, note: IISS 2025 }
+      NZL: { value: 0, note: IISS 2025 }
+      OMN: { value: 4400, note: IISS 2024 }
+      PAK: { value: 291000, note: IISS 2026 }
+      PAN: { value: 27700, note: IISS 2025 }
+      PER: { value: 77000, note: IISS 2026 }
+      PHL: { value: 100650, note: IISS 2026 }
+      PNG: { value: 0, note: IISS 2025 }
+      POL: { value: 14300, note: IISS 2026 }
+      PRK: { value: 5889000, note: IISS 2026 }
+      PRT: { value: 22820, note: IISS 2024 }
+      PRY: { value: 14800, note: IISS 2024 }
+      QAT: { value: 5000, note: IISS 2025 }
+      ROU: { value: 57000, note: IISS 2025 }
+      RUS: { value: 569000, note: IISS 2026 }
+      RWA: { value: 2000, note: IISS 2025 }
+      SAU: { value: 24500, note: IISS 2026 }
+      SDN: { value: 60000, note: IISS 2025 }
+      SEN: { value: 5000, note: IISS 2024 }
+      SLE: { value: 0, note: IISS }
+      SLV: { value: 2600, note: IISS 2025 }
+      SMR: { value: 0, note: IISS }
+      SOM: { value: 0, note: IISS 2024 }
+      SRB: { value: 3700, note: IISS 2025 }
+      SSD: { value: 0, note: IISS 2024 }
+      STP: { value: 0, note: IISS }
+      SUR: { value: 0, note: IISS 2025 }
+      SVK: { value: 0, note: IISS }
+      SVN: { value: 0, note: IISS 2025 }
+      SWE: { value: 0, note: IISS 2025 }
+      SYC: { value: 0, note: IISS 2025 }
+      TCD: { value: 11900, note: IISS 2024 }
+      TGO: { value: 5000, note: IISS 2025 }
+      THA: { value: 138700, note: IISS 2026 }
+      TJK: { value: 7500, note: IISS 2025 }
+      TKM: { value: 20000, note: IISS 2025 }
+      TLS: { value: 0, note: IISS 2025 }
+      TON: { value: 0, note: IISS }
+      TTO: { value: 0, note: IISS }
+      TUN: { value: 12000, note: IISS 2024 }
+      TUR: { value: 161400, note: IISS 2026 }
+      TWN: { value: 11800, note: IISS 2026 }
+      TZA: { value: 1400, note: IISS 2025 }
+      UGA: { value: 1400, note: IISS 2025 }
+      UKR: { value: 260000, note: IISS 2026 }
+      URY: { value: 1400, note: IISS 2025 }
+      USA: { value: 0, note: IISS 2026 }
+      UZB: { value: 20000, note: IISS 2025 }
+      VEN: { value: 220000, note: IISS 2026 }
+      VNM: { value: 40000, note: IISS 2026 }
+      XKX: { value: 0, note: IISS 2025 }
+      YEM: { value: 0, note: IISS 2024 }
+      ZAF: { value: 0, note: IISS 2025 }
+      ZMB: { value: 1400, note: IISS 2025 }
+      ZWE: { value: 21800, note: IISS 2025 }
+  mil.conscription:
+    source: https://en.wikipedia.org/wiki/Military_service ; https://en.wikipedia.org/wiki/Conscription_by_country
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      'universal : service obligatoire effectivement appliqué ; selective : conscription légale appliquée
+      par tirage ou besoin, ou réintroduite partiellement (Croatie 2025, Lettonie 2024). Allemagne (loi
+      de 2026 : recensement obligatoire, service volontaire) et France (service volontaire) : sans conscription.'
+    values:
+      {
+        RUS: universal,
+        UKR: universal,
+        ISR: universal,
+        KOR: universal,
+        PRK: universal,
+        TWN: universal,
+        SGP: universal,
+        CHE: universal,
+        AUT: universal,
+        FIN: universal,
+        EST: universal,
+        GRC: universal,
+        CYP: universal,
+        TUR: universal,
+        IRN: universal,
+        EGY: universal,
+        DZA: universal,
+        BLR: universal,
+        ARM: universal,
+        AZE: universal,
+        GEO: universal,
+        KAZ: universal,
+        UZB: universal,
+        TKM: universal,
+        TJK: universal,
+        KGZ: universal,
+        MNG: universal,
+        VNM: universal,
+        CUB: universal,
+        ERI: universal,
+        LVA: universal,
+        NOR: universal,
+        DNK: universal,
+        SWE: selective,
+        LTU: selective,
+        THA: selective,
+        CHN: selective,
+        BRA: selective,
+        MEX: selective,
+        COL: selective,
+        BOL: selective,
+        PRY: selective,
+        VEN: selective,
+        MAR: selective,
+        TUN: selective,
+        HRV: selective,
+        SRB: selective,
+        LAO: selective,
+        KHM: selective,
+        MMR: selective,
+        SDN: selective,
+        SSD: selective,
+        MLI: selective,
+        NER: selective,
+        TCD: selective,
+        GNQ: selective,
+        AGO: selective,
+        MOZ: selective,
+        CIV: selective,
+        SEN: selective,
+        BEN: selective,
+        SYR: selective,
+        IRQ: selective,
+        JOR: selective,
+        KWT: selective,
+        QAT: selective,
+        ARE: selective,
+      }
+  mil.mobilization:
+    source: Hypothèse GeoSim fondée sur conflicts.yaml et les effectifs de l’IISS
+    date: '2026-09-25'
+    confidence: assumption
+    note:
+      "Part du réservoir mobilisable (18-49 ans aptes) sous les armes du fait des guerres en cours
+      : Ukraine ≈ 1 M de militaires, Russie ≈ 1,3 M, Israël (réservistes rappelés pendant la guerre d'Iran)…"
+    values:
+      {
+        UKR: 12,
+        RUS: 5,
+        ISR: 8,
+        IRN: 5,
+        SDN: 15,
+        RSF: 40,
+        HOU: 30,
+        YEM: 10,
+        MMR: 10,
+        AAR: 40,
+        M23: 40,
+        LNA: 10,
+        PAK: 2,
+        AFG: 5,
+        ETH: 3,
+        COD: 3,
+      }
+  strat.hypersonic:
+    source: https://en.wikipedia.org/wiki/Hypersonic_weapon ; SIPRI Yearbook 2026
+    date: '2026-09-25'
+    confidence: low
+    note:
+      '1 : armes hypersoniques en service (Kinjal, Zircon, Avangard ; DF-17, DF-27) ; 0,5 : premières
+      unités (Dark Eagle américain, Hwasong-16B) ; 0,1-0,3 : essais ou revendications.'
+    values: { RUS: 1, CHN: 1, USA: 0.5, PRK: 0.5, IRN: 0.3, IND: 0.3, JPN: 0.2, FRA: 0.1, ISR: 0.2 }
+  mil.quality:
+    source:
+      Hypothèse GeoSim fondée sur l’entraînement, l’expérience et la maintenance décrits par l’IISS
+      (The Military Balance 2026) et le retour d’expérience des guerres récentes
+    date: '2026-09-25'
+    confidence: assumption
+    note: Multiplicateur d'efficacité (0,3-1,5) ; à valider avec les profils.
+    values:
+      {
+        USA: 1.3,
+        GBR: 1.15,
+        FRA: 1.15,
+        ISR: 1.25,
+        JPN: 1.05,
+        KOR: 1.05,
+        DEU: 0.95,
+        AUS: 1.1,
+        TUR: 1.0,
+        RUS: 0.9,
+        CHN: 1.0,
+        IND: 0.85,
+        PAK: 0.8,
+        UKR: 1.05,
+        IRN: 0.75,
+        PRK: 0.7,
+        SAU: 0.7,
+        ARE: 0.9,
+        EGY: 0.7,
+        POL: 1.0,
+        TWN: 0.85,
+        SGP: 1.05,
+        ITA: 0.95,
+        NLD: 1.0,
+        NOR: 1.05,
+        CAN: 1.0,
+        SWE: 1.05,
+        FIN: 1.05,
+        GRC: 0.9,
+        VNM: 0.85,
+        IDN: 0.75,
+        BRA: 0.8,
+        MEX: 0.7,
+        NGA: 0.6,
+        ETH: 0.65,
+        SDN: 0.55,
+        COD: 0.45,
+        VEN: 0.5,
+        KAZ: 0.7,
+        BLR: 0.75,
+        IRQ: 0.6,
+        QAT: 0.8,
+        PHL: 0.7,
+        ZAF: 0.7,
+        ARG: 0.7,
+        CHL: 0.85,
+        YEM: 0.5,
+      }
+  mil.doctrine:
+    source:
+      Hypothèse GeoSim fondée sur les doctrines publiées (livres blancs, revues stratégiques) et
+      les engagements récents
+    date: '2026-09-25'
+    confidence: assumption
+    values:
+      {
+        USA: expeditionary,
+        GBR: expeditionary,
+        FRA: expeditionary,
+        RUS: offensive,
+        CHN: defensive,
+        ISR: offensive,
+        IRN: asymmetric,
+        PRK: offensive,
+        UKR: defensive,
+        TWN: asymmetric,
+        IND: defensive,
+        PAK: defensive,
+        TUR: expeditionary,
+        SAU: defensive,
+        ARE: expeditionary,
+        KOR: defensive,
+        JPN: defensive,
+        POL: defensive,
+        VNM: asymmetric,
+        HOU: asymmetric,
+        RSF: offensive,
+      }
+  bud.defense:
+    source: https://focustaiwan.tw/politics/202508210007 ; https://www.taipeitimes.com/News/front/archives/2026/08/21/2003862862
+    date: '2026-09-25'
+    confidence: medium
+    note: Pays absents des données SIPRI de la Banque mondiale, budget officiel de l'année en cours.
+    values:
+      TWN:
+        {
+          value: 3.32,
+          note: 'Budget 2026 (NT$ 949,5 Md), budgets spéciaux et garde-côtes compris (définition
+            OTAN) ; budget 2027 proposé : NT$ 1 122,5 Md, 3,01 % du PIB.',
+        }
+  mil.budget:
+    source: https://www.taipeitimes.com/News/front/archives/2026/08/21/2003862862
+    date: '2026-09-25'
+    confidence: medium
+    note: Md$ courants.
+    values:
+      TWN:
+        {
+          value: 29.7,
+          note: "NT$ 949,5 Md au taux implicite de l'article (NT$ 1 122,5 Md = 35,16 Md$).",
+        }

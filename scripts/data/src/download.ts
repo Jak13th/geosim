@@ -68,7 +68,7 @@ export async function writeManifest(path: string, manifest: Manifest): Promise<v
 }
 
 export function fileNameFor(source: SourceDef): string {
-  const extension = source.url.split('?')[0]?.split('.').pop() ?? 'bin';
+  const extension = source.ext ?? source.url.split('?')[0]?.split('.').pop() ?? 'bin';
   return `${source.id}.${extension}`;
 }
 
@@ -122,7 +122,9 @@ export async function ensureSources(
     );
     manifest.sources = manifest.sources.filter((e) => e.id !== source.id);
     manifest.sources.push(entry);
-    changed = true;
+    // Écrit après chaque téléchargement : une interruption ne laisse pas de fichier non tracé.
+    await writeManifest(options.manifestPath, manifest);
+    changed = false;
   }
 
   if (changed) await writeManifest(options.manifestPath, manifest);

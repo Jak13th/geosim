@@ -85,6 +85,68 @@ Mers, golfes et détroits nommés de Natural Earth ; les océans sont découpés
 - **Contrôles de plausibilité** (4096 px) : Chine–Allemagne 18 200 km par Malacca, Suez et Gibraltar ; Corée–Pays-Bas 20 000 km (Busan–Rotterdam ≈ 19 900) ; États-Unis–Japon 7 100 km (Seattle–Tokyo ≈ 7 700) ; Qatar–Royaume-Uni 11 200 km.
 - **Limites** : l'accès terrestre des pays enclavés suit la distance, pas les corridors réels (Kazakhstan par la Russie, Mali par la Sierra Leone) ; le canal de Kiel n'est pas modélisé ; la porte de Singapour coupe toute la sortie sud du détroit de Malacca, îles Riau comprises.
 
+### 1.9 Zones de contrôle et souveraineté de jure (`zones.ts`, phase 1b)
+
+- **Données** : `data/curated/control_zones.geojson`, une zone par entité (source, date, confiance). Une zone désigne un **contrôleur** de facto (`controller` → couche `owner`) et/ou un **souverain** de jure (`sovereign` → couche `sovereign`). Sa géométrie vient de polygones propres, de zones disputées Natural Earth (`ne_disputed`, par nom) ou de subdivisions de premier niveau (`admin1`, codes ISO 3166-2).
+- **Application** : dans l'ordre du fichier, sur les pixels terrestres dont le centre est dans la zone ; le filtre `within` restreint la modification aux pixels dont le propriétaire actuel est listé (la zone « Sahara occidental » ne touche que la partie tenue par le Maroc). Aucun pixel neutre n'est attribué sans contrôleur.
+- **Contrôle** : une zone dont la surface dépasse `ZONE_BELOW_RESOLUTION_PX` (2 pixels) doit modifier au moins un pixel, sinon la construction échoue ; les zones plus petites (Jérusalem-Est, 70 km²) sont signalées et restent dans les métadonnées (`controlZones`, 0 pixel). Toute référence introuvable (entité, zone disputée, subdivision) est une erreur bloquante.
+- **Entités nouvelles** : entités de facto (Abkhazie, Ossétie du Sud, Transnistrie) et factions des guerres civiles (Forces de soutien rapide, Houthis, Armée nationale libyenne, AFC/M23, Armée d'Arakan), déclarées dans `entities.yaml` avec leur capitale ; leurs pixels viennent uniquement des zones.
+- **Limites** : ligne de front ukrainienne simplifiée (DeepStateMap du 24/09/2026, D31) ; l'Armée d'Arakan est représentée par l'État d'Arakan entier ; les zones sont statiques jusqu'à la phase 5 (fronts).
+
+### 1.10 Population et valeur économique par pixel (`population.ts`, phase 1b)
+
+Unité statistique d'un pixel : l'entité de facto qui publie ses propres statistiques (Taïwan, Kosovo, Chypre du Nord, Somaliland, Abkhazie…) si elle le contrôle, sinon son **souverain de jure** (les pixels ukrainiens occupés comptent dans la population de l'Ukraine, qui les inclut ; ceux du Darfour dans celle du Soudan). Les entités comprises dans les statistiques d'un autre pays (`includedIn` de `entities.yaml` : Abkhazie et Ossétie du Sud dans la Géorgie, Chypre du Nord dans Chypre, Somaliland dans la Somalie, Sahara occidental dans le PIB du Maroc) en sont retirées.
+
+Pour une unité de population P, de PIB Y et de taux d'urbanisation u (Banque mondiale) :
+
+- **Poids urbain** d'un pixel : somme des noyaux gaussiens des villes de l'unité, de masse égale à la population de l'agglomération (Natural Earth `POP_MAX`) et d'écart-type σ = max(0,5 pixel ; `city_kernel_sigma_km` × √(pop / 10⁶)), normalisés sur les pixels de l'unité ; plus `urban_area_density` × aire × couverture urbaine Natural Earth.
+- **Poids rural** : habitabilité h = biome × relief (+ `river_bonus` si fleuve), × `coast_factor` sur la côte. Biomes : forêt tempérée 1, forêt tropicale 0,5, steppe et savane 0,6, zone humide 0,5, toundra 0,01, désert 0,005, glace 0 ; relief : plaine 1, collines 0,6, montagne 0,25, haute montagne 0,05.
+- **Population** : pop(p) = P × u × wᵤ(p) / Σwᵤ + P × (1 − u) × h(p) / Σh. Sans ville ni zone urbaine, u = 0 ; sans pixel habitable, répartition uniforme.
+- **Valeur économique** : Y × w(p) / Σw avec w(p) = pop(p) × (1 + `urban_productivity_premium` × part urbaine du pixel) : un habitant des villes produit deux fois plus qu'un rural (hypothèse).
+- **Conservation** : Σ pop = P et Σ valeur = Y par unité, à 10⁻⁹ près (écart constaté : 2 × 10⁻¹² ; contrôle bloquant). Population mondiale répartie : 8,216 milliards.
+- **Factions** : leur population et leur PIB sont la somme des pixels qu'elles contrôlent (comptés aussi dans leur pays, qui publie les statistiques de tout son territoire).
+- **Stockage** : couches compactées sur les pixels terrestres (`land-<résolution>.bin.gz`, Float32 ; D7).
+- **Limites** : les biomes sont climatiques (terres agricoles classées « forêt ») ; densités relatives non calibrées sur une grille de population (GPW, WorldPop), à comparer en phase 8.
+
+## 2. Données pays (`scripts/data/src/country/`, phase 1b)
+
+`npm run data` produit `data/build/countries.base.json` (208 entités × paramètres pays), `pairs.base.json` (paramètres bilatéraux), `world.base.json` (paramètres mondiaux, blocs, conflits, sanctions, détroits, zones) et `report.md` (couverture). Chaque valeur porte `source`, `date` (année de la donnée ou date de curation), `confidence` et `method`.
+
+### 2.1 Chaîne de résolution
+
+Pour chaque paramètre pays, `rules.ts` définit une chaîne de sources essayées dans l'ordre, puis un repli :
+
+1. **Sources** : dernière observation non vide d'année ≤ année courante (Banque mondiale, WGI, FMI, OWID, FAOSTAT, HCR, BACI, AGNU, PNUD), puis valeur curée (`country_*.yaml`, sujets curés). Valeur de plus de trois ans : signalée (`stale`).
+2. **Replis** : `regional_median` — médiane des pays de même région Banque mondiale et même groupe de revenu, sinon même revenu, sinon même région, sinon monde (au moins 3 pays, confiance `low`) ; pour les grandeurs extensives, médiane du ratio à la population ou au PIB, multipliée par celui du pays ; `default` — hypothèse de `defaults.yaml`, modulée par nature d'entité, type de régime ou revenu (confiance `assumption`) ; `zero` — absence documentée, certaine (`high`) quand le fichier curé est une liste exhaustive (membres du Conseil de sécurité, monnaies du COFER, réserves gelées, conflits, sanctions) ; `not_applicable` ; `missing` (lacune, listée dans le rapport ; aucune au 25/09/2026).
+3. **Écrêtage** : une valeur hors de la plage du catalogue est ramenée à la borne, la valeur d'origine conservée (`clampedFrom`) et signalée (un cas : IDE du Liechtenstein).
+
+Ordre : population, PIB, urbanisation et régime d'abord (les replis et la carte en dépendent), puis tous les paramètres, puis tous les replis.
+
+### 2.2 Transformations et dérivations
+
+- **WGI** : estimation [−2,5 ; 2,5] → [0 ; 100] par (v + 2,5) / 5 × 100.
+- **Alignement AGNU** (`dip.alignment`) : point idéal (Bailey, Strezhnev et Voeten) rééchelonné linéairement de −100 (minimum de la dernière session) à +100 (maximum).
+- **Type de régime** : Regimes of the World (V-Dem) — autocratie fermée → `autocracy`, électorale → `hybrid`, démocratie électorale → `flawed_democracy`, libérale → `democracy` ; juntes, théocraties et monarchies absolues curées (`country_politics.yaml`).
+- **Polarisation** : v2cacamps de V-Dem (0 = forte, 4 = aucune) → (4 − v) / 4 × 100.
+- **Structure des exportations** : parts sectorielles des biens (BACI, HS 2022, par chapitres) × (1 − part des services) + part des services (balance des paiements, médiane mondiale à défaut).
+- **Autosuffisance céréalière** : production / disponibilité intérieure (bilans FAOSTAT) ; parts mondiales d'exportation de céréales et d'engrais (N + P₂O₅ + K₂O).
+- **Autonomie d'armement** : exportations / (importations + exportations) en TIV du SIPRI cumulés sur 10 ans.
+- **Croissance potentielle** : moyenne des projections du FMI à 1–5 ans (repli : moyenne des 10 dernières années de la Banque mondiale).
+- **Expérience de combat** : intensité (0–1) du conflit actif ou en cessez-le-feu le plus intense où l'entité est belligérante (`conflicts.yaml`).
+- **Exposition aux contrôles à l'export** : volet technologique le plus fort des régimes de sanctions visant l'entité.
+- **Paramètres de la carte** : surfaces contrôlée et souveraine, façade maritime, enclavement, répartition des terrains et biomes, capitale, détroits riverains.
+- **Profils décisionnels** (`ai.*`) : `profiles.yaml` pour les 44 pays au niveau complet (hypothèses sur les gouvernements, une justification par valeur), sinon profil par défaut selon le type de régime.
+
+### 2.3 Paramètres bilatéraux
+
+Commerce (BACI, flux ≥ 1 M$), dépendances énergétique et critique (part des importations ≥ 1 % : chapitre 27 ; puces SH 8542 ; terres rares ; céréales ; armes, chapitre 93), traités (engagement le plus fort, blocs à défense mutuelle compris ; crédibilité des blocs 0,8 par hypothèse), sanctions (maximum par volet), droits de douane, revendications, présence militaire (somme des bases), état de guerre (le plus grave des conflits interétatiques), reconnaissance, relations initiales (`relations_seed.yaml`, 148 paires), frontières et distances (carte). Une paire en double sans règle de fusion arrête la construction.
+
+### 2.4 Limites
+
+- Données anciennes signalées dans le rapport : rentes des ressources (2021), indice de capital humain (2020), production d'hydrocarbures des petits producteurs (2016, Shift Data Portal via OWID).
+- Consommations de pétrole, gaz et charbon : Energy Institute (≈ 80 pays) ; les autres par médiane régionale par habitant (confiance faible).
+- Paramètres `HYP` du catalogue (ouverture migratoire, cyber, espace…) : hypothèses par défaut à calibrer (phase 8).
+
 ## Systèmes (à venir)
 
 | Section SPEC | Système                                      | Phase                     |

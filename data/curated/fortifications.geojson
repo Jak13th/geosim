@@ -1,0 +1,236 @@
+{
+  "type": "FeatureCollection",
+  "name": "fortifications",
+  "description": "Lignes fortifiées, zones démilitarisées et champs de mines (SPEC §4.5). level : niveau de fortification 0–100 (hypothèse). Tracés approximatifs quand ils ne viennent pas de Natural Earth.",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "korean_dmz",
+        "nameFr": "Zone démilitarisée coréenne",
+        "countries": ["KOR", "PRK"],
+        "level": 90,
+        "ne_disputed": ["Korean Demilitarized Zone (south)", "Korean Demilitarized Zone (north)"],
+        "source": "https://en.wikipedia.org/wiki/Korean_Demilitarized_Zone",
+        "date": "2026-09-25",
+        "confidence": "high",
+        "note": "Zone de 4 km, champs de mines, lignes fortifiées des deux côtés."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ukraine_front",
+        "nameFr": "Lignes fortifiées du front ukrainien (ligne Sourovikine et défenses ukrainiennes)",
+        "countries": ["UKR", "RUS"],
+        "level": 70,
+        "source": "https://en.wikipedia.org/wiki/Surovikin_line ; DeepStateMap.live (24/09/2026)",
+        "date": "2026-09-25",
+        "confidence": "low",
+        "note": "Bande approximative le long de la ligne de contact (tracé GeoSim)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [32.512, 46.834],
+            [33.309, 47.133],
+            [34.339, 47.543],
+            [35.359, 47.647],
+            [36.139, 47.843],
+            [36.888, 48.024],
+            [37.423, 48.477],
+            [37.781, 48.921],
+            [37.852, 49.172],
+            [37.672, 49.597],
+            [37.376, 50.188],
+            [37.824, 50.412],
+            [38.128, 49.803],
+            [38.348, 49.228],
+            [38.219, 48.679],
+            [37.777, 48.123],
+            [37.112, 47.576],
+            [36.261, 47.357],
+            [35.441, 47.153],
+            [34.461, 47.057],
+            [33.491, 46.667],
+            [32.688, 46.366],
+            [32.512, 46.834]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "loc_kashmir",
+        "nameFr": "Ligne de contrôle au Cachemire",
+        "countries": ["IND", "PAK"],
+        "level": 60,
+        "source": "https://en.wikipedia.org/wiki/Line_of_Control",
+        "date": "2026-09-25",
+        "confidence": "low",
+        "note": "Clôture indienne et postes des deux côtés ; tracé GeoSim approximatif."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [73.68, 32.99],
+            [73.954, 33.336],
+            [73.86, 33.647],
+            [73.654, 34.136],
+            [74.128, 34.632],
+            [74.89, 34.85],
+            [75.682, 34.749],
+            [76.537, 35.036],
+            [76.91, 35.32],
+            [77.09, 35.08],
+            [76.663, 34.764],
+            [75.718, 34.451],
+            [74.91, 34.55],
+            [74.272, 34.368],
+            [73.946, 34.064],
+            [74.14, 33.753],
+            [74.246, 33.264],
+            [73.92, 32.81],
+            [73.68, 32.99]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cyprus_green_line",
+        "nameFr": "Ligne verte de Chypre (zone tampon de l’ONU)",
+        "countries": ["CYP", "CYN"],
+        "level": 30,
+        "ne_disputed": ["Cyprus U.N. Buffer Zone"],
+        "source": "https://en.wikipedia.org/wiki/United_Nations_Buffer_Zone_in_Cyprus",
+        "date": "2026-09-25",
+        "confidence": "high"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "moroccan_berm",
+        "nameFr": "Mur marocain au Sahara occidental",
+        "countries": ["MAR", "ESH"],
+        "level": 60,
+        "source": "https://en.wikipedia.org/wiki/Moroccan_Western_Sahara_Wall",
+        "date": "2026-09-25",
+        "confidence": "low",
+        "note": "2 700 km de remblais et de champs de mines ; tracé GeoSim approximatif."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-13.044, 27.776],
+            [-12.168, 27.316],
+            [-10.7, 27.12],
+            [-9.529, 27.316],
+            [-8.584, 27.529],
+            [-9.108, 25.923],
+            [-10.722, 24.909],
+            [-11.908, 23.522],
+            [-12.894, 22.344],
+            [-13.146, 21.193],
+            [-15.2, 21.18],
+            [-16.9, 21.18],
+            [-16.9, 21.42],
+            [-15.2, 21.42],
+            [-13.254, 21.407],
+            [-13.106, 22.456],
+            [-12.092, 23.678],
+            [-10.878, 25.091],
+            [-9.292, 26.077],
+            [-8.816, 27.471],
+            [-9.471, 27.084],
+            [-10.7, 26.88],
+            [-12.232, 27.084],
+            [-13.156, 27.564],
+            [-13.044, 27.776]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "israel_gaza_barrier",
+        "nameFr": "Barrière et zone tampon de Gaza",
+        "countries": ["ISR", "PSE"],
+        "level": 70,
+        "source": "https://en.wikipedia.org/wiki/Gaza%E2%80%93Israel_barrier",
+        "date": "2026-09-25",
+        "confidence": "low"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [34.22, 31.22],
+            [34.27, 31.22],
+            [34.57, 31.55],
+            [34.53, 31.6],
+            [34.22, 31.22]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "golan_line",
+        "nameFr": "Lignes israéliennes du Golan",
+        "countries": ["ISR", "SYR"],
+        "level": 60,
+        "ne_disputed": ["UNDOF Zone"],
+        "source": "https://en.wikipedia.org/wiki/Purple_Line_(ceasefire_line)",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "finland_border",
+        "nameFr": "Fortifications de la frontière finno-russe et « Bouclier de l’Est » (Pologne, pays baltes)",
+        "countries": ["FIN", "POL", "EST", "LVA", "LTU"],
+        "level": 30,
+        "source": "https://en.wikipedia.org/wiki/East_Shield",
+        "date": "2026-09-25",
+        "confidence": "low",
+        "note": "Clôture finlandaise et programme polono-balte « Bouclier de l’Est » ; seule la frontière finno-russe est tracée."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [27.858, 70.081],
+            [29.294, 69.034],
+            [28.997, 67.022],
+            [30.095, 65.532],
+            [29.987, 64.049],
+            [31.587, 62.751],
+            [28.053, 60.515],
+            [27.947, 60.685],
+            [31.413, 62.849],
+            [29.813, 63.951],
+            [29.905, 65.468],
+            [28.803, 66.978],
+            [29.106, 68.966],
+            [27.742, 69.919],
+            [27.858, 70.081]
+          ]
+        ]
+      }
+    }
+  ]
+}

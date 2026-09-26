@@ -1,0 +1,452 @@
+# Revendications territoriales et maritimes (SPEC §5.2) : revendiquants, contrôle de facto,
+# souveraineté de jure retenue (reconnaissance majoritaire ; null si indéterminée), intensité 0–100
+# (hypothèse). `zone` renvoie à control_zones.geojson ou à claims.geojson.
+version: 1
+disputes:
+  - id: crimea
+    name: Crimea
+    nameFr: Crimée
+    claimants: [UKR, RUS]
+    controller: RUS
+    sovereign: UKR
+    kind: territorial
+    intensity: 90
+    zone: crimea
+    source: https://en.wikipedia.org/wiki/Annexation_of_Crimea_by_the_Russian_Federation
+    date: '2026-09-25'
+    confidence: high
+  - id: ukraine_occupied
+    name: Occupied territories of Ukraine
+    nameFr: Territoires ukrainiens occupés
+    claimants: [UKR, RUS]
+    controller: RUS
+    sovereign: UKR
+    kind: territorial
+    intensity: 95
+    zone: ukraine_occupied
+    source: https://en.wikipedia.org/wiki/Russian-occupied_territories_of_Ukraine
+    date: '2026-09-25'
+    confidence: high
+    note: Annexion proclamée par la Russie en 2022 (Donetsk, Louhansk, Zaporijjia, Kherson), non reconnue.
+  - id: jammu_kashmir
+    name: Indian-administered Kashmir
+    nameFr: Jammu-et-Cachemire administré par l’Inde
+    claimants: [IND, PAK]
+    controller: IND
+    sovereign: null
+    kind: territorial
+    intensity: 60
+    zone: jammu_kashmir
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Kashmir_conflict
+    date: '2026-09-25'
+    confidence: high
+  - id: azad_kashmir
+    name: Pakistani-administered Kashmir
+    nameFr: Cachemire administré par le Pakistan
+    claimants: [PAK, IND]
+    controller: PAK
+    sovereign: null
+    kind: territorial
+    intensity: 50
+    zone: azad_kashmir
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Kashmir_conflict
+    date: '2026-09-25'
+    confidence: high
+  - id: aksai_chin
+    name: Aksai Chin
+    nameFr: Aksai Chin et vallée de Shaksgam
+    claimants: [CHN, IND]
+    controller: CHN
+    sovereign: null
+    kind: territorial
+    intensity: 40
+    zone: aksai_chin
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Aksai_Chin
+    date: '2026-09-25'
+    confidence: high
+  - id: arunachal
+    name: Arunachal Pradesh
+    nameFr: Arunachal Pradesh
+    claimants: [IND, CHN]
+    controller: IND
+    sovereign: null
+    kind: territorial
+    intensity: 45
+    zone: arunachal
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Arunachal_Pradesh
+    date: '2026-09-25'
+    confidence: high
+  - id: taiwan
+    name: Taiwan
+    nameFr: Taïwan (revendication de la RPC)
+    claimants: [TWN, CHN]
+    controller: TWN
+    sovereign: null
+    kind: territorial
+    intensity: 80
+    zone: taiwan
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Political_status_of_Taiwan
+    date: '2026-09-25'
+    confidence: high
+    note: La RPC revendique Taïwan et n'exclut pas l'usage de la force (loi anti-sécession de 2005).
+  - id: spratly
+    name: Spratly Islands
+    nameFr: Îles Spratleys
+    claimants: [CHN, TWN, VNM, PHL, MYS, BRN]
+    controller: null
+    sovereign: null
+    kind: maritime
+    intensity: 60
+    zone: spratly
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Spratly_Islands_dispute
+    date: '2026-09-25'
+    confidence: high
+    note:
+      Occupations partielles par la Chine, le Viêt Nam, les Philippines, la Malaisie et Taïwan ; sentence
+      arbitrale de 2016 rejetée par Pékin.
+  - id: paracels
+    name: Paracel Islands
+    nameFr: Îles Paracels
+    claimants: [CHN, VNM, TWN]
+    controller: CHN
+    sovereign: null
+    kind: maritime
+    intensity: 40
+    zone: paracels
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Paracel_Islands
+    date: '2026-09-25'
+    confidence: high
+  - id: scarborough
+    name: Scarborough Shoal
+    nameFr: Récif de Scarborough
+    claimants: [CHN, PHL, TWN]
+    controller: null
+    sovereign: null
+    kind: maritime
+    intensity: 55
+    zone: scarborough
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Scarborough_Shoal_standoff
+    date: '2026-09-25'
+    confidence: high
+    note: Contrôle chinois de fait depuis 2012 (garde-côtes), réserve naturelle déclarée par Pékin en 2025.
+  - id: senkaku
+    name: Senkaku Islands
+    nameFr: Îles Senkaku (Diaoyu)
+    claimants: [JPN, CHN, TWN]
+    controller: JPN
+    sovereign: null
+    kind: maritime
+    intensity: 45
+    zone: senkaku
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Senkaku_Islands_dispute
+    date: '2026-09-25'
+    confidence: high
+  - id: kuril
+    name: Southern Kuril Islands
+    nameFr: Kouriles du Sud
+    claimants: [RUS, JPN]
+    controller: RUS
+    sovereign: null
+    kind: territorial
+    intensity: 25
+    zone: kuril
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Kuril_Islands_dispute
+    date: '2026-09-25'
+    confidence: high
+  - id: dokdo
+    name: Liancourt Rocks
+    nameFr: Dokdo (Takeshima)
+    claimants: [KOR, JPN]
+    controller: KOR
+    sovereign: null
+    kind: maritime
+    intensity: 15
+    zone: dokdo
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Liancourt_Rocks_dispute
+    date: '2026-09-25'
+    confidence: high
+  - id: golan
+    name: Golan Heights
+    nameFr: Plateau du Golan et fermes de Chebaa
+    claimants: [SYR, ISR, LBN]
+    controller: ISR
+    sovereign: SYR
+    kind: territorial
+    intensity: 40
+    zone: golan
+    source: https://en.wikipedia.org/wiki/Golan_Heights
+    date: '2026-09-25'
+    confidence: high
+    note: Le Liban revendique les fermes de Chebaa.
+  - id: palestine
+    name: Palestinian territories
+    nameFr: Cisjordanie, Jérusalem-Est et Gaza
+    claimants: [PSE, ISR]
+    controller: PSE
+    sovereign: PSE
+    kind: territorial
+    intensity: 75
+    zone: east_jerusalem
+    source: https://en.wikipedia.org/wiki/Israeli-occupied_territories
+    date: '2026-09-25'
+    confidence: high
+    note: Occupation israélienne (zone C de Cisjordanie, Jérusalem-Est, 64 à 70 % de Gaza).
+  - id: western_sahara
+    name: Western Sahara
+    nameFr: Sahara occidental
+    claimants: [ESH, MAR]
+    controller: MAR
+    sovereign: ESH
+    kind: territorial
+    intensity: 40
+    zone: western_sahara
+    source: https://en.wikipedia.org/wiki/Western_Sahara_conflict
+    date: '2026-09-25'
+    confidence: medium
+    note: Le Maroc administre environ 80 % du territoire ; résolution 2797 (2025) favorable au plan d'autonomie.
+  - id: essequibo
+    name: Essequibo
+    nameFr: Guayana Esequiba
+    claimants: [VEN, GUY]
+    controller: GUY
+    sovereign: null
+    kind: territorial
+    intensity: 35
+    zone: essequibo
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Guayana_Esequiba
+    date: '2026-09-25'
+    confidence: medium
+    note: Revendication vénézuélienne ravivée en 2023 ; affaire pendante devant la CIJ.
+  - id: falklands
+    name: Falkland Islands
+    nameFr: Malouines, Géorgie du Sud et Sandwich du Sud
+    claimants: [ARG, GBR]
+    controller: GBR
+    sovereign: null
+    kind: territorial
+    intensity: 20
+    zone: falklands
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Falkland_Islands_sovereignty_dispute
+    date: '2026-09-25'
+    confidence: high
+  - id: gibraltar
+    name: Gibraltar
+    nameFr: Gibraltar
+    claimants: [ESP, GBR]
+    controller: GBR
+    sovereign: null
+    kind: territorial
+    intensity: 10
+    zone: gibraltar
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Disputed_status_of_Gibraltar
+    date: '2026-09-25'
+    confidence: high
+    note: Accord UE–Royaume-Uni sur Gibraltar (2025).
+  - id: abkhazia_ossetia
+    name: Abkhazia and South Ossetia
+    nameFr: Abkhazie et Ossétie du Sud
+    claimants: [GEO, ABK, OSS]
+    controller: ABK
+    sovereign: GEO
+    kind: territorial
+    intensity: 30
+    zone: abkhazia
+    source: https://en.wikipedia.org/wiki/Russian-occupied_territories_in_Georgia
+    date: '2026-09-25'
+    confidence: high
+    note: La Géorgie considère ces territoires comme occupés par la Russie.
+  - id: transnistria
+    name: Transnistria
+    nameFr: Transnistrie
+    claimants: [MDA, PMR]
+    controller: PMR
+    sovereign: MDA
+    kind: territorial
+    intensity: 15
+    zone: transnistria
+    source: https://en.wikipedia.org/wiki/Transnistria
+    date: '2026-09-25'
+    confidence: high
+  - id: northern_cyprus
+    name: Northern Cyprus
+    nameFr: Chypre du Nord
+    claimants: [CYP, CYN]
+    controller: CYN
+    sovereign: CYP
+    kind: territorial
+    intensity: 25
+    zone: northern_cyprus
+    source: https://en.wikipedia.org/wiki/Cyprus_problem
+    date: '2026-09-25'
+    confidence: high
+  - id: somaliland
+    name: Somaliland
+    nameFr: Somaliland
+    claimants: [SOM, SOL]
+    controller: SOL
+    sovereign: SOM
+    kind: territorial
+    intensity: 30
+    zone: somaliland
+    source: https://en.wikipedia.org/wiki/Somaliland
+    date: '2026-09-25'
+    confidence: high
+  - id: kosovo
+    name: Kosovo
+    nameFr: Kosovo
+    claimants: [SRB, XKX]
+    controller: XKX
+    sovereign: XKX
+    kind: territorial
+    intensity: 35
+    zone: kosovo
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Political_status_of_Kosovo
+    date: '2026-09-25'
+    confidence: high
+    note: "Souveraineté retenue : Kosovo (reconnu par 110 États membres de l'ONU) ; la Serbie le revendique."
+  - id: abu_musa
+    name: Abu Musa and the Tunbs
+    nameFr: Abou Moussa et les Tunb
+    claimants: [ARE, IRN]
+    controller: IRN
+    sovereign: null
+    kind: territorial
+    intensity: 30
+    zone: abu_musa
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Abu_Musa
+    date: '2026-09-25'
+    confidence: high
+  - id: halaib
+    name: Hala'ib Triangle
+    nameFr: Triangle de Halayeb
+    claimants: [SDN, EGY]
+    controller: EGY
+    sovereign: null
+    kind: territorial
+    intensity: 15
+    zone: halaib
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Hala%27ib_Triangle
+    date: '2026-09-25'
+    confidence: high
+  - id: ilemi
+    name: Ilemi Triangle
+    nameFr: Triangle d’Ilemi
+    claimants: [SSD, KEN]
+    controller: KEN
+    sovereign: null
+    kind: territorial
+    intensity: 10
+    zone: ilemi
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Ilemi_Triangle
+    date: '2026-09-25'
+    confidence: high
+  - id: abyei
+    name: Abyei
+    nameFr: Abyei
+    claimants: [SDN, SSD]
+    controller: SDN
+    sovereign: null
+    kind: territorial
+    intensity: 30
+    zone: abyei
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Abyei
+    date: '2026-09-25'
+    confidence: medium
+  - id: chagos
+    name: Chagos Archipelago
+    nameFr: Archipel des Chagos
+    claimants: [MUS, GBR]
+    controller: GBR
+    sovereign: null
+    kind: territorial
+    intensity: 20
+    zone: chagos
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Chagos_Archipelago_sovereignty_dispute
+    date: '2026-09-25'
+    confidence: medium
+    note: Traité de transfert signé le 22/05/2025, non entré en vigueur au 25/09/2026.
+  - id: mayotte
+    name: Mayotte
+    nameFr: Mayotte
+    claimants: [COM, FRA]
+    controller: FRA
+    sovereign: null
+    kind: territorial
+    intensity: 10
+    zone: mayotte
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Mayotte
+    date: '2026-09-25'
+    confidence: high
+  - id: belize
+    name: Belize territorial dispute
+    nameFr: Revendication guatémaltèque sur le Belize
+    claimants: [GTM, BLZ]
+    controller: BLZ
+    sovereign: null
+    kind: territorial
+    intensity: 10
+    zone: belize
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Guatemalan_claim_to_Belize
+    date: '2026-09-25'
+    confidence: high
+    note: Affaire pendante devant la CIJ.
+  - id: bhutan_china
+    name: Bhutan–China border
+    nameFr: Frontière sino-bhoutanaise
+    claimants: [CHN, BTN]
+    controller: BTN
+    sovereign: null
+    kind: territorial
+    intensity: 15
+    zone: bhutan_china
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Bhutan%E2%80%93China_border
+    date: '2026-09-25'
+    confidence: medium
+  - id: kalapani
+    name: Kalapani territory
+    nameFr: Kalapani (Om Parvat)
+    claimants: [NPL, IND]
+    controller: IND
+    sovereign: null
+    kind: territorial
+    intensity: 10
+    zone: kalapani
+    source: Natural Earth 5.1.1 (zones disputées) ; https://en.wikipedia.org/wiki/Kalapani_territory
+    date: '2026-09-25'
+    confidence: medium
+  - id: aegean
+    name: Aegean dispute
+    nameFr: Différends de la mer Égée
+    claimants: [GRC, TUR]
+    controller: null
+    sovereign: null
+    kind: maritime
+    intensity: 25
+    source: https://en.wikipedia.org/wiki/Aegean_dispute
+    date: '2026-09-25'
+    confidence: high
+    note: Plateau continental, espace aérien, eaux territoriales ; sans géométrie.
+  - id: east_china_sea
+    name: East China Sea EEZ dispute
+    nameFr: Zones économiques de la mer de Chine orientale
+    claimants: [CHN, JPN]
+    controller: null
+    sovereign: null
+    kind: maritime
+    intensity: 20
+    source: https://en.wikipedia.org/wiki/East_China_Sea_EEZ_disputes
+    date: '2026-09-25'
+    confidence: high
+    note: Sans géométrie.
+  - id: temples_thai_cambodia
+    name: Cambodia–Thailand border
+    nameFr: Frontière khméro-thaïlandaise (temples de Preah Vihear, Ta Muen)
+    claimants: [KHM, THA]
+    controller: THA
+    sovereign: null
+    kind: territorial
+    intensity: 25
+    source: https://en.wikipedia.org/wiki/2025_Cambodian%E2%80%93Thai_border_conflict
+    date: '2026-09-25'
+    confidence: medium
+    note: Sans géométrie (quelques kilomètres carrés).

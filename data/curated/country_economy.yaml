@@ -1,0 +1,529 @@
+# Valeurs pays curées — économie et finances (SPEC §5.2). Une section par paramètre du catalogue, avec
+# provenance commune (source, date de consultation, confiance) et valeurs par code pays.
+version: 1
+params:
+  eco.credit_rating:
+    source:
+      https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating (notations S&P à long terme
+      en devises, carte de juin 2026)
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      "Échelle S&P convertie : AAA = 20, AA+ = 19 … B− = 5, CCC+ = 4 … D = 0. La Russie n'est plus
+      notée depuis 2022 (valeur par défaut)."
+    values:
+      AGO: { value: 5, note: S&P B− }
+      ALB: { value: 9, note: S&P BB }
+      AND: { value: 14, note: S&P A− }
+      ARE: { value: 18, note: S&P AA }
+      ARG: { value: 5, note: S&P B− }
+      ARM: { value: 8, note: S&P BB− }
+      AUS: { value: 20, note: S&P AAA }
+      AUT: { value: 19, note: S&P AA+ }
+      AZE: { value: 10, note: S&P BB+ }
+      BEL: { value: 18, note: S&P AA }
+      BEN: { value: 8, note: S&P BB− }
+      BFA: { value: 4, note: S&P CCC+ }
+      BGD: { value: 7, note: S&P B+ }
+      BGR: { value: 13, note: S&P BBB+ }
+      BHR: { value: 6, note: S&P B }
+      BHS: { value: 8, note: S&P BB− }
+      BIH: { value: 7, note: S&P B+ }
+      BLZ: { value: 5, note: S&P B− }
+      BOL: { value: 4, note: S&P CCC+ }
+      BRA: { value: 9, note: S&P BB }
+      BRB: { value: 7, note: S&P B+ }
+      BWA: { value: 12, note: S&P BBB }
+      CAN: { value: 20, note: S&P AAA }
+      CHE: { value: 20, note: S&P AAA }
+      CHL: { value: 15, note: S&P A }
+      CHN: { value: 16, note: S&P A+ }
+      CIV: { value: 9, note: S&P BB }
+      CMR: { value: 5, note: S&P B− }
+      COD: { value: 5, note: S&P B− }
+      COG: { value: 4, note: S&P CCC+ }
+      COL: { value: 9, note: S&P BB }
+      CPV: { value: 6, note: S&P B }
+      CRI: { value: 9, note: S&P BB }
+      CYP: { value: 14, note: S&P A− }
+      CZE: { value: 17, note: S&P AA− }
+      DEU: { value: 20, note: S&P AAA }
+      DNK: { value: 20, note: S&P AAA }
+      DOM: { value: 9, note: S&P BB }
+      ECU: { value: 5, note: S&P B− }
+      EGY: { value: 6, note: S&P B }
+      ESP: { value: 16, note: S&P A+ }
+      EST: { value: 16, note: S&P A+ }
+      ETH: { value: 0, note: S&P SD }
+      FIN: { value: 19, note: S&P AA+ }
+      FJI: { value: 7, note: S&P B+ }
+      FRA: { value: 16, note: S&P A+ }
+      GBR: { value: 18, note: S&P AA }
+      GEO: { value: 9, note: S&P BB }
+      GHA: { value: 5, note: S&P B− }
+      GIN: { value: 7, note: S&P B+ }
+      GRC: { value: 12, note: S&P BBB }
+      GTM: { value: 10, note: S&P BB+ }
+      HND: { value: 8, note: S&P BB− }
+      HRV: { value: 15, note: S&P A }
+      HUN: { value: 11, note: S&P BBB− }
+      IDN: { value: 12, note: S&P BBB }
+      IND: { value: 12, note: S&P BBB }
+      IRL: { value: 19, note: S&P AA+ }
+      IRQ: { value: 5, note: S&P B− }
+      ISL: { value: 16, note: S&P A+ }
+      ISR: { value: 15, note: S&P A }
+      ITA: { value: 13, note: S&P BBB+ }
+      JAM: { value: 9, note: S&P BB }
+      JOR: { value: 8, note: S&P BB− }
+      JPN: { value: 16, note: S&P A+ }
+      KAZ: { value: 12, note: S&P BBB }
+      KEN: { value: 6, note: S&P B }
+      KGZ: { value: 7, note: S&P B+ }
+      KOR: { value: 18, note: S&P AA }
+      KWT: { value: 17, note: S&P AA− }
+      LAO: { value: 4, note: S&P CCC+ }
+      LBN: { value: 0, note: S&P SD }
+      LIE: { value: 20, note: S&P AAA }
+      LKA: { value: 4, note: S&P CCC+ }
+      LTU: { value: 15, note: S&P A }
+      LUX: { value: 20, note: S&P AAA }
+      LVA: { value: 15, note: S&P A }
+      MAR: { value: 11, note: S&P BBB− }
+      MDA: { value: 8, note: S&P BB− }
+      MDG: { value: 5, note: S&P B− }
+      MEX: { value: 12, note: S&P BBB }
+      MKD: { value: 8, note: S&P BB− }
+      MLT: { value: 14, note: S&P A− }
+      MNE: { value: 7, note: S&P B+ }
+      MNG: { value: 8, note: S&P BB− }
+      MOZ: { value: 4, note: S&P CCC+ }
+      MUS: { value: 11, note: S&P BBB− }
+      MYS: { value: 14, note: S&P A− }
+      NGA: { value: 5, note: S&P B− }
+      NIC: { value: 7, note: S&P B+ }
+      NLD: { value: 20, note: S&P AAA }
+      NOR: { value: 20, note: S&P AAA }
+      NZL: { value: 19, note: S&P AA+ }
+      OMN: { value: 11, note: S&P BBB− }
+      PAK: { value: 5, note: S&P B− }
+      PAN: { value: 11, note: S&P BBB− }
+      PER: { value: 11, note: S&P BBB− }
+      PHL: { value: 13, note: S&P BBB+ }
+      PNG: { value: 5, note: S&P B− }
+      POL: { value: 14, note: S&P A− }
+      PRT: { value: 16, note: S&P A+ }
+      PRY: { value: 11, note: S&P BBB− }
+      QAT: { value: 18, note: S&P AA }
+      ROU: { value: 11, note: S&P BBB− }
+      RWA: { value: 7, note: S&P B+ }
+      SAU: { value: 16, note: S&P A+ }
+      SEN: { value: 4, note: S&P CCC+ }
+      SGP: { value: 20, note: S&P AAA }
+      SLV: { value: 5, note: S&P B− }
+      SMR: { value: 13, note: S&P BBB+ }
+      SRB: { value: 11, note: S&P BBB− }
+      SUR: { value: 4, note: S&P CCC+ }
+      SVK: { value: 15, note: S&P A }
+      SVN: { value: 18, note: S&P AA }
+      SWE: { value: 20, note: S&P AAA }
+      TCD: { value: 5, note: S&P B− }
+      TGO: { value: 7, note: S&P B+ }
+      THA: { value: 13, note: S&P BBB+ }
+      TJK: { value: 6, note: S&P B }
+      TTO: { value: 11, note: S&P BBB− }
+      TUR: { value: 8, note: S&P BB− }
+      TWN: { value: 19, note: S&P AA+ }
+      UGA: { value: 5, note: S&P B− }
+      UKR: { value: 4, note: S&P CCC+ }
+      URY: { value: 13, note: S&P BBB+ }
+      USA: { value: 19, note: S&P AA+ }
+      UZB: { value: 9, note: S&P BB }
+      VNM: { value: 10, note: S&P BB+ }
+      ZAF: { value: 9, note: S&P BB }
+      ZMB: { value: 4, note: S&P CCC+ }
+  eco.reserve_currency:
+    source: 'FMI, COFER 2026T1 : https://data.imf.org/en/news/imf%20data%20brief%20july%201'
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      "Part de la monnaie dans les réserves allouées (dollar 57,13 %, euro 20,03 %, yen 5,44 %, renminbi
+      1,99 %) ; livre, dollars canadien et australien, franc suisse : répartition des 9,2 % restants selon
+      leurs parts de 2025 (estimation). L'euro est attribué à chaque membre de la zone euro."
+    values:
+      {
+        AUS: 0.02,
+        AUT: 0.2003,
+        BEL: 0.2003,
+        BGR: 0.2003,
+        CAN: 0.025,
+        CHE: 0.002,
+        CHN: 0.0199,
+        CYP: 0.2003,
+        DEU: 0.2003,
+        ESP: 0.2003,
+        EST: 0.2003,
+        FIN: 0.2003,
+        FRA: 0.2003,
+        GBR: 0.046,
+        GRC: 0.2003,
+        HRV: 0.2003,
+        IRL: 0.2003,
+        ITA: 0.2003,
+        JPN: 0.0544,
+        LTU: 0.2003,
+        LUX: 0.2003,
+        LVA: 0.2003,
+        MLT: 0.2003,
+        NLD: 0.2003,
+        PRT: 0.2003,
+        SVK: 0.2003,
+        SVN: 0.2003,
+        USA: 0.5713,
+      }
+  eco.exchange_regime:
+    source:
+      'FMI, Annual Report on Exchange Arrangements and Exchange Restrictions 2024 (classification
+      de fait simplifiée) ; unions monétaires : blocs.yaml'
+    date: '2026-09-25'
+    confidence: medium
+    note:
+      "Classification simplifiée : flottant (floating, free floating), géré (arrangements administrés
+      et régimes intermédiaires), fixe (ancrages et caisses d'émission), union monétaire, dollarisé (monnaie
+      étrangère, dollar, euro ou autre). Inde, Pakistan, Argentine et Turquie : flottement fortement administré."
+    values:
+      {
+        AFG: managed,
+        AGO: managed,
+        ALB: floating,
+        AND: dollarized,
+        ARE: fixed,
+        ARG: managed,
+        ARM: floating,
+        ATG: monetary_union,
+        AUS: floating,
+        AUT: monetary_union,
+        AZE: managed,
+        BEL: monetary_union,
+        BEN: monetary_union,
+        BFA: monetary_union,
+        BGD: managed,
+        BGR: monetary_union,
+        BHR: fixed,
+        BHS: fixed,
+        BIH: fixed,
+        BLR: managed,
+        BLZ: fixed,
+        BOL: managed,
+        BRA: floating,
+        BRB: fixed,
+        BRN: fixed,
+        BTN: fixed,
+        CAF: monetary_union,
+        CAN: floating,
+        CHE: floating,
+        CHL: floating,
+        CHN: managed,
+        CIV: monetary_union,
+        CMR: monetary_union,
+        COG: monetary_union,
+        COL: floating,
+        COM: fixed,
+        CPV: fixed,
+        CRI: managed,
+        CUB: fixed,
+        CYP: monetary_union,
+        CZE: floating,
+        DEU: monetary_union,
+        DJI: fixed,
+        DMA: monetary_union,
+        DNK: fixed,
+        DOM: managed,
+        DZA: managed,
+        ECU: dollarized,
+        EGY: floating,
+        ERI: fixed,
+        ESP: monetary_union,
+        EST: monetary_union,
+        ETH: managed,
+        FIN: monetary_union,
+        FRA: monetary_union,
+        FSM: dollarized,
+        GAB: monetary_union,
+        GBR: floating,
+        GEO: floating,
+        GHA: floating,
+        GNB: monetary_union,
+        GNQ: monetary_union,
+        GRC: monetary_union,
+        GRD: monetary_union,
+        GTM: managed,
+        HND: managed,
+        HRV: monetary_union,
+        HTI: managed,
+        HUN: floating,
+        IDN: floating,
+        IND: managed,
+        IRL: monetary_union,
+        IRN: managed,
+        IRQ: managed,
+        ISL: floating,
+        ISR: floating,
+        ITA: monetary_union,
+        JAM: managed,
+        JOR: fixed,
+        JPN: floating,
+        KAZ: floating,
+        KEN: floating,
+        KGZ: managed,
+        KHM: managed,
+        KIR: dollarized,
+        KNA: monetary_union,
+        KOR: floating,
+        KWT: fixed,
+        LAO: managed,
+        LBN: managed,
+        LBY: managed,
+        LCA: monetary_union,
+        LIE: dollarized,
+        LKA: managed,
+        LSO: fixed,
+        LTU: monetary_union,
+        LUX: monetary_union,
+        LVA: monetary_union,
+        MAR: managed,
+        MCO: dollarized,
+        MDA: floating,
+        MDG: floating,
+        MEX: floating,
+        MHL: dollarized,
+        MLI: monetary_union,
+        MLT: monetary_union,
+        MMR: managed,
+        MNE: dollarized,
+        MNG: managed,
+        MOZ: managed,
+        MUS: floating,
+        MYS: floating,
+        NAM: fixed,
+        NER: monetary_union,
+        NGA: floating,
+        NIC: managed,
+        NLD: monetary_union,
+        NOR: floating,
+        NPL: fixed,
+        NRU: dollarized,
+        NZL: floating,
+        OMN: fixed,
+        PAK: managed,
+        PAN: dollarized,
+        PER: floating,
+        PHL: floating,
+        PLW: dollarized,
+        POL: floating,
+        PRK: fixed,
+        PRT: monetary_union,
+        PRY: managed,
+        QAT: fixed,
+        ROU: managed,
+        RUS: floating,
+        SAU: fixed,
+        SDN: managed,
+        SEN: monetary_union,
+        SGP: managed,
+        SLV: dollarized,
+        SMR: dollarized,
+        SRB: floating,
+        STP: fixed,
+        SVK: monetary_union,
+        SVN: monetary_union,
+        SWE: floating,
+        SWZ: fixed,
+        SYR: managed,
+        TCD: monetary_union,
+        TGO: monetary_union,
+        THA: floating,
+        TJK: managed,
+        TKM: fixed,
+        TLS: dollarized,
+        TTO: managed,
+        TUN: managed,
+        TUR: managed,
+        TUV: dollarized,
+        TZA: managed,
+        UGA: floating,
+        UKR: managed,
+        URY: floating,
+        USA: floating,
+        UZB: managed,
+        VAT: dollarized,
+        VCT: monetary_union,
+        VEN: managed,
+        VNM: managed,
+        XKX: dollarized,
+        YEM: managed,
+        ZAF: floating,
+        ZMB: floating,
+        ZWE: dollarized,
+      }
+  eco.inflation_target:
+    source:
+      'https://en.wikipedia.org/wiki/Inflation_targeting ; sites des banques centrales (Afrique
+      du Sud : cible de 3 % adoptée en novembre 2025 ; Chine : « autour de 2 % » en 2025-2026)'
+    date: '2026-09-25'
+    confidence: medium
+    note: 'Cible ponctuelle ou milieu de fourchette ; zone euro : 2 % (BCE).'
+    values:
+      {
+        USA: 2,
+        JPN: 2,
+        GBR: 2,
+        CAN: 2,
+        AUS: 2.5,
+        NZL: 2,
+        CHE: 1,
+        SWE: 2,
+        NOR: 2,
+        ISL: 2.5,
+        KOR: 2,
+        CHN: 2,
+        IND: 4,
+        IDN: 2.5,
+        BRA: 3,
+        MEX: 3,
+        CHL: 3,
+        COL: 3,
+        PER: 2,
+        ZAF: 3,
+        TUR: 5,
+        RUS: 4,
+        POL: 2.5,
+        CZE: 2,
+        HUN: 3,
+        ROU: 2.5,
+        ISR: 2,
+        PHL: 3,
+        THA: 2,
+        VNM: 4.5,
+        EGY: 7,
+        NGA: 7.5,
+        GHA: 8,
+        KEN: 5,
+        UKR: 5,
+        KAZ: 5,
+        PAK: 6,
+        UZB: 5,
+        GEO: 3,
+        ARM: 3,
+        SRB: 3,
+        MDA: 5,
+        UGA: 5,
+        DOM: 4,
+        GTM: 4,
+        CRI: 3,
+        PRY: 3.5,
+        URY: 4.5,
+        JAM: 5,
+        ALB: 3,
+        MKD: 2,
+        BGD: 5.5,
+        LKA: 5,
+        NPL: 5,
+        AUT: 2,
+        BEL: 2,
+        BGR: 2,
+        HRV: 2,
+        CYP: 2,
+        EST: 2,
+        FIN: 2,
+        FRA: 2,
+        DEU: 2,
+        GRC: 2,
+        IRL: 2,
+        ITA: 2,
+        LVA: 2,
+        LTU: 2,
+        LUX: 2,
+        MLT: 2,
+        NLD: 2,
+        PRT: 2,
+        SVK: 2,
+        SVN: 2,
+        ESP: 2,
+      }
+  eco.sovereign_fund:
+    source:
+      'Global SWF et SWFI, classements 2025-2026 (fonds par pays, arrondis) : https://globalswf.com/ranking
+      ; https://en.wikipedia.org/wiki/Sovereign_wealth_fund'
+    date: '2026-09-25'
+    confidence: low
+    note:
+      'Actifs sous gestion en Md$, ordres de grandeur agrégés par pays (Chine : CIC et SAFE IC ; Émirats
+      : ADIA, Mubadala, ADQ, ICD ; Indonésie : Danantara, annoncé à 900 Md$).'
+    values:
+      {
+        NOR: 2000,
+        CHN: 2500,
+        ARE: 2100,
+        SAU: 950,
+        KWT: 1000,
+        SGP: 1150,
+        QAT: 550,
+        IDN: 900,
+        RUS: 140,
+        AUS: 200,
+        KOR: 200,
+        KAZ: 65,
+        LBY: 70,
+        AZE: 60,
+        BRN: 70,
+        OMN: 50,
+        TUR: 300,
+        IRN: 20,
+        NZL: 50,
+        MYS: 30,
+        IRL: 20,
+        TLS: 20,
+        BWA: 5,
+        NGA: 3,
+        CHL: 15,
+        PER: 6,
+        TTO: 6,
+        AGO: 3,
+        BHR: 20,
+        DZA: 5,
+      }
+  eco.foreign_held_debt:
+    source:
+      FMI, Sovereign Debt Investor Base (Arslanalp et Tsuda), dernières données disponibles ; Trésor
+      américain (TIC)
+    date: '2026-09-25'
+    confidence: low
+    note: Part de la dette publique détenue par des non-résidents (%), ordres de grandeur arrondis.
+    values:
+      {
+        USA: 30,
+        JPN: 13,
+        GBR: 28,
+        DEU: 50,
+        FRA: 52,
+        ITA: 28,
+        ESP: 42,
+        CHN: 5,
+        IND: 5,
+        BRA: 10,
+        RUS: 15,
+        TUR: 35,
+        IDN: 25,
+        MEX: 15,
+        ZAF: 25,
+        ARG: 45,
+        EGY: 40,
+        PAK: 40,
+        UKR: 70,
+        KOR: 20,
+        CAN: 25,
+        AUS: 40,
+        SAU: 30,
+        ISR: 15,
+      }

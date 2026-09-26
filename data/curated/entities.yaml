@@ -1,0 +1,389 @@
+# Entités : niveau de détail, entités sans unité Natural Earth (entités de facto issues des zones de
+# contrôle, factions des guerres civiles) et métadonnées des entités absentes de la Banque mondiale.
+# Chaque entrée porte source, date (de consultation) et confiance. Codes : ISO 3166-1 alpha-3 quand
+# il existe ; sinon code GeoSim de trois caractères hors de l'espace ISO attribué.
+version: 1
+
+# Pays au niveau de détail « complet » (SPEC §5.3, DECISIONS D6) : G20 et puissances régionales,
+# pays en conflit, détenteurs de ressources ou de passages critiques. Liste amendable.
+full_detail:
+  [
+    ARG,
+    AUS,
+    BRA,
+    CAN,
+    CHN,
+    FRA,
+    DEU,
+    IND,
+    IDN,
+    ITA,
+    JPN,
+    KOR,
+    MEX,
+    RUS,
+    SAU,
+    ZAF,
+    TUR,
+    GBR,
+    USA,
+    UKR,
+    BLR,
+    POL,
+    NLD,
+    NOR,
+    IRN,
+    ISR,
+    IRQ,
+    ARE,
+    QAT,
+    EGY,
+    PAK,
+    PRK,
+    TWN,
+    VNM,
+    PHL,
+    SGP,
+    NGA,
+    ETH,
+    SDN,
+    COD,
+    CHL,
+    KAZ,
+    YEM,
+    VEN,
+  ]
+
+# Entités sans unité Natural Earth : leurs pixels viennent de control_zones.geojson.
+extra:
+  - id: ABK
+    name: Abkhazia
+    nameFr: Abkhazie
+    kind: de_facto
+    parent: GEO
+    region: ECS
+    income: UMC
+    capital: { name: Sukhumi, lonlat: [41.0234, 43.0015] }
+    recognizedBy: [RUS, SYR, NIC, VEN]
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      République autoproclamée sous protection militaire russe depuis 1993 (reconnaissance russe en
+      2008). Groupe de revenu : hypothèse (économie dépendante de la Russie).
+  - id: OSS
+    name: South Ossetia
+    nameFr: Ossétie du Sud
+    kind: de_facto
+    parent: GEO
+    region: ECS
+    income: UMC
+    capital: { name: Tskhinvali, lonlat: [43.9667, 42.2264] }
+    recognizedBy: [RUS, SYR, NIC, VEN]
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      République autoproclamée, présence militaire russe (4e base). Groupe de revenu : hypothèse.
+  - id: PMR
+    name: Transnistria
+    nameFr: Transnistrie
+    kind: de_facto
+    parent: MDA
+    region: ECS
+    income: UMC
+    capital: { name: Tiraspol, lonlat: [29.6433, 46.8403] }
+    recognizedBy: []
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      République moldave pridnestrovienne, reconnue par aucun État membre de l'ONU ; troupes
+      russes (Groupe opérationnel). Groupe de revenu : hypothèse.
+  - id: RSF
+    name: Rapid Support Forces (Tasis)
+    nameFr: Forces de soutien rapide (Tasis)
+    kind: faction
+    parent: SDN
+    region: SSF
+    income: LIC
+    capital: { name: Nyala, lonlat: [24.8807, 12.0489] }
+    recognizedBy: []
+    source: https://www.sudanspost.com/territorial-control-map-sudan-conflict-as-of-june-21-2026/
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      Forces de soutien rapide et gouvernement parallèle « Tasis » (Nyala), en guerre contre les
+      Forces armées soudanaises depuis avril 2023 ; tiennent le Darfour et des poches du Kordofan.
+  - id: HOU
+    name: Ansar Allah (Houthis)
+    nameFr: Ansar Allah (Houthis)
+    kind: faction
+    parent: YEM
+    region: MEA
+    income: LIC
+    capital: { name: Sanaa, lonlat: [44.2064, 15.3547] }
+    recognizedBy: []
+    source: https://www.aljazeera.com/economy/2026/9/13/red-sea-nations-watch-as-houthis-seize-bab-al-mandeb-strait
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      Autorité de fait de Sanaa (Conseil politique suprême) depuis 2014-2015 ; a pris Mokha et
+      l'île de Périm en septembre 2026.
+  - id: LNA
+    name: Libyan National Army
+    nameFr: Armée nationale libyenne (Haftar)
+    kind: faction
+    parent: LBY
+    region: MEA
+    income: UMC
+    capital: { name: Benghazi, lonlat: [20.0667, 32.1167] }
+    recognizedBy: []
+    source: https://en.wikipedia.org/wiki/Libyan_crisis_(2011%E2%80%93present)
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      Autorités de l'Est (Chambre des représentants, gouvernement de Benghazi) et Armée nationale
+      libyenne : contrôlent la Cyrénaïque et le Fezzan ; le gouvernement d'union nationale (Tripoli)
+      est reconnu par l'ONU.
+  - id: M23
+    name: Congo River Alliance / M23
+    nameFr: Alliance Fleuve Congo / M23
+    kind: faction
+    parent: COD
+    region: SSF
+    income: LIC
+    capital: { name: Goma, lonlat: [29.2285, -1.6792] }
+    recognizedBy: []
+    source: https://www.criticalthreats.org/briefs/congo-war-security-review
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      Rébellion soutenue par le Rwanda ; tient Goma (janvier 2025), Bukavu (février 2025), Walikale
+      et Uvira (décembre 2025). Cadre de paix de Doha (15/11/2025), feuille de route d'août 2026.
+  - id: AAR
+    name: Arakan Army
+    nameFr: Armée d'Arakan
+    kind: faction
+    parent: MMR
+    region: EAS
+    income: LMC
+    capital: { name: Mrauk-U, lonlat: [93.1947, 20.5956] }
+    recognizedBy: []
+    source: https://en.wikipedia.org/wiki/Arakan_Army
+    date: 2026-09-25
+    confidence: low
+    note: >-
+      Contrôle la plus grande partie de l'État d'Arakan (Rakhine) depuis 2024-2025, hors Sittwe,
+      Kyaukphyu et Manaung ; représentée ici par l'État entier (approximation).
+
+# Métadonnées des entités absentes des métadonnées de la Banque mondiale, statistiques incluses dans
+# celles d'un autre pays (population, PIB) et reconnaissance internationale.
+meta:
+  TWN:
+    region: EAS
+    income: HIC
+    recognizedBy: [BLZ, SWZ, GTM, HTI, MHL, PLW, PRY, KNA, LCA, VCT, TUV]
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      Hors Banque mondiale ; revenu élevé (FMI). Reconnu par 11 États membres de l'ONU et le
+      Saint-Siège (hors du périmètre des entités).
+  VAT:
+    region: ECS
+    income: HIC
+    source: https://en.wikipedia.org/wiki/Vatican_City
+    date: 2026-09-25
+    confidence: assumption
+    note: >-
+      Absent des métadonnées de la Banque mondiale ; région Europe et Asie centrale, revenu élevé par
+      hypothèse (économie italienne environnante). Aucun pixel à la résolution de la carte.
+  XKX:
+    recognizedBy: []
+    notRecognizedBy:
+      [
+        SRB,
+        RUS,
+        CHN,
+        IND,
+        BRA,
+        ESP,
+        GRC,
+        CYP,
+        ROU,
+        SVK,
+        UKR,
+        ARG,
+        IDN,
+        ZAF,
+        MEX,
+        IRN,
+        VEN,
+        CUB,
+        VNM,
+        LKA,
+        BIH,
+        MDA,
+        GEO,
+        AZE,
+        ARM,
+        KAZ,
+        BLR,
+        DZA,
+        NGA,
+      ]
+    source: https://en.wikipedia.org/wiki/International_recognition_of_Kosovo
+    date: 2026-09-25
+    confidence: low
+    note: >-
+      Reconnu par 110 États membres de l'ONU ; liste partielle des principaux États qui ne le
+      reconnaissent pas.
+  CYN:
+    region: ECS
+    income: HIC
+    includedIn: { population: CYP }
+    recognizedBy: [TUR]
+    source: https://en.wikipedia.org/wiki/Northern_Cyprus
+    date: 2026-09-25
+    confidence: medium
+    note: >-
+      Reconnue par la seule Turquie. La population de Chypre (Nations unies, Banque mondiale) couvre
+      l'île entière ; le PIB du FMI ne couvre que la zone contrôlée par la République de Chypre.
+  SOL:
+    region: SSF
+    income: LIC
+    includedIn: { population: SOM }
+    recognizedBy: [ISR]
+    source: https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition
+    date: 2026-09-25
+    confidence: medium
+    note: Reconnu par Israël (décembre 2025) ; la population de la Somalie (Nations unies) l'inclut.
+  ESH:
+    region: MEA
+    income: LMC
+    includedIn: { gdp: MAR }
+    recognizedBy:
+      [
+        DZA,
+        AGO,
+        MOZ,
+        PRK,
+        RWA,
+        TZA,
+        ETH,
+        VNM,
+        LAO,
+        NIC,
+        UGA,
+        MEX,
+        LSO,
+        CUB,
+        IRN,
+        SYR,
+        LBY,
+        BWA,
+        ZWE,
+        MUS,
+        VEN,
+        BOL,
+        MRT,
+        NGA,
+        TTO,
+        BLZ,
+        NAM,
+        TLS,
+        ZAF,
+        KEN,
+        URY,
+        SSD,
+        PER,
+        COL,
+        ECU,
+        HND,
+        SLV,
+        MWI,
+        PRY,
+        VUT,
+        GRD,
+        DMA,
+        LCA,
+        GUY,
+        HTI,
+      ]
+    source: https://en.wikipedia.org/wiki/International_recognition_of_the_Sahrawi_Arab_Democratic_Republic
+    date: 2026-09-25
+    confidence: low
+    note: >-
+      République arabe sahraouie démocratique, membre de l'Union africaine. Liste des 45 États
+      membres de l'ONU qui la reconnaissent sans l'avoir retirée ni gelée, relevée sur la page
+      citée (confiance faible : retraits et gels fréquents, statut contesté pour plusieurs pays).
+      Le PIB du Maroc inclut ses « provinces du Sud ».
+  GEO:
+    source: https://population.un.org/wpp/
+    date: 2026-09-25
+    confidence: low
+    note: >-
+      Hypothèse : la population de la Géorgie publiée par la Banque mondiale (3,94 M en 2025,
+      estimation des Nations unies) inclut l'Abkhazie et l'Ossétie du Sud ; on les en retire.
+  PSE:
+    notRecognizedBy:
+      [USA, ISR, DEU, ITA, JPN, KOR, NLD, AUT, CHE, DNK, FIN, GRC, NZL, SGP, CMR, ERI, MMR]
+    source: https://en.wikipedia.org/wiki/International_recognition_of_Palestine
+    date: 2026-09-25
+    confidence: low
+    note: >-
+      Reconnue par 157 États membres de l'ONU (dont France, Royaume-Uni, Canada, Australie depuis
+      septembre 2025) ; liste partielle des principaux États qui ne la reconnaissent pas.
+  ISR:
+    notRecognizedBy:
+      [
+        DZA,
+        IRN,
+        IRQ,
+        KWT,
+        LBN,
+        LBY,
+        OMN,
+        PAK,
+        QAT,
+        SAU,
+        SOM,
+        SYR,
+        TUN,
+        YEM,
+        AFG,
+        BGD,
+        BRN,
+        IDN,
+        MYS,
+        MDV,
+        PRK,
+        CUB,
+        DJI,
+        COM,
+        MLI,
+        NER,
+      ]
+    source: https://en.wikipedia.org/wiki/International_recognition_of_Israel
+    date: 2026-09-25
+    confidence: medium
+    note: États membres de l'ONU qui ne reconnaissent pas Israël (liste consultée, 2026).
+  PRK:
+    notRecognizedBy: [KOR, JPN, FRA, EST]
+    source: https://en.wikipedia.org/wiki/Foreign_relations_of_North_Korea
+    date: 2026-09-25
+    confidence: medium
+    note: États sans reconnaissance diplomatique de la Corée du Nord (la Corée du Sud revendique la péninsule).
+  ARM:
+    notRecognizedBy: [PAK]
+    source: https://en.wikipedia.org/wiki/Armenia%E2%80%93Pakistan_relations
+    date: 2026-09-25
+    confidence: high
+    note: Le Pakistan ne reconnaît pas l'Arménie.
+  CYP:
+    notRecognizedBy: [TUR]
+    source: https://en.wikipedia.org/wiki/Cyprus%E2%80%93Turkey_relations
+    date: 2026-09-25
+    confidence: high
+    note: La Turquie ne reconnaît pas la République de Chypre.

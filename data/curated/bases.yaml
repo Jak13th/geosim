@@ -1,0 +1,646 @@
+# Bases et troupes stationnées à l'étranger au 25/09/2026 (SPEC §5.2) : pays utilisateur, pays hôte
+# (ou entité de facto / faction hôte), effectifs (ordre de grandeur), sites. Hors opérations de
+# maintien de la paix de l'ONU. Effectifs arrondis ; sources : IISS The Military Balance 2026 et
+# pages citées.
+version: 1
+bases:
+  - user: USA
+    host: JPN
+    troops: 55000
+    sites: Yokosuka, Okinawa (Kadena, Futenma), Misawa, Iwakuni
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: high
+  - user: USA
+    host: DEU
+    troops: 35000
+    sites: Ramstein, Grafenwöhr, Stuttgart (EUCOM, AFRICOM)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: high
+  - user: USA
+    host: KOR
+    troops: 28500
+    sites: Camp Humphreys, Osan, Kunsan
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: high
+  - user: USA
+    host: ITA
+    troops: 12000
+    sites: Aviano, Vicenza, Naples, Sigonella
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: high
+  - user: USA
+    host: GBR
+    troops: 10000
+    sites: Lakenheath, Mildenhall, Fairford
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: high
+  - user: USA
+    host: POL
+    troops: 10000
+    sites: Poznań (V Corps avancé), Redzikowo (Aegis Ashore), rotations
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: KWT
+    troops: 13500
+    sites: Camp Arifjan, Ali Al Salem
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: QAT
+    troops: 10000
+    sites: Al Udeid
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+    note: Base frappée par l'Iran en 2025 et 2026.
+  - user: USA
+    host: BHR
+    troops: 9000
+    sites: NSA Bahreïn (Ve Flotte)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: ARE
+    troops: 3500
+    sites: Al Dhafra, Jebel Ali
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: SAU
+    troops: 4000
+    sites: Prince Sultan
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+    note: Renforts de la guerre d'Iran (2026).
+  - user: USA
+    host: JOR
+    troops: 3000
+    sites: Muwaffaq Salti
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: IRQ
+    troops: 2500
+    sites: Erbil, Al-Asad (retrait en cours)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: USA
+    host: SYR
+    troops: 500
+    sites: Nord-Est syrien (retrait engagé en 2026)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: USA
+    host: DJI
+    troops: 4000
+    sites: Camp Lemonnier
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: high
+  - user: USA
+    host: ESP
+    troops: 3200
+    sites: Rota, Morón
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: high
+  - user: USA
+    host: TUR
+    troops: 1700
+    sites: Incirlik, Kürecik
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: ROU
+    troops: 1000
+    sites: Mihail Kogălniceanu, Deveselu (Aegis Ashore)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+    note: Réduction annoncée en 2025.
+  - user: USA
+    host: LTU
+    troops: 1000
+    sites: Rotations (Pabradė)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: USA
+    host: NOR
+    troops: 1000
+    sites: Rotations (Marines, Værnes)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: USA
+    host: BEL
+    troops: 1100
+    sites: SHAPE (Mons), Chièvres
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: NLD
+    troops: 400
+    sites: Volkel, Brunssum
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: GRC
+    troops: 400
+    sites: Souda
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: PRT
+    troops: 250
+    sites: Lajes (Açores)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: ISL
+    troops: 300
+    sites: Keflavík (rotations)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: USA
+    host: DNK
+    troops: 300
+    sites: Base spatiale de Pituffik (Groenland)
+    source: https://en.wikipedia.org/wiki/Pituffik_Space_Base ; https://en.wikipedia.org/wiki/2026
+    date: '2026-09-25'
+    confidence: medium
+    note: Accord du 18/09/2026 élargissant la présence américaine permanente au Groenland.
+  - user: USA
+    host: AUS
+    troops: 2500
+    sites: Darwin (rotations des Marines), Pine Gap
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: PHL
+    troops: 1000
+    sites: Sites EDCA (rotations)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: USA
+    host: HND
+    troops: 500
+    sites: Soto Cano
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: SGP
+    troops: 200
+    sites: Soutien logistique (Sembawang, Paya Lebar)
+    source:
+      https://en.wikipedia.org/wiki/List_of_United_States_military_bases ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: USA
+    host: GBR
+    troops: 1500
+    sites: Diego Garcia (Territoire britannique de l’océan Indien)
+    source: https://en.wikipedia.org/wiki/Naval_Support_Facility_Diego_Garcia
+    date: '2026-09-25'
+    confidence: medium
+    note: Base louée au Royaume-Uni ; comptée avec l'hôte GBR.
+  - user: RUS
+    host: ARM
+    troops: 3000
+    sites: 102e base (Gyumri)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: RUS
+    host: TJK
+    troops: 7000
+    sites: 201e base (Douchanbé, Qurghonteppa)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: RUS
+    host: KGZ
+    troops: 500
+    sites: Base aérienne de Kant
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: RUS
+    host: BLR
+    troops: 2000
+    sites: Baranovitchi, Vileïka ; armes nucléaires non stratégiques
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: RUS
+    host: SYR
+    troops: 1500
+    sites: Hmeimim, Tartous (présence négociée avec les nouvelles autorités)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+    note: Présence réduite depuis la chute d'Assad (décembre 2024).
+  - user: RUS
+    host: ABK
+    troops: 3500
+    sites: 7e base (Goudaouta)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: RUS
+    host: OSS
+    troops: 4000
+    sites: 4e base (Tskhinvali)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: RUS
+    host: PMR
+    troops: 1500
+    sites: Groupe opérationnel des forces russes (Tiraspol, Cobasna)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: RUS
+    host: CAF
+    troops: 1500
+    sites: Africa Corps (ex-Wagner)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: RUS
+    host: MLI
+    troops: 2500
+    sites: Africa Corps
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: RUS
+    host: BFA
+    troops: 300
+    sites: Africa Corps
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: RUS
+    host: LNA
+    troops: 1000
+    sites: Al-Joufra, Brak, Al-Khadim (Est libyen)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Russian_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: CHN
+    host: DJI
+    troops: 2000
+    sites: Base de soutien de Djibouti
+    source: https://en.wikipedia.org/wiki/People%27s_Liberation_Army_Support_Base_in_Djibouti
+    date: '2026-09-25'
+    confidence: medium
+  - user: CHN
+    host: KHM
+    troops: 200
+    sites: Base navale de Ream (installations chinoises)
+    source: https://en.wikipedia.org/wiki/Ream_Naval_Base
+    date: '2026-09-25'
+    confidence: low
+  - user: CHN
+    host: TJK
+    troops: 300
+    sites: Poste de Shaymak (Pamir)
+    source: https://en.wikipedia.org/wiki/China%E2%80%93Tajikistan_relations
+    date: '2026-09-25'
+    confidence: low
+  - user: FRA
+    host: DJI
+    troops: 1500
+    sites: Forces françaises stationnées à Djibouti
+    source:
+      https://en.wikipedia.org/wiki/French_Armed_Forces#Overseas_deployments ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: high
+  - user: FRA
+    host: ARE
+    troops: 650
+    sites: Base navale d’Abou Dhabi, base aérienne 104
+    source:
+      https://en.wikipedia.org/wiki/French_Armed_Forces#Overseas_deployments ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: high
+  - user: FRA
+    host: CIV
+    troops: 100
+    sites: Détachement résiduel (base de Port-Bouët rétrocédée en 2025)
+    source:
+      https://en.wikipedia.org/wiki/French_Armed_Forces#Overseas_deployments ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: FRA
+    host: GAB
+    troops: 100
+    sites: Camp de Gaulle (format réduit)
+    source:
+      https://en.wikipedia.org/wiki/French_Armed_Forces#Overseas_deployments ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: FRA
+    host: ROU
+    troops: 1000
+    sites: Bataillon multinational de l’OTAN (Cincu)
+    source:
+      https://en.wikipedia.org/wiki/French_Armed_Forces#Overseas_deployments ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: FRA
+    host: EST
+    troops: 300
+    sites: Présence avancée renforcée de l’OTAN (Tapa)
+    source:
+      https://en.wikipedia.org/wiki/French_Armed_Forces#Overseas_deployments ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: GBR
+    host: CYP
+    troops: 2500
+    sites: Zones de souveraineté d’Akrotiri et Dhekelia
+    source: https://en.wikipedia.org/wiki/British_Forces_Overseas ; IISS The Military Balance 2026
+    date: '2026-09-25'
+    confidence: high
+    note: Bases souveraines britanniques ; frappées par l'Iran en 2026.
+  - user: GBR
+    host: EST
+    troops: 900
+    sites: Présence avancée renforcée de l’OTAN (Tapa)
+    source: https://en.wikipedia.org/wiki/British_Forces_Overseas ; IISS The Military Balance 2026
+    date: '2026-09-25'
+    confidence: high
+  - user: GBR
+    host: BHR
+    troops: 500
+    sites: HMS Jufair
+    source: https://en.wikipedia.org/wiki/British_Forces_Overseas ; IISS The Military Balance 2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: GBR
+    host: OMN
+    troops: 100
+    sites: Duqm
+    source: https://en.wikipedia.org/wiki/British_Forces_Overseas ; IISS The Military Balance 2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: GBR
+    host: KEN
+    troops: 300
+    sites: BATUK (Nanyuki)
+    source: https://en.wikipedia.org/wiki/British_Forces_Overseas ; IISS The Military Balance 2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: GBR
+    host: BRN
+    troops: 1000
+    sites: Bataillon de Gurkhas (Seria)
+    source: https://en.wikipedia.org/wiki/British_Forces_Overseas ; IISS The Military Balance 2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: GBR
+    host: BLZ
+    troops: 100
+    sites: BATSUB
+    source: https://en.wikipedia.org/wiki/British_Forces_Overseas ; IISS The Military Balance 2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: TUR
+    host: CYN
+    troops: 35000
+    sites: Forces turques à Chypre du Nord
+    source:
+      https://en.wikipedia.org/wiki/List_of_Turkish_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: TUR
+    host: IRQ
+    troops: 2000
+    sites: Bases du Kurdistan irakien (Bashiqa…)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Turkish_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: TUR
+    host: SYR
+    troops: 3000
+    sites: Nord de la Syrie
+    source:
+      https://en.wikipedia.org/wiki/List_of_Turkish_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+    note: Présence réduite et renégociée avec Damas (2025-2026).
+  - user: TUR
+    host: QAT
+    troops: 3000
+    sites: Base Khalid bin al-Walid
+    source:
+      https://en.wikipedia.org/wiki/List_of_Turkish_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: TUR
+    host: SOM
+    troops: 200
+    sites: TURKSOM (Mogadiscio)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Turkish_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: medium
+  - user: TUR
+    host: LBY
+    troops: 500
+    sites: Al-Watiya, Misrata (ouest libyen)
+    source:
+      https://en.wikipedia.org/wiki/List_of_Turkish_military_bases_abroad ; IISS The Military Balance
+      2026
+    date: '2026-09-25'
+    confidence: low
+  - user: JPN
+    host: DJI
+    troops: 180
+    sites: Base d’autodéfense de Djibouti
+    source: https://en.wikipedia.org/wiki/Japan_Self-Defense_Force_Base_Djibouti
+    date: '2026-09-25'
+    confidence: high
+  - user: DEU
+    host: LTU
+    troops: 1500
+    sites: 45e brigade blindée (Rūdninkai), montée en puissance jusqu’en 2027
+    source: https://en.wikipedia.org/wiki/45th_Armoured_Brigade_(Bundeswehr)
+    date: '2026-09-25'
+    confidence: medium
+  - user: IND
+    host: BTN
+    troops: 1000
+    sites: IMTRAT (mission de formation)
+    source: https://en.wikipedia.org/wiki/Indian_Military_Training_Team
+    date: '2026-09-25'
+    confidence: medium
+  - user: IND
+    host: MUS
+    troops: 50
+    sites: Agalega (installations aériennes et navales)
+    source: https://en.wikipedia.org/wiki/Agal%C3%A9ga
+    date: '2026-09-25'
+    confidence: low
+  - user: RWA
+    host: MOZ
+    troops: 4000
+    sites: Cabo Delgado
+    source: https://en.wikipedia.org/wiki/Insurgency_in_Cabo_Delgado
+    date: '2026-09-25'
+    confidence: medium
+  - user: RWA
+    host: M23
+    troops: 4000
+    sites: Nord-Kivu et Sud-Kivu (selon les experts de l’ONU)
+    source: https://www.criticalthreats.org/briefs/congo-war-security-review
+    date: '2026-09-25'
+    confidence: low
+    note: Présence démentie par Kigali.
+  - user: UGA
+    host: COD
+    troops: 4000
+    sites: Ituri, Nord-Kivu (opération Shujaa)
+    source: https://en.wikipedia.org/wiki/Operation_Shujaa
+    date: '2026-09-25'
+    confidence: medium
+  - user: BDI
+    host: COD
+    troops: 10000
+    sites: Sud-Kivu
+    source: https://en.wikipedia.org/wiki/Burundi%E2%80%93Democratic_Republic_of_the_Congo_relations
+    date: '2026-09-25'
+    confidence: low
+  - user: PAK
+    host: SAU
+    troops: 1500
+    sites: Contingent de formation et de protection (accord de défense de 2025)
+    source: https://en.wikipedia.org/wiki/Pakistan%E2%80%93Saudi_Arabia_Strategic_Mutual_Defense_Agreement
+    date: '2026-09-25'
+    confidence: low
+  - user: ARE
+    host: SOL
+    troops: 100
+    sites: Berbera (installations aériennes)
+    source: https://en.wikipedia.org/wiki/Berbera_Airport
+    date: '2026-09-25'
+    confidence: low

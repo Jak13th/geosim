@@ -1,6 +1,7 @@
 /**
- * Construction de la carte (phase 1a) : grille Equal Earth, couches politiques et physiques,
- * éléments, zones maritimes, voisinages, routes et détroits, puis export et validation.
+ * Construction de la carte : grille Equal Earth, couches politiques (zones de contrôle comprises)
+ * et physiques, éléments, population et valeur économique par pixel, zones maritimes,
+ * voisinages, routes et détroits, puis export et validation.
  */
 import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -9,7 +10,9 @@ import { gzipSync } from 'node:zlib';
 import {
   MapFlag,
   createLayers,
+  encodeLand,
   encodeMap,
+  isLand,
   type MapEntity,
   type MapGeo,
   type MapLayers,
@@ -25,7 +28,12 @@ import { readZip } from '../io/zip.ts';
 import { SOURCES, type SourceKey } from '../sources.ts';
 import { buildAdjacency } from './adjacency.ts';
 import { buildDistances } from './distances.ts';
-import { buildEntities, parseCuratedUnits } from './entities.ts';
+import {
+  appendExtraEntities,
+  buildEntities,
+  parseCuratedUnits,
+  type ExtraEntityDef,
+} from './entities.ts';
 import {
   buildCities,
   buildPorts,
@@ -39,7 +47,13 @@ import { globeMask, makeGrid, pixelLonLat } from './grid.ts';
 import { labelPoints, makeTopology } from './gridops.ts';
 import { buildPhysical } from './physical.ts';
 import { rasterizePolitical } from './political.ts';
-import { infrastructurePreview, politicalPreview, seaPreview, terrainPreview } from './preview.ts';
+import {
+  infrastructurePreview,
+  politicalPreview,
+  populationPreview,
+  seaPreview,
+  terrainPreview,
+} from './preview.ts';
 import { tracePolyline } from './raster.ts';
 import { writeMapReport, type MapReportInput } from './report.ts';
 import {
@@ -49,9 +63,17 @@ import {
   chokepointErrors,
   parseChokepoints,
 } from './routing.ts';
+import { distributePopulation, type UnitTotals } from './population.ts';
 import { buildSeaZones } from './seaZones.ts';
 import { entityStats } from './stats.ts';
 import { validateMap } from './validate.ts';
+import { applyControlZones, type ControlZone, type ZoneResult } from './zones.ts';
+
+/**
+ * Surface (en pixels) sous laquelle une zone de contrôle peut ne contenir aucun centre de pixel :
+ * elle est alors seulement signalée (Jérusalem-Est, 70 km², tombe entre les centres à 4096 px).
+ */
+const ZONE_BELOW_RESOLUTION_PX = 2;
 
 /** Tolérance de simplification des tracés de routes (pixels) : tracés pour l'affichage seulement. */
 const ROUTE_SIMPLIFY_PX = 4;
@@ -64,9 +86,23 @@ export interface BuildMapOptions {
   modelConfigPath: string;
   manifestPath: string;
   log: (message: string) => void;
+  /** Entités sans unité Natural Earth (entities.yaml). */
+  extraEntities: readonly ExtraEntityDef[];
+  /** Zones de contrôle (control_zones.geojson), appliquées dans l'ordre. */
+  zones: readonly ControlZone[];
+  /** Totaux statistiques par code d'entité (population, PIB, urbanisation). */
+  totals: ReadonlyMap<string, UnitTotals>;
+  /** Entités de facto dont les statistiques propres couvrent le territoire qu'elles contrôlent. */
+  ownStats: ReadonlySet<string>;
 }
 
-export async function buildMap(options: BuildMapOptions): Promise<void> {
+export interface BuiltMap {
+  meta: MapMeta;
+  geo: MapGeo;
+  zones: ZoneResult[];
+}
+
+export async function buildMap(options: BuildMapOptions): Promise<BuiltMap> {
   const { log } = options;
   const config = await loadModelConfig(options.modelConfigPath);
   const curated = parseCuratedUnits(await loadYaml(join(options.curatedDir, 'ne_units.yaml')));
@@ -95,6 +131,7 @@ export async function buildMap(options: BuildMapOptions): Promise<void> {
   // Couches politiques.
   const countries = await ne('countries');
   const table = buildEntities(countries, curated);
+  appendExtraEntities(table, curated, options.extraEntities);
   const political = rasterizePolitical(grid, topology, countries, table);
   log(
     `${table.entities.length} entités, ${table.units.length} unités ; ${political.forced.length} pixels garantis (micro-États), ${political.overlaps} chevauchements`,
@@ -131,6 +168,29 @@ export async function buildMap(options: BuildMapOptions): Promise<void> {
   log(
     `Terrain et biomes ; sans altitude : ${physical.missingElevation} px, sans climat : ${physical.missingClimate} px`,
   );
+
+  // Zones de contrôle et souveraineté de jure (control_zones.geojson).
+  const zoneResults = applyControlZones(
+    grid,
+    physical.terrain,
+    political.owner,
+    political.sovereign,
+    options.zones,
+    table.entityIndex,
+    await ne('disputed'),
+    await ne('admin1'),
+  );
+  log(
+    `Zones de contrôle : ${zoneResults.length} appliquées, ${zoneResults.reduce((s, z) => s + z.pixels, 0)} pixels modifiés`,
+  );
+  const belowResolution = zoneResults.filter(
+    (z) => z.pixels === 0 && z.areaPx < ZONE_BELOW_RESOLUTION_PX,
+  );
+  if (belowResolution.length > 0) {
+    log(
+      `Zones sous la résolution de la carte : ${belowResolution.map((z) => `${z.id} (${z.areaPx.toFixed(2)} px)`).join(', ')}`,
+    );
+  }
 
   const layers: MapLayers = createLayers(grid.width, grid.height);
   layers.unit.set(political.unit);
@@ -187,6 +247,38 @@ export async function buildMap(options: BuildMapOptions): Promise<void> {
   );
   log(
     `Fleuves : ${riverPixels} px ; aéroports : ${airports} ; villes : ${cities.length} ; capitales : ${capitals.length}/${table.entities.length} ; ports : ${ports.length} (${dropped.length} écartés)`,
+  );
+
+  // Population et valeur économique : chaque pixel relève de l'unité statistique qui le couvre.
+  const ownStatsIndex = new Set(
+    [...options.ownStats].map((id) => table.entityIndex.get(id)).filter((i) => i !== undefined),
+  );
+  const unitOf = new Uint16Array(grid.width * grid.height);
+  for (let p = 0; p < unitOf.length; p++) {
+    if (!isLand(layers.terrain[p] as number)) continue;
+    const o = layers.owner[p] as number;
+    unitOf[p] = ownStatsIndex.has(o) ? o : (layers.sovereign[p] as number);
+  }
+  const totalsByIndex = new Map<number, UnitTotals>();
+  for (const [id, t] of options.totals) {
+    const index = table.entityIndex.get(id);
+    if (index !== undefined) totalsByIndex.set(index, t);
+  }
+  const people = distributePopulation({
+    grid,
+    terrain: layers.terrain,
+    biome: layers.biome,
+    urban: layers.urban,
+    flags: layers.flags,
+    unitOf,
+    cities,
+    totals: totalsByIndex,
+    config,
+  });
+  let worldPopulation = 0;
+  for (let p = 0; p < unitOf.length; p++) worldPopulation += people.population[p] as number;
+  log(
+    `Population répartie : ${(worldPopulation / 1e9).toFixed(3)} milliard(s) d'habitants ; écart maximal aux totaux ${(100 * people.maxRelativeError).toExponential(1)} %`,
   );
 
   // Zones maritimes et voisinages.
@@ -258,6 +350,8 @@ export async function buildMap(options: BuildMapOptions): Promise<void> {
     adjacency.coastlineKm,
     access,
     ids,
+    people.population,
+    people.economicValue,
   );
   const labels = labelPoints(topology, layers.owner, entityCount);
   const lonLatOf = (p: number): [number, number] => {
@@ -336,6 +430,19 @@ export async function buildMap(options: BuildMapOptions): Promise<void> {
     }),
     cities,
     ports,
+    controlZones: options.zones.map((z) => ({
+      id: z.id,
+      nameFr: z.nameFr,
+      controller: z.controller,
+      sovereign: z.sovereign,
+      pixels: zoneResults.find((r) => r.id === z.id)?.pixels ?? 0,
+      provenance: {
+        source: z.source,
+        date: z.date,
+        confidence: z.confidence,
+        ...(z.note ? { note: z.note } : {}),
+      },
+    })),
   };
   const geo: MapGeo = {
     version: 1,
@@ -354,6 +461,16 @@ export async function buildMap(options: BuildMapOptions): Promise<void> {
   const errors = [
     ...chokepointErrors(network.checks),
     ...validateMap(grid, layers, table, political, capitals),
+    ...zoneResults.flatMap((z) => [
+      ...z.missing.map((m) => `zone ${z.id} : ${m} introuvable`),
+      ...(z.pixels === 0 && z.areaPx >= ZONE_BELOW_RESOLUTION_PX
+        ? [`zone ${z.id} : aucun pixel modifié`]
+        : []),
+    ]),
+    ...people.unplaced.map((u) => `${ids[u - 1]} : population sans pixel`),
+    ...(people.maxRelativeError > 1e-6
+      ? [`population : écart aux totaux nationaux ${people.maxRelativeError}`]
+      : []),
   ];
 
   // Export.
@@ -376,6 +493,24 @@ export async function buildMap(options: BuildMapOptions): Promise<void> {
   await writeFile(join(outDir, `map-${tag}.json`), JSON.stringify(meta));
   await writeFile(join(outDir, `geo-${tag}.json`), JSON.stringify(geo));
   await writeFile(join(outDir, `routes-${tag}.json`), JSON.stringify(routesFile));
+  // Couches compactées sur les pixels terrestres (DECISIONS D7).
+  let landCount = 0;
+  for (let p = 0; p < layers.terrain.length; p++)
+    if (isLand(layers.terrain[p] as number)) landCount++;
+  const landPopulation = new Float32Array(landCount);
+  const landEconomy = new Float32Array(landCount);
+  for (let p = 0, k = 0; p < layers.terrain.length; p++) {
+    if (!isLand(layers.terrain[p] as number)) continue;
+    landPopulation[k] = people.population[p] as number;
+    landEconomy[k] = people.economicValue[p] as number;
+    k++;
+  }
+  await writeFile(
+    join(outDir, `land-${tag}.bin.gz`),
+    gzipSync(encodeLand(buildId, { population: landPopulation, economicValue: landEconomy }), {
+      level: 6,
+    }),
+  );
   log(
     `Carte binaire : ${(binary.byteLength / 1e6).toFixed(1)} Mo, ${(gz.byteLength / 1e6).toFixed(1)} Mo compressée`,
   );
@@ -385,6 +520,7 @@ export async function buildMap(options: BuildMapOptions): Promise<void> {
   await png('political', politicalPreview(layers, globe));
   await png('terrain', terrainPreview(layers, globe));
   await png('infrastructure', infrastructurePreview(layers, globe));
+  await png('population', populationPreview(layers, globe, people.population, grid.pixelAreaKm2));
   await png(
     'sea',
     seaPreview(layers, globe, routeSample(grid, routesFile, ['CHN', 'USA', 'DEU', 'BRA'])),
@@ -421,6 +557,7 @@ export async function buildMap(options: BuildMapOptions): Promise<void> {
       `Validation de la carte : ${errors.length} erreur(s)\n  ${errors.join('\n  ')}`,
     );
   }
+  return { meta, geo, zones: zoneResults };
 }
 
 async function readTiff(zipPath: string, keep: (name: string) => boolean): Promise<Raster> {

@@ -1,0 +1,310 @@
+{
+  "type": "FeatureCollection",
+  "name": "separatism",
+  "description": "Séparatismes et insurrections localisées (SPEC §4.5) : zones, pays et intensité 0–100 (hypothèse fondée sur les sources citées). Effets simulés en phases 4 et 5.",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "balochistan",
+        "nameFr": "Baloutchistan (Pakistan)",
+        "countries": ["PAK"],
+        "level": 50,
+        "admin1": ["PK-BA"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium",
+        "note": "Insurrection de l'Armée de libération du Baloutchistan (attaques de janvier 2026)."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "iran_kurdistan",
+        "nameFr": "Kurdistan iranien",
+        "countries": ["IRN"],
+        "level": 35,
+        "admin1": ["IR-16", "IR-02", "IR-17"],
+        "source": "https://en.wikipedia.org/wiki/2026_Iran_war",
+        "date": "2026-09-25",
+        "confidence": "medium",
+        "note": "Insurrection ravivée par la guerre de 2026 (coalition des forces politiques du Kurdistan iranien)."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sistan_baluchestan",
+        "nameFr": "Sistan-et-Baloutchestan",
+        "countries": ["IRN"],
+        "level": 35,
+        "admin1": ["IR-13"],
+        "source": "https://en.wikipedia.org/wiki/2026_Iran_war",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "turkey_kurdistan",
+        "nameFr": "Sud-Est de la Turquie (PKK)",
+        "countries": ["TUR"],
+        "level": 5,
+        "admin1": ["TR-73", "TR-30", "TR-47", "TR-21"],
+        "source": "https://en.wikipedia.org/wiki/PKK%E2%80%93Turkey_peace_process_(2025%E2%80%93present)",
+        "date": "2026-09-25",
+        "confidence": "medium",
+        "note": "Dissolution du PKK annoncée en mai 2025, désarmement en cours."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "anglophone_cameroon",
+        "nameFr": "Régions anglophones du Cameroun",
+        "countries": ["CMR"],
+        "level": 35,
+        "admin1": ["CM-NW", "CM-SW"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cabinda",
+        "nameFr": "Cabinda",
+        "countries": ["AGO"],
+        "level": 10,
+        "admin1": ["AO-CAB"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "west_papua",
+        "nameFr": "Papouasie occidentale",
+        "countries": ["IDN"],
+        "level": 25,
+        "admin1": ["ID-PA", "ID-PB"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bangsamoro",
+        "nameFr": "Bangsamoro et archipel de Sulu",
+        "countries": ["PHL"],
+        "level": 10,
+        "admin1": ["PH-LAS", "PH-MAG", "PH-SLU", "PH-TAW", "PH-BAS"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "casamance",
+        "nameFr": "Casamance",
+        "countries": ["SEN"],
+        "level": 5,
+        "admin1": ["SN-ZG"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "manipur",
+        "nameFr": "Manipur",
+        "countries": ["IND"],
+        "level": 25,
+        "admin1": ["IN-MN"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "xinjiang",
+        "nameFr": "Xinjiang",
+        "countries": ["CHN"],
+        "level": 10,
+        "admin1": ["CN-XJ"],
+        "source": "https://en.wikipedia.org/wiki/Xinjiang_conflict",
+        "date": "2026-09-25",
+        "confidence": "low",
+        "note": "Mouvement séparatiste ouïghour réprimé ; intensité faible."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tibet",
+        "nameFr": "Tibet",
+        "countries": ["CHN"],
+        "level": 10,
+        "admin1": ["CN-XZ"],
+        "source": "https://en.wikipedia.org/wiki/Tibetan_independence_movement",
+        "date": "2026-09-25",
+        "confidence": "low"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "catalonia",
+        "nameFr": "Catalogne",
+        "countries": ["ESP"],
+        "level": 5,
+        "admin1": ["ES-B", "ES-T"],
+        "source": "https://en.wikipedia.org/wiki/Catalan_independence_movement",
+        "date": "2026-09-25",
+        "confidence": "low",
+        "note": "Mouvement politique non violent (Barcelone et Tarragone seulement : Gérone et Lérida absentes des codes Natural Earth)."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "new_caledonia",
+        "nameFr": "Nouvelle-Calédonie",
+        "countries": ["FRA"],
+        "level": 15,
+        "admin1": ["NC-X03~", "NC-X02~", "NC-X01~"],
+        "source": "https://en.wikipedia.org/wiki/Bougival_Accord",
+        "date": "2026-09-25",
+        "confidence": "medium",
+        "note": "Accord de Bougival (juillet 2025) sur un « État de Nouvelle-Calédonie » ; émeutes de 2024."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bougainville",
+        "nameFr": "Bougainville",
+        "countries": ["PNG"],
+        "level": 20,
+        "admin1": ["PG-NSB"],
+        "source": "https://en.wikipedia.org/wiki/Bougainville_independence_referendum",
+        "date": "2026-09-25",
+        "confidence": "medium",
+        "note": "Référendum de 2019 (98 % pour l'indépendance), indépendance visée en 2027."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cabo_delgado",
+        "nameFr": "Cabo Delgado",
+        "countries": ["MOZ"],
+        "level": 30,
+        "admin1": ["MZ-P"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tigray",
+        "nameFr": "Tigré",
+        "countries": ["ETH"],
+        "level": 40,
+        "admin1": ["ET-TI"],
+        "source": "https://en.wikipedia.org/wiki/2026",
+        "date": "2026-09-25",
+        "confidence": "medium",
+        "note": "Affrontements entre l'armée fédérale et le TPLF depuis janvier 2026."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "amhara",
+        "nameFr": "Amhara (Fano)",
+        "countries": ["ETH"],
+        "level": 45,
+        "admin1": ["ET-AM"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "oromia",
+        "nameFr": "Oromia (OLA)",
+        "countries": ["ETH"],
+        "level": 30,
+        "admin1": ["ET-OR"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "azawad",
+        "nameFr": "Azawad (nord du Mali)",
+        "countries": ["MLI"],
+        "level": 40,
+        "admin1": ["ML-6", "ML-7", "ML-8"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "medium",
+        "note": "Front de libération de l'Azawad et JNIM."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "north_caucasus",
+        "nameFr": "Caucase du Nord",
+        "countries": ["RUS"],
+        "level": 5,
+        "admin1": ["RU-CE", "RU-DA", "RU-IN"],
+        "source": "https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts",
+        "date": "2026-09-25",
+        "confidence": "low"
+      },
+      "geometry": null
+    }
+  ]
+}

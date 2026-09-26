@@ -14,6 +14,8 @@ export interface SourceDef {
   licenseUrl: string;
   /** Version annoncée ; pour Natural Earth, relue dans le fichier VERSION.txt de l'archive. */
   version: string;
+  /** Extension du fichier en cache, quand l'URL n'en porte pas (API). */
+  ext?: string;
 }
 
 const NE_BASE = 'https://naciscdn.org/naturalearth/10m';
@@ -68,6 +70,16 @@ export const SOURCES = {
     'physical',
     'geography_regions_polys',
     'Régions physiques nommées (zones humides, deltas)',
+  ),
+  admin1: naturalEarth(
+    'cultural',
+    'admin_1_states_provinces',
+    'Subdivisions de premier niveau (régions, provinces), pour les zones de contrôle',
+  ),
+  disputed: naturalEarth(
+    'cultural',
+    'admin_0_disputed_areas',
+    'Zones disputées et entités séparatistes (souveraineté de jure, revendications)',
   ),
   elevation: {
     id: 'wc2.1_5m_elev',

@@ -7,7 +7,7 @@
  */
 import type { MapProjection } from './format.ts';
 
-export type EntityKind = 'state' | 'de_facto';
+export type EntityKind = 'state' | 'de_facto' | 'faction';
 
 export interface MapProvenance {
   source: string;
@@ -44,6 +44,12 @@ export interface EntityGeoStats {
   /** Répartition des terrains et des biomes (% des pixels contrôlés), par libellé de code. */
   terrainMix: Record<string, number>;
   biomeMix: Record<string, number>;
+  /** Population des pixels contrôlés (habitants). */
+  population: number;
+  /** Valeur économique des pixels contrôlés (millions de $ de PIB annuel). */
+  economicValue: number;
+  /** Population des pixels sous sa souveraineté de jure. */
+  sovereignPopulation: number;
 }
 
 export interface MapEntity {
@@ -121,6 +127,18 @@ export interface MapMeta {
   chokepoints: MapChokepoint[];
   cities: MapCity[];
   ports: MapPort[];
+  /** Zones de contrôle appliquées (control_zones.geojson), dans l'ordre. */
+  controlZones: MapControlZone[];
+}
+
+export interface MapControlZone {
+  id: string;
+  nameFr: string;
+  controller: string | null;
+  sovereign: string | null;
+  /** Pixels terrestres modifiés. */
+  pixels: number;
+  provenance: MapProvenance;
 }
 
 export interface PairLength {

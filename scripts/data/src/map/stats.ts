@@ -12,18 +12,26 @@ export function entityStats(
   coastlineKm: Float64Array,
   access: readonly Access[],
   ids: readonly string[],
+  population: Float64Array,
+  economicValue: Float64Array,
 ): EntityGeoStats[] {
   const count = ids.length;
   const pixels = new Int32Array(count + 1);
   const sovPixels = new Int32Array(count + 1);
   const terrainCounts = Array.from({ length: count + 1 }, () => new Int32Array(8));
   const biomeCounts = Array.from({ length: count + 1 }, () => new Int32Array(8));
+  const pop = new Float64Array(count + 1);
+  const sovPop = new Float64Array(count + 1);
+  const econ = new Float64Array(count + 1);
   for (let p = 0; p < terrain.length; p++) {
     if (!isLand(terrain[p] as number)) continue;
     const o = owner[p] as number;
     const s = sovereign[p] as number;
     pixels[o] = (pixels[o] as number) + 1;
     sovPixels[s] = (sovPixels[s] as number) + 1;
+    pop[o] = (pop[o] as number) + (population[p] as number);
+    sovPop[s] = (sovPop[s] as number) + (population[p] as number);
+    econ[o] = (econ[o] as number) + (economicValue[p] as number);
     increment(terrainCounts[o] as Int32Array, terrain[p] as number);
     increment(biomeCounts[o] as Int32Array, biome[p] as number);
   }
@@ -48,6 +56,9 @@ export function entityStats(
       transit: a?.transit ? (ids[a.transit - 1] ?? null) : null,
       terrainMix: mix(terrainCounts[e] as Int32Array, total, TERRAIN_LABELS),
       biomeMix: mix(biomeCounts[e] as Int32Array, total, BIOME_LABELS),
+      population: Math.round(pop[e] as number),
+      economicValue: Math.round(econ[e] as number),
+      sovereignPopulation: Math.round(sovPop[e] as number),
     });
   }
   return stats;

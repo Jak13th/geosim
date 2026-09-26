@@ -1,0 +1,442 @@
+# Prochaines élections nationales décisives (exécutif ou législatif direct) après le 25/09/2026
+# (SPEC §5.2). Source principale : calendriers électoraux nationaux de Wikipedia 2026, 2027 et 2028
+# (consultés le 25/09/2026) ; dates indicatives ajoutées pour les pays au niveau de détail complet.
+# `date` est la date de l'élection ; la date de consultation figure dans `source`.
+version: 1
+elections:
+  AND:
+    date: '2027-04-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  ARG:
+    date: '2027-10-24'
+    type: President, Senate and Chamber of Deputies
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  AUS:
+    date: '2028-05-20'
+    type: Élections fédérales, date indicative
+    source: https://en.wikipedia.org/wiki/Next_Australian_federal_election (consulté le 2026-09-25)
+    confidence: low
+  BDI:
+    date: '2027-05-03'
+    type: President
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  BGR:
+    date: '2026-10-25'
+    type: President
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  BHR:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  BIH:
+    date: '2026-10-04'
+    type: Presidency and House of Representatives
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  BLR:
+    date: '2030-01-26'
+    type: Élection présidentielle, date indicative
+    source: https://en.wikipedia.org/wiki/Elections_in_Belarus (consulté le 2026-09-25)
+    confidence: low
+    note: Élections non concurrentielles.
+  BRA:
+    date: '2026-10-04'
+    type: President, Chamber of Deputies and Senate
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  CAN:
+    date: '2029-10-15'
+    type: Élections fédérales, date indicative
+    source: https://en.wikipedia.org/wiki/Next_Canadian_federal_election (consulté le 2026-09-25)
+    confidence: low
+  CHL:
+    date: '2029-11-18'
+    type: Élections générales, date indicative
+    source: https://en.wikipedia.org/wiki/Elections_in_Chile (consulté le 2026-09-25)
+    confidence: low
+  CMR:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  COD:
+    date: '2028-12-20'
+    type: Élections générales, date indicative
+    source:
+      https://en.wikipedia.org/wiki/Elections_in_the_Democratic_Republic_of_the_Congo (consulté
+      le 2026-09-25)
+    confidence: low
+  COG:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  COL:
+    date: '2030-03-10'
+    type: Élections législatives, date indicative
+    source: https://en.wikipedia.org/wiki/Elections_in_Colombia (consulté le 2026-09-25)
+    confidence: low
+  CPV:
+    date: '2026-11-15'
+    type: President
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  CZE:
+    date: '2028-01-15'
+    type: Élection présidentielle, date indicative
+    source: https://en.wikipedia.org/wiki/2028_Czech_presidential_election (consulté le 2026-09-25)
+    confidence: low
+    note: Les sénatoriales partielles d'octobre 2026 ne sont pas retenues.
+  DEU:
+    date: '2029-03-15'
+    type: Élections fédérales (Bundestag), date indicative
+    source: https://en.wikipedia.org/wiki/Next_German_federal_election (consulté le 2026-09-25)
+    confidence: low
+    note: L'Assemblée fédérale de 2027 (élection présidentielle indirecte) n'est pas retenue.
+  DMA:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  EGY:
+    date: '2030-12-15'
+    type: Élection présidentielle, date indicative
+    source: https://en.wikipedia.org/wiki/Next_Egyptian_presidential_election (consulté le 2026-09-25)
+    confidence: low
+  ESP:
+    date: '2027-12-15'
+    type: Senate and Congress of Deputies
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  ETH:
+    date: '2031-06-15'
+    type: Élections générales, date indicative
+    source: https://en.wikipedia.org/wiki/Elections_in_Ethiopia (consulté le 2026-09-25)
+    confidence: low
+    note: Élections générales tenues le 01/06/2026.
+  FIN:
+    date: '2027-04-18'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  FJI:
+    date: '2026-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  FRA:
+    date: '2027-04-11'
+    type: Élection présidentielle (1er tour, date à confirmer)
+    source: https://en.wikipedia.org/wiki/2027_French_presidential_election (consulté le 2026-09-25)
+    confidence: medium
+    note: L'élection sénatoriale du 27/09/2026 (indirecte) n'est pas retenue.
+  FSM:
+    date: '2027-03-02'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  GBR:
+    date: '2029-05-03'
+    type: Élections générales (au plus tard en août 2029), date indicative
+    source: https://en.wikipedia.org/wiki/Next_United_Kingdom_general_election (consulté le 2026-09-25)
+    confidence: low
+    note: Andy Burnham Premier ministre depuis le 20/07/2026.
+  GMB:
+    date: '2026-12-05'
+    type: President
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  GNB:
+    date: '2026-12-06'
+    type: President and Parliament
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  GNQ:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  GRC:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  GRD:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  GTM:
+    date: '2027-06-27'
+    type: President and Congress
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  HTI:
+    date: '2026-12-13'
+    type: President, Chamber of Deputies and Senate
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  HUN:
+    date: '2030-04-15'
+    type: Élections législatives, date indicative
+    source: https://en.wikipedia.org/wiki/Elections_in_Hungary (consulté le 2026-09-25)
+    confidence: low
+    note: Victoire du parti Tisza (Péter Magyar) le 12/04/2026.
+  IDN:
+    date: '2029-02-14'
+    type: Élections générales, date indicative
+    source: https://en.wikipedia.org/wiki/2029_Indonesian_general_election (consulté le 2026-09-25)
+    confidence: low
+  IND:
+    date: '2029-04-15'
+    type: Élections générales (Lok Sabha), date indicative
+    source: https://en.wikipedia.org/wiki/2029_Indian_general_election (consulté le 2026-09-25)
+    confidence: low
+  IRN:
+    date: '2028-06-15'
+    type: Élection présidentielle, date indicative
+    source: https://en.wikipedia.org/wiki/Next_Iranian_presidential_election (consulté le 2026-09-25)
+    confidence: low
+    note: 'Élections non concurrentielles ; Guide suprême : Mojtaba Khamenei depuis le 08/03/2026.'
+  IRQ:
+    date: '2029-11-15'
+    type: Élections législatives, date indicative
+    source: https://en.wikipedia.org/wiki/Next_Iraqi_parliamentary_election (consulté le 2026-09-25)
+    confidence: low
+  ISR:
+    date: '2026-10-27'
+    type: Knesset
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  ITA:
+    date: '2027-12-15'
+    type: Chamber of Deputies and Senate
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  JPN:
+    date: '2028-07-15'
+    type: Élection de la Chambre des conseillers, date indicative
+    source: https://en.wikipedia.org/wiki/2028_Japanese_House_of_Councillors_election (consulté le 2026-09-25)
+    confidence: low
+    note: Chambre des représentants élue le 08/02/2026 (supermajorité du PLD).
+  KAZ:
+    date: '2029-11-15'
+    type: Élection présidentielle, date indicative
+    source: https://en.wikipedia.org/wiki/Elections_in_Kazakhstan (consulté le 2026-09-25)
+    confidence: low
+    note: Élection du Kouroultaï le 23/08/2026.
+  KGZ:
+    date: '2027-01-27'
+    type: President
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  KNA:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  KOR:
+    date: '2028-04-12'
+    type: Élections législatives, date indicative
+    source: https://en.wikipedia.org/wiki/2028_South_Korean_legislative_election (consulté le 2026-09-25)
+    confidence: medium
+  LBY:
+    date: '2027-12-15'
+    type: President
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  LSO:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  LVA:
+    date: '2026-10-03'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  MEX:
+    date: '2027-06-06'
+    type: Chamber of Deputies
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  MNE:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  MNG:
+    date: '2027-06-15'
+    type: President
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  NGA:
+    date: '2027-01-16'
+    type: President, Senate and House of Representatives
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  NLD:
+    date: '2029-10-15'
+    type: Élections législatives, date indicative
+    source: https://en.wikipedia.org/wiki/Next_Dutch_general_election (consulté le 2026-09-25)
+    confidence: low
+    note: Gouvernement minoritaire de Rob Jetten depuis le 23/02/2026 (risque d'élections anticipées).
+  NOR:
+    date: '2029-09-10'
+    type: Élections législatives
+    source: https://en.wikipedia.org/wiki/2029_Norwegian_parliamentary_election (consulté le 2026-09-25)
+    confidence: medium
+  NZL:
+    date: '2026-11-07'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  PAK:
+    date: '2029-02-15'
+    type: Élections générales, date indicative
+    source: https://en.wikipedia.org/wiki/Next_Pakistani_general_election (consulté le 2026-09-25)
+    confidence: low
+  PER:
+    date: '2031-04-15'
+    type: Élections générales, date indicative
+    source: https://en.wikipedia.org/wiki/Elections_in_Peru (consulté le 2026-09-25)
+    confidence: low
+    note: Keiko Fujimori élue en juin 2026.
+  PHL:
+    date: '2028-05-08'
+    type: Élections générales (présidentielle)
+    source: https://en.wikipedia.org/wiki/2028_Philippine_presidential_election (consulté le 2026-09-25)
+    confidence: medium
+  PNG:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  POL:
+    date: '2027-12-15'
+    type: Sejm and Senate
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  PSE:
+    date: '2026-11-28'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  RUS:
+    date: '2030-03-17'
+    type: Élection présidentielle, date indicative
+    source: https://en.wikipedia.org/wiki/2030_Russian_presidential_election (consulté le 2026-09-25)
+    confidence: low
+    note: Élections à la Douma des 18-20/09/2026.
+  SGP:
+    date: '2030-05-15'
+    type: Élections générales, date indicative
+    source: https://en.wikipedia.org/wiki/Next_Singaporean_general_election (consulté le 2026-09-25)
+    confidence: low
+  SLV:
+    date: '2027-02-28'
+    type: President
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  SOL:
+    date: '2027-03-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  SRB:
+    date: '2026-10-25'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  STP:
+    date: '2026-09-27'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  SVK:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  SVN:
+    date: '2027-12-15'
+    type: President
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  SWE:
+    date: '2030-09-08'
+    type: Élections législatives
+    source: https://en.wikipedia.org/wiki/Next_Swedish_general_election (consulté le 2026-09-25)
+    confidence: medium
+    note: Élections du 13/09/2026 remportées de justesse par la gauche.
+  TJK:
+    date: '2027-12-15'
+    type: President
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  TLS:
+    date: '2027-12-15'
+    type: President
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  TUN:
+    date: '2027-12-15'
+    type: Parliament
+    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  TUR:
+    date: '2028-05-14'
+    type: Élections présidentielle et législatives, date indicative
+    source: https://en.wikipedia.org/wiki/Next_Turkish_presidential_election (consulté le 2026-09-25)
+    confidence: low
+  TWN:
+    date: '2028-01-15'
+    type: Élections présidentielle et législatives
+    source: https://en.wikipedia.org/wiki/2028_Taiwanese_presidential_election (consulté le 2026-09-25)
+    confidence: medium
+  USA:
+    date: '2026-11-03'
+    type: House of Representatives
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: high
+  XKX:
+    date: '2026-12-15'
+    type: President
+    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    confidence: medium
+    note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
+  ZAF:
+    date: '2029-05-15'
+    type: Élections générales, date indicative
+    source: https://en.wikipedia.org/wiki/Next_South_African_general_election (consulté le 2026-09-25)
+    confidence: low
