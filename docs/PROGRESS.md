@@ -8,8 +8,8 @@
 | 0 — Fondations                                     | terminée                               | 2026-09-25 |
 | 1a — Géographie et carte                           | terminée                               | 2026-09-25 |
 | 1b — Données pays et fichiers curés                | terminée                               | 2026-09-25 |
-| 2 — Carte interactive (lecture seule)              | **terminée**, en attente de validation | 2026-09-26 |
-| 3 — Moteur et temps réel                           | à faire                                |            |
+| 2 — Carte interactive (lecture seule)              | terminée                               | 2026-09-26 |
+| 3 — Moteur et temps réel                           | **terminée**, en attente de validation | 2026-09-26 |
 | 4 — Monde interconnecté                            | à faire                                |            |
 | 5 — Forces armées et guerre                        | à faire                                |            |
 | 6 — Escalade, nucléaire, cyber, espace, événements | à faire                                |            |
@@ -153,6 +153,52 @@ La phase 1 est découpée en deux jalons avec arrêt (voir `DECISIONS.md`).
 - Chargement sur le fil principal : quelques centaines de millisecondes de calcul à l'ouverture (emprises, étiquettes, textures).
 - Écran d'ordinateur uniquement (pas de gestes tactiles).
 
-## Prochaines étapes (phase 3)
+## Phase 3 — Moteur et temps réel (2026-09-26)
 
-Moteur et temps réel (SPEC §12) : worker, boucle, vitesses, pas-à-pas, commandes, journal, captures ; couches de valeur (surcharge, verrou, réinitialisation, modificateurs) ; édition en direct dans l'inspecteur ; onglet Modèle avec rechargement à chaud ; démographie, économie, budget, dette, inflation, chômage, marchés simplifiés ; graphiques.
+**Fait**
+
+- **Moteur** (`packages/engine`, pur et déterministe) : état vectorisé en trois couches — donnée réelle, valeur courante, valeur effective avec modificateurs à durée et décroissance (D48) ; tick quotidien, systèmes mensuels le 1er du mois, dérivés recalculés après chaque commande ; commandes validées contre le catalogue et journalisées avec leurs effets et leur inverse (annuler, rétablir) ; événements journalisés avec leurs facteurs explicatifs ; empreinte d'état de 64 bits ; relecture du journal ; captures sérialisées ; historique mensuel ; invariants (MODELES §3).
+- **Systèmes** calés sur la situation initiale (D49) : démographie par tranches d'âge (§4) ; économie — croissance potentielle et de long terme, cycle avec contagion commerciale et chocs énergétiques, PIB, inflation, chômage, rentes, solde courant, réserves, crises de balance des paiements (§5) ; budget, dette, fonds souverains, règle budgétaire provisoire, taux souverains, notation, défauts et restructurations (§5.6–5.9) ; marchés simplifiés du pétrole (capacité inutilisée de l'OPEP+), du gaz en trois zones (arbitrage du GNL), du charbon, du blé, des engrais, des métaux critiques et des puces (§6) ; comptes dérivés et croissance mondiale (§7). 196 coefficients dans `config/model.yaml`, chacun avec valeur, plage, unité et description.
+- **Données** : nouveaux paramètres (croissance de long terme, écart de production, taux moyen de la dette, probabilité de défaut, défaut en cours, réserves en mois d'importations, autres dépenses, ajustement budgétaire, intérêts) et natures alignées sur le moteur (D54) ; solde migratoire moyen sur dix ans (D52) ; taux moyen de la dette depuis la Banque mondiale, l'API du FMI étant inaccessible pour cette série (D53) ; agrégats de la Banque mondiale exclus (collision d'un code de pays), parts d'âge normalisées, consommations d'hydrocarbures manquantes par part de l'énergie primaire.
+- **Temps réel** (`apps/web/src/sim/`) : le moteur tourne dans un Web Worker, par tranches courtes ; vitesses de 1 jour à 3 mois par seconde, pas-à-pas (jour, semaine, mois), « avancer jusqu'à une date » ; images à 5 Hz avec tableaux transférés, et aussitôt après chaque commande ; une erreur du moteur met la simulation en pause et s'affiche (D58, D59).
+- **API locale** : `config/model.yaml` lu, enregistré (seules les lignes `value:` changent) et rechargé à chaud par une commande journalisée (D60) ; captures dans `captures/` (hors git), écritures réservées à l'interface locale (D61).
+- **Interface** : barre de temps (date simulée, lecture, vitesses, pas-à-pas, aller à une date, annuler et rétablir, indicateurs mondiaux) ; inspecteur éditable — curseur (logarithmique pour population, PIB…) et champ, liste, case, vecteur ; réinitialiser, verrouiller, effet temporaire, édition groupée (bloc, région, tous) ; badges « modifiée », « simulée », « calcul » (D65) ; filtres « Modifiés » et « Favoris » ; trajectoires et historique de chaque paramètre ; panneau bilatéral et paramètres mondiaux éditables, statut des détroits ; onglet Modèle (coefficients en direct, enregistrement, rechargement) ; onglet Simulation (graine, nouvelle simulation, captures, vérification de la relecture) ; journal filtrable avec « Pourquoi ? », effets et coefficients ; graphiques uPlot par pays et mondiaux, export CSV (D62) ; couches de la carte en direct, échelles calées sur le départ (D63) ; raccourcis espace, `+`/`−`, `Ctrl+Z`, `Ctrl+Y`.
+- **CLI** : `npm run sim -- --years 20 --runs 5 --seed 1 --out results/essai` écrit séries par pays et mondiales (CSV), journal des événements et résumé (empreinte, invariants, croissance mondiale par an, pays clés).
+- **Calibration** : premiers résultats (5 runs de 20 ans, sensibilité ±50 % sur 30 coefficients) dans `docs/CALIBRATION.md`. La sensibilité a révélé des références de calage figées avec les anciens coefficients (saut artificiel des taux quand on modifiait un coefficient en cours de partie) et un taux moyen non réinitialisé après restructuration : corrigés et testés.
+
+**Critères de fin de phase**
+
+- 20 ans sans NaN ni divergence : 5 runs de 20 ans sur les données réelles, aucune violation d'invariant, croissance mondiale de 3,2 % la première année à ≈ 2 % la vingtième, 30 à 40 défauts souverains par run (CALIBRATION.md) ; test automatique de 20 ans (`engine.built.test.ts`).
+- Un curseur modifié infléchit aussitôt la trajectoire : la valeur et les dérivés changent dès la commande (image immédiate), la trajectoire au pas mensuel suivant ; tests « une modification est visible aussitôt et infléchit la trajectoire » (même graine, seule la modification sépare les deux trajectoires) ; visible dans les mini-graphes et les graphiques.
+- La relecture du journal donne une empreinte identique : tests du moteur (fixture et 20 ans de données réelles), du pilote du worker, et bouton « Vérifier la relecture » parcouru par `check:console`.
+
+**Vérifications** : `npm run typecheck`, `npm test` (48 fichiers, 266 tests), `npm run lint`, `npm run format:check`, `npm run build`, `npm run check:console` (couches, navigation, recherche, inspecteur, panneau bilatéral, puis pas-à-pas, lecture à 3 mois/s — 180 jours en 2 s —, édition en direct avec verrou, effet temporaire et édition groupée, annuler et rétablir, « avancer jusqu'à », graphiques, journal, effet sur le pétrole et fermeture d'Ormuz, coefficient modifié puis rechargé, capture et restauration, enregistrement sur le disque, relecture identique : aucune erreur ni aucun avertissement). Prévisualisation du build de production vérifiée dans Chromium.
+
+**Comment tester**
+
+1. `npm install` (nouvelle dépendance : uPlot), puis `npm run data -- --skip-map` (nouveaux indicateurs de la Banque mondiale et règles des données, ≈ 1 min) ; ou `npm run data` complet.
+2. `npm run dev`, puis http://localhost:5173 ; le moteur démarre une fois la carte chargée (« Moteur 0.3.0 » en haut à droite).
+3. Espace pour lancer, `+`/`−` pour la vitesse. Ctrl+K « France », onglet « Budget de l'État », clic sur « Défense », curseur à 5 % : la valeur et le solde changent aussitôt ; « Graphiques » → « Dette publique brute » : la trajectoire s'infléchit au mois suivant ; Ctrl+Z annule.
+4. « Monde » : effet temporaire ×1,5 sur le Brent, statut d'un détroit ; « Journal » : clique un défaut souverain pour son « Pourquoi ? ».
+5. « Modèle » : modifie un coefficient, puis « Enregistrer dans le fichier » (`git diff config/model.yaml` : une seule ligne) ; modifie `config/model.yaml` dans un éditeur : l'interface le recharge et l'annonce.
+6. « Simulation » : « Capturer », avance, « restaurer » ; « Vérifier la relecture » → « Identique ».
+7. Sans interface : `npm run sim -- --years 20 --runs 5 --seed 1 --out results/essai`, puis `results/essai/summary.json`.
+
+**À valider par toi**
+
+- Les coefficients par défaut de `config/model.yaml` (points de départ, pas des vérités) : en particulier la croissance de long terme, qui passe sous les projections du FMI au-delà de trois ans (≈ 2,3 % contre 3,1 % en 2031), et l'amplitude des cycles (CALIBRATION.md). À recalibrer maintenant ou en phase 8, selon ta préférence.
+- La règle budgétaire provisoire (D57) et le modèle de défaut souverain (D56).
+- Points des phases précédentes toujours ouverts : profils décisionnels et relations initiales (D35), ligne de front DeepStateMap (D31), Sahara occidental (D32), drapeaux (D43).
+
+**Limites connues**
+
+- Économie simplifiée : pas de secteur bancaire ni de change explicite hors crises ; politique monétaire résumée par l'ancrage des anticipations et le taux directeur mondial ; règle budgétaire uniforme.
+- Commerce, sanctions, relations et statut des détroits n'agissent pas encore sur l'économie (phase 4) : fermer Ormuz se journalise mais ne change pas les prix ; les paramètres politiques, militaires et stratégiques restent constants et ceux qui ne sont pas encore calculés portent le badge « phase N ».
+- Écarts de calibration relevés : chômage du Nigeria (donnée de 2018), taux de l'Argentine au plancher, dérive de la dette ukrainienne si l'on accentue fortement la pente des primes de risque (financements officiels absents avant la phase 4).
+- Le rechargement à chaud de `config/model.yaml` suppose `npm run dev` ; en prévisualisation du build, bouton « Recharger le fichier ».
+- Une capture ne se restaure que sur les mêmes données ; le format de scénario versionné viendra en phase 8.
+- Ce conteneur n'a pas de GPU : fluidité de la carte mesurée en rendu logiciel uniquement (≈ 4 images/s) ; le moteur, lui, tourne dans son worker sans bloquer l'interface.
+
+## Prochaines étapes (phase 4)
+
+Monde interconnecté (SPEC §12) : commerce, routes et détroits ; énergie, alimentation, minerais ; sanctions ; relations et affinité ; blocs ; ONU ; politique intérieure (stabilité, élections, coups, guerres civiles simples) ; réfugiés.

@@ -1,10 +1,15 @@
 /**
  * Panneau bas (SPEC §9.1) : journal et graphiques, repliable.
  */
+import { Suspense, lazy } from 'react';
 import type { Dataset } from '../data/dataset.ts';
 import { useApp } from '../store.ts';
-import { ChartsPanel } from './ChartsPanel.tsx';
 import { JournalPanel } from './JournalPanel.tsx';
+
+/** Graphiques (uPlot) chargés à la première ouverture : paquet initial plus léger. */
+const ChartsPanel = lazy(() =>
+  import('./ChartsPanel.tsx').then((m) => ({ default: m.ChartsPanel })),
+);
 
 export function BottomPanel({ data }: { data: Dataset }) {
   const tab = useApp((s) => s.bottomTab);
@@ -37,7 +42,15 @@ export function BottomPanel({ data }: { data: Dataset }) {
         </button>
       </header>
       <div className="bottom-body">
-        {tab === 'journal' ? <JournalPanel data={data} /> : <ChartsPanel data={data} />}
+        {tab === 'journal' ? (
+          <JournalPanel data={data} />
+        ) : (
+          <Suspense
+            fallback={<p className="muted small journal-empty">Chargement des graphiques…</p>}
+          >
+            <ChartsPanel data={data} />
+          </Suspense>
+        )}
       </div>
     </section>
   );

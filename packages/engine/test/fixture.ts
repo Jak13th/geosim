@@ -290,7 +290,7 @@ const RUNTIME = CATALOG.filter(
       ].includes(d.id)),
 )
   .map((d) => d.id)
-  .filter((id) => !['demo.hdi', 'bud.balance', 'mil.budget'].includes(id));
+  .filter((id) => !['demo.hdi', 'demo.birth_rate', 'bud.balance', 'mil.budget'].includes(id));
 
 function resolved(value: ParamValue): ResolvedValue {
   return { value, source: 'TEST', date: '2026', confidence: 'high', method: 'source' };

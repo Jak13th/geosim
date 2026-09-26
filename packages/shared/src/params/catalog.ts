@@ -123,9 +123,9 @@ export const REGIME_TYPES = [
 export const CATALOG: readonly ParamDef[] = [
   // 1. Démographie et société
   p('demo.population', 'Population', 'S', 'habitants', [0, 2e9], 'WB:SP.POP.TOTL', ['demography', 'economy', 'military'], 'Population résidente totale (estimation des Nations unies reprise par la Banque mondiale).', LOG),
-  p('demo.birth_rate', 'Natalité', 'I', '‰/an', [0, 60], 'WB:SP.DYN.CBRT.IN', ['demography'], 'Naissances vivantes par an pour 1 000 habitants.'),
+  p('demo.birth_rate', 'Natalité', 'D', '‰/an', [0, 60], 'WB:SP.DYN.CBRT.IN', ['demography'], 'Naissances vivantes par an pour 1 000 habitants.'),
   p('demo.death_rate', 'Mortalité', 'S', '‰/an', [0, 40], 'WB:SP.DYN.CDRT.IN', ['demography'], 'Décès par an pour 1 000 habitants, hors guerre et catastrophes simulées.'),
-  p('demo.fertility', 'Fécondité', 'I', 'enfants/femme', [0.5, 8], 'WB:SP.DYN.TFRT.IN', ['demography'], 'Indicateur conjoncturel de fécondité.', { step: 0.01 }),
+  p('demo.fertility', 'Fécondité', 'S', 'enfants/femme', [0.5, 8], 'WB:SP.DYN.TFRT.IN', ['demography'], 'Indicateur conjoncturel de fécondité.', { step: 0.01 }),
   p('demo.life_expectancy', 'Espérance de vie', 'S', 'ans', [30, 95], 'WB:SP.DYN.LE00.IN', ['demography', 'health'], 'Espérance de vie à la naissance.'),
   p('demo.share_0_14', 'Part des 0–14 ans', 'S', '%', [0, 60], 'WB:SP.POP.0014.TO.ZS', ['demography'], 'Part de la population âgée de 0 à 14 ans.'),
   p('demo.share_15_64', 'Part des 15–64 ans', 'S', '%', [30, 85], 'WB:SP.POP.1564.TO.ZS', ['demography', 'economy'], 'Part de la population en âge de travailler.'),

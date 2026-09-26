@@ -139,13 +139,35 @@ export function budgetAccounts(
   return { revenue, primarySpending: primary, interest, balance: revenue - primary - interest };
 }
 
+/**
+ * Références de départ du taux de marché, recalculées avec les coefficients courants : inflation
+ * anticipée et prime de risque au départ. Un coefficient modifié en cours de partie ne crée donc
+ * pas de saut artificiel des taux (le calage sur la situation initiale reste exact).
+ */
+function initialRateTerms(state: State, m: SystemContext['model'], i: number) {
+  const S = state;
+  const N = S.n;
+  const expected0 = expectedInflation(
+    m,
+    S.base[C.cbi * N + i] as number,
+    S.base[C.target * N + i] as number,
+    S.base[C.inflation * N + i] as number,
+  );
+  // Un pays en défaut au départ paie le taux de sa dette restructurée : sa prime de référence
+  // est celle d'après la restructuration.
+  const inDefault0 = S.genericBaseValue('eco.in_default', i) === true;
+  const spread0 = inDefault0
+    ? spreadOf(m, m.get(K.postRating), false)
+    : spreadOf(m, S.base[C.rating * N + i] as number, false);
+  return { expected0, spread0 };
+}
+
 /** Taux de marché de la dette souveraine (%). */
 export function marketRate(state: State, ctx: Pick<SystemContext, 'model'>, i: number): number {
   const S = state;
   const m = ctx.model;
   const reference = S.internalArray('budget.referenceRate', 0)[i] as number;
-  const expected0 = S.internalArray('budget.expectedInflation0', 0)[i] as number;
-  const spread0 = S.internalArray('budget.spread0', 0)[i] as number;
+  const { expected0, spread0 } = initialRateTerms(S, m, i);
   const policy0 = S.worldInternal.get('budget.policyRate0') ?? 0;
   const expected = expectedInflation(
     m,
@@ -169,8 +191,6 @@ function init(ctx: SystemContext): void {
   const N = S.n;
   S.worldInternal.set('budget.policyRate0', S.worldEff('world.policy_rate'));
   const reference = S.internalArray('budget.referenceRate', 0);
-  const expected0 = S.internalArray('budget.expectedInflation0', 0);
-  const spread0 = S.internalArray('budget.spread0', 0);
   S.internalArray('budget.defaultMonths', 0);
   for (let i = 0; i < N; i++) {
     // Efficacité de collecte (levier) : calculée depuis la gouvernance.
@@ -190,20 +210,16 @@ function init(ctx: SystemContext): void {
     S.writeGeneric('eco.in_default', i, inDefault);
     S.setGenericBase('eco.in_default', i, inDefault);
 
-    // Taux de référence : taux moyen apparent (données). Un pays en défaut au départ paie le taux
-    // de sa dette restructurée : sa prime de référence est celle d'après la restructuration.
-    const pi = S.v(C.inflation)[i] as number;
-    const expected = expectedInflation(m, S.v(C.cbi)[i] as number, S.v(C.target)[i] as number, pi);
-    const spread = inDefault ? spreadOf(m, m.get(K.postRating), false) : spreadOf(m, rating, false);
+    // Taux de référence : taux moyen apparent (données) ; à défaut, inflation anticipée + prime
+    // de départ (voir `initialRateTerms`).
     let avg = S.v(C.avgRate)[i] as number;
     if (!Number.isFinite(avg)) {
-      avg = Math.max(0, expected + spread);
+      const { expected0, spread0 } = initialRateTerms(S, m, i);
+      avg = Math.max(0, expected0 + spread0);
       S.force(C.avgRate, i, avg);
       S.base[C.avgRate * N + i] = avg;
     }
     reference[i] = avg;
-    expected0[i] = expected;
-    spread0[i] = spread;
 
     S.force(C.adjustment, i, 0);
     S.base[C.adjustment * N + i] = 0;
@@ -446,6 +462,10 @@ function restructure(ctx: SystemContext, i: number): void {
   const rating = S.v(C.rating)[i] as number;
   S.write(C.rating, i, m.get(K.postRating));
   S.writeGeneric('eco.in_default', i, false);
+  // Les titres échangés portent de nouveaux coupons : le taux moyen repart du taux de marché
+  // d'après la restructuration (sinon les intérêts d'avant le défaut relanceraient la spirale).
+  const rateBefore = S.v(C.avgRate)[i] as number;
+  S.write(C.avgRate, i, Math.min(rateBefore, marketRate(S, ctx, i)));
   ctx.emit({
     kind: 'default_exit',
     entities: [e.id],
@@ -471,6 +491,11 @@ function restructure(ctx: SystemContext, i: number): void {
         to: S.v(C.rating)[i] ?? null,
       },
       { slot: { scope: 'country', param: 'eco.in_default', entity: e.id }, from: true, to: false },
+      {
+        slot: { scope: 'country', param: 'eco.debt_avg_rate', entity: e.id },
+        from: rateBefore,
+        to: S.v(C.avgRate)[i] ?? null,
+      },
     ],
   });
 }

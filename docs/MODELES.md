@@ -156,12 +156,157 @@ Provenance composée : source `DER`, méthode `derived`, date = la plus récente
 - Consommations de pétrole, gaz et charbon : Energy Institute (≈ 80 pays) ; les autres par médiane régionale par habitant (confiance faible).
 - Paramètres `HYP` du catalogue (ouverture migratoire, cyber, espace…) : hypothèses par défaut à calibrer (phase 8).
 
-## Systèmes (à venir)
+## 3. Moteur (`packages/engine/src/`, phase 3)
+
+### 3.1 Temps et ordonnancement
+
+- Un tick = un jour simulé (calendrier grégorien proleptique, sans `Date` : `calendar.ts`). Départ : date de construction des données.
+- Chaque jour : expiration des modificateurs arrivés à échéance, puis valeurs effectives recalculées si des modificateurs sont actifs.
+- Le premier jour de chaque mois, dans cet ordre : **marchés** (prix du mois) → **démographie** → **économie** → **budget**, puis les valeurs dérivées (`derive` : démographie, budget, comptes) et un point d'historique. Les systèmes lisent les valeurs effectives et écrivent les valeurs courantes ; `effNow` relit une valeur écrite dans le même pas, modificateurs compris.
+- Après chaque commande, les valeurs dérivées sont recalculées sans avancer le temps : un curseur budgétaire change aussitôt le solde, les intérêts, le taux souverain affichés.
+- Les systèmes des phases suivantes (combats quotidiens, IA hebdomadaire) s'inséreront dans ce calendrier.
+
+### 3.2 Couches de valeur (`state.ts`, `commands.ts`)
+
+Pour chaque paramètre pays numérique, trois tableaux P × N (colonne par paramètre) :
+
+- `base` : donnée réelle ; pour un paramètre sans donnée (calculé par le moteur), sa valeur initiale calculée ;
+- valeur courante : surcharge de l'utilisateur et évolution simulée ;
+- valeur effective = courante × Π(1 + (a − 1)·w) + Σ b·w, bornée à la plage du catalogue, où chaque modificateur multiplie (`mul`, facteur a) ou ajoute (`add`, montant b) avec un poids w(t) : 1 (constant), 1 − âge/durée (linéaire) ou 0,5^(âge/demi-vie) (exponentiel), nul après la durée.
+
+Le moteur garde aussi les valeurs **au départ** (après calage et calcul des dérivés), qui distinguent une valeur simulée d'une valeur calculée dès le départ (badges « simulée » et « calcul » de l'inspecteur).
+
+Sémantique des commandes par nature de paramètre (PARAMETRES.md) : un levier (`I`) ou un état (`S`) saisi remplace la valeur courante, la simulation repart de là ; un dérivé (`D`) saisi est forcé (verrouillé), ce qui court-circuite son calcul, et « réinitialiser » rend le calcul. Le verrou interdit à la simulation d'écrire la valeur. Les paramètres bilatéraux, mondiaux, de zone (statut des détroits) et de simulation (graine, réalisme…) suivent les mêmes règles ; les paramètres fixés au lancement ou à la construction des données (date de départ, résolution, point de vue) et les zones géographiques (outils de scénario, phase 8) ne se modifient pas par commande.
+
+### 3.3 Commandes, journal, annuler et rétablir
+
+- Toute modification est une commande horodatée (`set`, `adjust`, `reset`, `lock`, `addModifier`, `removeModifier`, `setCoefficient`, `setModel`) : validée contre le catalogue (type, bornes, composantes), appliquée, puis journalisée avec ses effets (valeur avant, valeur après) et son opération inverse. Une commande invalide lève une erreur et ne laisse aucune trace.
+- Annuler applique l'inverse de la dernière commande de l'utilisateur et journalise l'annulation (entrée `undo` qui vise l'entrée annulée) ; rétablir rejoue la commande. Les événements de la simulation (défauts, crises) sont journalisés avec leurs facteurs explicatifs (« Pourquoi ? »), leurs effets et les modificateurs qu'ils créent.
+- La vitesse et le pas-à-pas ne sont pas des commandes : ils ne changent pas l'histoire simulée.
+
+### 3.4 Empreinte, relecture, captures
+
+- **Empreinte** (`hash.ts`) : deux hachages de 32 bits indépendants (FNV-1a et MurmurHash3 sur des mots de 32 bits) de tout ce qui détermine la suite : date, graine, coefficients, valeurs courantes, verrous, valeurs non numériques, paires, monde, zones, simulation, surcharges, modificateurs, états internes des systèmes, états des générateurs. Le journal et l'historique n'en font pas partie. NaN normalisé, −0 = +0.
+- **Relecture** : repartir de la capture initiale et rejouer les commandes de l'utilisateur du journal à leur tick (événements reproduits par l'aléa) redonne la même empreinte (tests `engine.test.ts`, `engine.built.test.ts` sur 20 ans de données réelles, bouton « Vérifier la relecture » de l'onglet Simulation).
+- **Captures** (`codec.ts`) : état complet, journal, pile d'annulation et historique sérialisés en JSON (tableaux typés en base64 petit-boutiste) ; restaurées uniquement sur les mêmes données (identifiant `date du build | carte`).
+- **Aléa en nombre fixe** : chaque système tire le même nombre de valeurs chaque mois (un choc par pays pour l'économie, un tirage par pays pour le défaut, un choc par prix pour les marchés), quel que soit l'état : deux trajectoires de même graine partagent leurs chocs (nombres aléatoires communs), ce qui isole l'effet d'une modification.
+
+### 3.5 Historique
+
+Échantillon mensuel (simple précision) des paramètres pays que les systèmes font évoluer, plus ceux que l'utilisateur modifie (suivis dès la modification, les mois passés prenant la valeur d'alors), et des séries mondiales (paramètres numériques et composantes des vecteurs de prix).
+
+### 3.6 Worker et temps réel (`apps/web/src/sim/`)
+
+- Le moteur tourne dans un Web Worker. La boucle avance par tranches de 20 ms au plus (50 ms pour « avancer jusqu'à ») : les jours dus = vitesse × temps réel écoulé ; une commande de l'interface attend au plus une tranche. Si le moteur ne suit pas (retard de plus de 0,5 s de simulation), le retard est abandonné et signalé.
+- Vitesses : 1 jour, 1 semaine, 30 jours ou 90 jours simulés par seconde (`sim.speed`, 0–90). Pas-à-pas : un jour, une semaine, ou jusqu'au premier jour du mois suivant (un pas mensuel des systèmes).
+- Images vers l'interface à 5 Hz au plus, et aussitôt après chaque commande : horloge ; valeurs effectives des pays (tableau transféré, sans copie) ; valeurs non numériques par différences ; monde, zones, simulation, verrous, surcharges, modificateurs ; paramètres bilatéraux seulement quand ils changent ; nouvelles entrées du journal. L'horloge réelle ne sert qu'à cadencer la boucle : elle n'entre jamais dans le moteur.
+
+## 4. Démographie (`systems/demography.ts`, SPEC §8.1)
+
+Pas mensuel (dt = 1/12 an), par pays, trois tranches d'âge A₀ (0–14), A₁ (15–64), A₂ (65+).
+
+- **Profil par âge** : à l'intérieur des tranches, les effectifs par année d'âge suivent c(a) ∝ e^(−r·a). La pente r est déduite chaque mois du rapport des effectifs moyens par âge des deux premières tranches (dichotomie sur [−0,1 ; 0,1], sommes géométriques en forme close). Elle donne les parts qui changent de tranche en un an : `passage₀₁ = c(14) / Σ₀¹⁴ c`, `passage₁₂ = c(64) / Σ₁₅⁶⁴ c`, et la part des 18–49 ans parmi les 15–64 ans.
+- **Mortalité** par tranche : `m_k = taux de référence_k × facteur du pays × e^(−baisse·t)` (`demography.mortality.age_*`, `annual_decline` = 1 %/an). Le facteur du pays est calé au départ pour reproduire la mortalité brute observée : `facteur = TBM₀ / Σ_k m_k·part_k`. La mortalité brute évolue ensuite avec le vieillissement.
+- **Fécondité** (état) : converge vers le niveau de long terme, `F ← F + (F_LT − F)·dt / durée` (`fertility.long_run` = 1,8, `convergence_years` = 50 ans).
+- **Natalité** (dérivé) : `TBN = TBN₀ × (F / F₀) × (part des 15–64 / part initiale)` : la fécondité et le poids des âges féconds modulent les naissances, calées sur la natalité observée.
+- **Bilan mensuel** : `A₀ += naissances − décès₀ − passages₀₁` ; `A₁ += passages₀₁ − décès₁ − passages₁₂ + migrants` ; `A₂ += passages₁₂ − décès₂`. Solde migratoire (levier, ‰) versé dans les 15–64 ans ; les données utilisent la moyenne du solde sur dix ans (DECISIONS D52).
+- **Population active** : proportionnelle aux 15–64 ans (taux d'activité constant). **Réservoir mobilisable** : 18–49 ans × taux d'aptitude (`manpower.fitness_rate`).
+- **Espérance de vie** : gain annuel `0,25 × (plafond − e) / (plafond − 60)` (`life_expectancy.*`). **Urbanisation** : croissance logistique vers 95 %.
+- **IDH** (dérivé) : l'IDH initial du PNUD est ajusté par l'évolution de ses composantes santé (espérance de vie, bornes 20–85 ans) et revenu (log du revenu PPA réel, bornes 100–75 000 $), en moyenne géométrique ; l'éducation reste celle du départ.
+- **Croissance des 15–64 ans** : mémorisée pour la croissance de long terme (§5.1).
+
+**Limites** : trois tranches seulement (pas de pyramide détaillée ni d'écho des cohortes) ; taux d'activité constant ; migrations constantes (réfugiés en phase 4) ; pertes de guerre, famines et épidémies en phases 5 et 6.
+
+## 5. Économie et finances publiques (`systems/economy.ts`, `budget.ts`, `finance.ts`, SPEC §8.2)
+
+**Principe** : les niveaux viennent des données ; le modèle simule les **écarts à la situation initiale**. Les projections du FMI qui fixent la croissance potentielle intègrent déjà la dette, l'instabilité ou la rente de départ ; les termes de choc sont donc mesurés par rapport à l'état initial (DECISIONS D49).
+
+### 5.1 Croissance potentielle et de long terme
+
+- Croissance de long terme : `g_LT = g_frontière + β · max(0, ln(Y_frontière / y) − seuil) · institutions + α · croissance des 15–64 ans`, bornée à [−1 ; 7] %/an. Frontière : 85 000 $ PPA par habitant croissant de 1,3 %/an ; y = revenu PPA réel par habitant ; institutions = (efficacité de l'État + état de droit) / 200 ; β = 2,5 %/an par point de log au-delà d'un seuil de 0,3 (convergence conditionnelle) ; α = 0,7.
+- La croissance potentielle (état, initialisée aux projections du FMI) converge vers g_LT : `g_pot ← g_pot + (g_LT − g_pot)·dt / 8 ans`.
+- Croissance structurelle du mois : `g_s = g_pot − e_stab·[pén(S) − pén(S₀)] − e_dette·[excès(d)·prime(n) − excès(d₀)·prime(n₀)] + e_inv·(investissement public − initial)`, avec `pén(S) = max(0, 50 − S)²` (stabilité), `excès(d) = max(0, d − 90 − 150·monnaie de réserve)` et la prime de risque de la notation (§5.8).
+
+### 5.2 Cycle : écart de production
+
+`x(t+1) = φ·x(t) + (1 − φ)·e_trade·Σ_j (exportations i→j / PIB_i)·x_j(t) + impulsion énergie + ε`
+
+- φ = 0,95 par mois (demi-vie d'un an), e_trade = 1 (contagion par les exportations).
+- Impulsion énergie : `−e_imp·Δ(facture nette)` pour un importateur, `−e_exp·Δ(facture nette)` pour un exportateur (`energy_importer` = 0,6, `energy_exporter` = 0,15), la facture nette étant (consommation − production) × (prix courant − prix initial indexé), en % du PIB ; plus `e_vol` × l'écart des volumes d'hydrocarbures à leur trajectoire de référence, pondéré par les rentes initiales.
+- ε ~ N(0, σ·(1 + k·fragilité²)), fragilité = 1 − stabilité/100, σ = 0,3 point, k = 3 : les pays instables ont des cycles plus amples.
+- PIB en volume = PIB potentiel × (1 + x/100), le PIB potentiel croissant au rythme g_s. La croissance affichée est le glissement sur douze mois (historique reconstitué au rythme potentiel initial : elle part de g_pot).
+- PIB en dollars courants : suit le volume et l'inflation du dollar (numéraire, les États-Unis) ; le PIB en PPA suit le même rythme.
+
+### 5.3 Inflation
+
+- π = cœur + choc de prix importés. Le choc cumule les sauts de prix (énergie, alimentation, dévaluation) et s'estompe en douze mois (facteur e^(−1/12) par mois).
+- Saut énergie (points) : `pass_énergie × Σ_combustibles consommation × Δprix / PIB` ; saut alimentation : `pass_alim × part de l'alimentation × variation du prix du blé`.
+- Cœur : `cœur ← cœur + (cible_cœur − cœur) / 12`, avec `cible_cœur = ancrage + monétisation + 0,3·x + 0,3·choc`. Ancrage = a·cible + (1 − a)·π₀, a = 0,2 + 0,7 × indépendance de la banque centrale (bornée à [0, 1]) : les banques centrales indépendantes ramènent l'inflation vers leur cible, les autres restent près de l'inflation de départ.
+- Monétisation : `m = part monétisée × déficit` (% du PIB) ; `3 × m × (1 + (m / 8)²)` points d'inflation : au-delà de 8 % du PIB monétisés, l'emballement est rapide (hyperinflation).
+
+### 5.4 Chômage
+
+Loi d'Okun sur la variation de l'écart de production et retour lent vers le taux initial : `u ← u − 0,4·(x − x_préc) + (u₀ − u)·dt / 5 ans`.
+
+### 5.5 Comptes extérieurs
+
+- Rentes d'hydrocarbures : `rente = rente₀ × (prix / prix₀) × (production / production de référence)`, la référence suivant la capacité mondiale (§6) ; rentes des ressources = initiales + variations.
+- Solde courant : `CA ← CA − Δ(facture énergétique) + Δ(volumes) + (CA₀ − CA)·dt / 5 ans`.
+- Réserves : suivent le PIB nominal (le déficit courant initial est financé par les entrées de capitaux) ; les écarts du solde courant à son niveau initial les font varier selon le régime de change (flottant 0,1 ; administré 0,3 ; fixe ou dollarisé 0,5 ; union monétaire 0). Mois d'importations = réserves utilisables (hors gelées) / importations × 12.
+- **Crise de balance des paiements** (changes administrés, fixes ou dollarisés ; hors factions) : quand les réserves passent sous 1,5 mois d'importations, dévaluation de 30 % (saut des prix importés = 0,5 × importations × 30 %, transmis à l'inflation), soutien extérieur de 2 mois d'importations, notation −2 crans et −3 points de croissance potentielle décroissant sur un an. Journalisée avec ses facteurs.
+
+### 5.6 Budget et dette
+
+- Recettes = `recettes × efficacité / efficacité initiale + 0,6 × (rentes − rentes initiales)`. Efficacité de collecte (levier) calculée au départ : `0,5 + 0,5 × (efficacité de l'État + contrôle de la corruption) / 200`.
+- Dépenses primaires = Σ postes (défense, social, santé, éducation, R&D, infrastructures, subventions, sécurité, aide) + autres dépenses − ajustement de la règle budgétaire. Les **autres dépenses** sont calées au départ pour que le solde soit celui du FMI (elles absorbent postes non ventilés et écarts de définition).
+- Intérêts = taux moyen apparent × dette ; solde = recettes − dépenses primaires − intérêts (recalculés à chaque commande).
+- Financement mensuel : un déficit est couvert d'abord par le fonds souverain, au prorata de sa taille (`min(1, tirage × fonds / PIB)`, sans dépasser ce qu'il contient), puis par la dette pour sa part non monétisée ; un excédent va au fonds (pays qui en ont un) ou au désendettement. `dette ← (dette + déficit financé par emprunt × dt) / (croissance nominale du mois)`.
+
+### 5.7 Règle budgétaire (en attendant les décisions des pays, phase 7)
+
+Le solde primaire se rapproche d'une cible : `cible = (i − g_n) / (100 + g_n) × dette + 0,03 × (dette − dette initiale)` (solde qui stabilise la dette, plus une réaction à la dette de type Bohn, 1998), g_n = croissance potentielle + inflation anticipée. L'ajustement (`bud.fiscal_adjustment`, état) évolue de `0,2 × (cible − solde primaire) × dt`, borné à ±20 points de PIB (catalogue). En défaut, sans accès aux marchés, la cible est au moins l'équilibre primaire et la vitesse au moins 1/an (austérité).
+
+### 5.8 Taux souverains (`finance.ts`)
+
+- Inflation anticipée = a·cible + (1 − a)·π (même ancrage qu'au §5.3).
+- Prime de risque = `0,3 × e^(0,2 × (20 − notation))` (notation 0–20, 20 = AAA ; en défaut, notation 0).
+- Taux de marché = `taux moyen initial + Δ taux directeur mondial + 1 × Δ inflation anticipée + Δ prime`, plancher −1 % : le niveau initial vient des données (dette concessionnelle comprise), seuls les écarts à la situation de départ le déplacent. Un pays déjà en défaut au départ paie le taux de sa dette restructurée.
+- Le taux moyen apparent converge vers le taux de marché au rythme du renouvellement de la dette : `i ← i + (taux de marché − i)·dt / maturité` (gelé pendant un défaut).
+
+### 5.9 Notation et défaut souverain
+
+- Révision tous les six mois vers la notation implicite `n₀ − Δdette/15 − max(0, Δinflation)/10 + Δcroissance potentielle/2`, d'un cran au plus par révision, sans dépasser n₀ + 3 ni sortir de [1, 20].
+- Probabilité annuelle de défaut : `min(30 %, 0,1 % × e^(0,43 × (12 − notation)))` (BBB : 0,1 %/an ; B− : ≈ 2 % ; CCC+ : ≈ 3 % ; C : ≈ 11 %), proche des fréquences historiques de défaut des souverains. Tirage mensuel `1 − (1 − p)^(1/12)` (hors factions).
+- Défaut : notation 0, `eco.in_default`, −4 points de croissance potentielle (décroissance linéaire sur deux ans) et −10 points de stabilité (demi-vie de six mois) ; journalisé avec ses facteurs (notation, probabilité, dette, intérêts / recettes, taux, croissance, réserves). Restructuration au bout de 24 mois : décote de 30 % sur la dette, notation 4 (CCC+), et le taux moyen repart du taux de marché d'après la restructuration (nouveaux coupons).
+
+**Limites** : pas de secteur bancaire ni de taux de change explicite (hors crises) ; politique monétaire résumée par l'ancrage et le taux directeur mondial (levier) ; règle budgétaire uniforme ; cycles d'autant plus amples que la stabilité est faible (y compris pour de grandes économies diversifiées) : σ et k sont à calibrer (CALIBRATION.md) ; commerce, sanctions et effets des détroits sur l'activité en phase 4.
+
+## 6. Marchés mondiaux simplifiés (`systems/markets.ts`, SPEC §8.3)
+
+Pour chaque produit (pétrole, gaz par zone, charbon, blé, engrais, cuivre, lithium, terres rares, uranium) :
+
+`prix* = prix d'ancrage × (demande / offre)^(1/ε)` ; `ln p(t+1) = ln p + (ln p* − ln p) / délai + σ·N(0, 1)`
+
+- **Ancrage** : prix au jour des données, en dollars constants (indexé sur l'inflation du dollar). Il contient la prime de crise du départ (guerre d'Iran, détroit d'Ormuz), qui sera expliquée par le statut des détroits en phase 4.
+- **Demande et offre** : indices relatifs au départ. Énergies fossiles : consommation de chaque pays déplacée par son PIB en volume (élasticité-revenu), une tendance et le prix (élasticité-prix appliquée après la formation du prix) ; production de chaque pays croissant avec la capacité mondiale, `capacité += (tendance + réponse × ln(p / p_ancrage))·dt` : l'investissement ramène le prix vers l'ancrage à long terme. Blé, engrais : offre selon les parts d'exportation (`res.*`), demande selon la population mondiale ; métaux : parts de production minière (USGS), demande selon le PIB mondial.
+- **Pétrole** : la capacité inutilisée (OPEP+, `energy.spare_capacity`) se mobilise en trois mois quand la demande dépasse l'offre.
+- **Gaz** : trois zones (Europe : Europe, Moyen-Orient, Afrique ; Asie ; Amériques). L'écart de chaque zone est mélangé à la moyenne des autres par l'arbitrage du GNL (0,3).
+- **Engrais** : prix d'équilibre multiplié par (gaz européen / initial)^part du gaz dans le coût.
+- **Puces avancées** : indice d'offre = 100 × parts de fabrication courantes / initiales.
+- Consommation d'énergie primaire : activité (élasticité 0,6) et efficacité (−1 %/an).
+
+**Limites** : pas de stocks ni de spéculation ; demande et offre en indices (les volumes mondiaux des sources ne s'équilibrent pas) ; pas de commerce bilatéral des matières premières ni de routes (phase 4) ; coûts de production implicites dans l'ancrage.
+
+## 7. Comptes dérivés (`systems/accounts.ts`, `derived.ts`)
+
+Recalculés après chaque pas et chaque commande, sans coefficient : PIB par habitant, indice de misère (inflation + chômage), budget de défense (PIB × part de la défense), aide versée (PIB × part de l'aide, approximation du RNB), intensité énergétique (énergie primaire / PIB), dépendance énergétique ((consommation − production de pétrole, gaz et charbon) / énergie primaire). Croissance mondiale : moyenne des croissances pondérée par le PIB en PPA (convention du FMI), hors factions.
+
+## Systèmes à venir
 
 | Section SPEC | Système                                      | Phase                     |
 | ------------ | -------------------------------------------- | ------------------------- |
-| §8.1         | Démographie                                  | 3                         |
-| §8.2         | Économie et finances publiques               | 3                         |
+| §8.1         | Démographie                                  | 3 (fait)                  |
+| §8.2         | Économie et finances publiques               | 3 (fait)                  |
 | §8.3         | Commerce, routes maritimes, marchés          | 3 (marchés simplifiés), 4 |
 | §8.4         | Énergie, alimentation, eau, minerais         | 4                         |
 | §8.5         | Politique intérieure                         | 4                         |

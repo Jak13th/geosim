@@ -25,7 +25,17 @@ import { NUMERAIRE } from '../constants.ts';
 import { col, type State } from '../state.ts';
 import type { System, SystemContext } from '../system.ts';
 import { realIncomePpp } from './demography.ts';
-import { capacityKeyOf, energyPricesPerMwh, gasZoneOf, usdIndex, type GasZone } from './markets.ts';
+import {
+  baseEnergyQuotes,
+  capacityKeyOf,
+  energyContent,
+  energyPricesPerMwh,
+  energyQuotes,
+  gasZoneOf,
+  perMwh,
+  type EnergyPrices,
+  type GasZone,
+} from './markets.ts';
 import { expectedInflation, spreadOf } from './finance.ts';
 
 const C = {
@@ -130,24 +140,26 @@ function stabilityPenalty(ctx: SystemContext, stability: number): number {
 }
 
 type Fuel = 'oil' | 'coal' | GasZone;
-const BASE_PRICE_KEYS: Record<Fuel, string> = {
-  oil: 'econ.basePrice.oil',
-  coal: 'econ.basePrice.coal',
-  europe: 'econ.basePrice.gas.europe',
-  asia: 'econ.basePrice.gas.asia',
-  americas: 'econ.basePrice.gas.americas',
-};
+/** Prix du mois précédent, dans leurs unités de cotation et en dollars constants. */
 const PREV_PRICE_KEYS: Record<Fuel, string> = {
-  oil: 'econ.prevPrice.oil',
-  coal: 'econ.prevPrice.coal',
-  europe: 'econ.prevPrice.gas.europe',
-  asia: 'econ.prevPrice.gas.asia',
-  americas: 'econ.prevPrice.gas.americas',
+  oil: 'econ.prevQuote.oil',
+  coal: 'econ.prevQuote.coal',
+  europe: 'econ.prevQuote.gas.europe',
+  asia: 'econ.prevQuote.gas.asia',
+  americas: 'econ.prevQuote.gas.americas',
 };
 
-/** Prix d'une énergie ($/MWh) au départ, en dollars courants (indexé sur l'inflation du dollar). */
-function basePrice(state: State, fuel: Fuel): number {
-  return (state.worldInternal.get(BASE_PRICE_KEYS[fuel]) ?? 0) * usdIndex(state);
+function byFuel(p: EnergyPrices, fuel: Fuel): number {
+  return fuel === 'oil' ? p.oil : fuel === 'coal' ? p.coal : p.gas[fuel];
+}
+
+/**
+ * Prix d'une énergie ($/MWh) au départ, en dollars courants : prix d'ancrage des données indexé
+ * sur l'inflation du dollar, converti avec les pouvoirs calorifiques courants (un coefficient
+ * modifié en cours de partie ne crée pas de faux choc de prix).
+ */
+function basePrice(state: State, model: SystemContext['model'], fuel: Fuel): number {
+  return byFuel(perMwh(baseEnergyQuotes(state), model), fuel);
 }
 
 /**
@@ -161,12 +173,13 @@ function termsOfTrade(ctx: SystemContext, i: number): { tot: number; exporter: b
   const oil = fin(S.e(C.oilCons)[i] as number) - fin(S.e(C.oilProd)[i] as number);
   const gas = fin(S.e(C.gasCons)[i] as number) - fin(S.e(C.gasProd)[i] as number);
   const coal = fin(S.e(C.coalCons)[i] as number) - fin(S.e(C.coalProd)[i] as number);
+  const m = ctx.model;
   const net =
-    oil * (now.oil - basePrice(S, 'oil')) +
-    gas * (now.gas[zone] - basePrice(S, zone)) +
-    coal * (now.coal - basePrice(S, 'coal'));
+    oil * (now.oil - basePrice(S, m, 'oil')) +
+    gas * (now.gas[zone] - basePrice(S, m, zone)) +
+    coal * (now.coal - basePrice(S, m, 'coal'));
   const position =
-    oil * basePrice(S, 'oil') + gas * basePrice(S, zone) + coal * basePrice(S, 'coal');
+    oil * basePrice(S, m, 'oil') + gas * basePrice(S, m, zone) + coal * basePrice(S, m, 'coal');
   // Termes de l'échange en prix réels : écart des prix courants aux prix initiaux indexés.
   const gdp = S.e(C.gdp)[i] as number;
   // TWh × $/MWh = M$ ; / 1 000 = Md$ ; / PIB (Md$) × 100 = % du PIB.
@@ -226,7 +239,7 @@ function numeraireIndex(state: State): number {
   return state.byId.get(NUMERAIRE) ?? -1;
 }
 
-function pricesByFuel(p: ReturnType<typeof energyPricesPerMwh>): [Fuel, number][] {
+function pricesByFuel(p: EnergyPrices): [Fuel, number][] {
   return [
     ['oil', p.oil],
     ['coal', p.coal],
@@ -240,10 +253,8 @@ function init(ctx: SystemContext): void {
   const S = ctx.state;
   const N = S.n;
   S.worldInternal.set('usdPriceIndex', 1);
-  const prices = energyPricesPerMwh(S, ctx.model);
-  for (const [fuel, price] of pricesByFuel(prices)) {
-    S.worldInternal.set(BASE_PRICE_KEYS[fuel], price);
-    S.worldInternal.set(PREV_PRICE_KEYS[fuel], price);
+  for (const [fuel, quote] of pricesByFuel(energyQuotes(S))) {
+    S.worldInternal.set(PREV_PRICE_KEYS[fuel], quote);
   }
   S.worldInternal.set('econ.prevWheat', S.worldNumber('world.wheat_price'));
   S.internalArray('econ.potentialOutput', 1);
@@ -286,18 +297,23 @@ function monthly(ctx: SystemContext): void {
   S.worldInternal.set('usdPriceIndex', usdAfter);
 
   // Prix de l'énergie et du blé : variation réelle du mois (chocs de prix importés), en dollars
-  // courants. Les prix précédents sont mémorisés en dollars constants.
-  const prices = energyPricesPerMwh(S, m);
-  const change = (fuel: Fuel, now: number): number =>
-    now - (S.worldInternal.get(PREV_PRICE_KEYS[fuel]) ?? now / usdAfter) * usdAfter;
+  // courants par MWh. Les prix précédents sont mémorisés dans leurs unités, en dollars constants.
+  const quotes = energyQuotes(S);
+  const prices = perMwh(quotes, m);
+  const content = energyContent(m);
+  const change = (fuel: Fuel, perUnit: number): number => {
+    const now = byFuel(quotes, fuel);
+    const before = (S.worldInternal.get(PREV_PRICE_KEYS[fuel]) ?? now / usdAfter) * usdAfter;
+    return (now - before) / perUnit;
+  };
   const delta = {
-    oil: change('oil', prices.oil),
+    oil: change('oil', content.oil),
     gas: {
-      europe: change('europe', prices.gas.europe),
-      asia: change('asia', prices.gas.asia),
-      americas: change('americas', prices.gas.americas),
+      europe: change('europe', content.gas),
+      asia: change('asia', content.gas),
+      americas: change('americas', content.gas),
     },
-    coal: change('coal', prices.coal),
+    coal: change('coal', content.coal),
   };
   const wheat = S.worldEff('world.wheat_price') / usdAfter;
   const wheatPrev = S.worldInternal.get('econ.prevWheat') ?? wheat;
@@ -442,8 +458,8 @@ function monthly(ctx: SystemContext): void {
     const gdpNow = S.effNow(C.gdp, i);
     let rentsDelta = 0;
     for (const [rents, prod, price, price0, fuel] of [
-      [C.oilRents, C.oilProd, prices.oil, basePrice(S, 'oil'), 'oil'],
-      [C.gasRents, C.gasProd, prices.gas[zone], basePrice(S, zone), 'gas'],
+      [C.oilRents, C.oilProd, prices.oil, basePrice(S, m, 'oil'), 'oil'],
+      [C.gasRents, C.gasProd, prices.gas[zone], basePrice(S, m, zone), 'gas'],
     ] as const) {
       const r0 = S.base[rents * N + i] as number;
       const p0 = S.base[prod * N + i] as number;
@@ -492,8 +508,8 @@ function monthly(ctx: SystemContext): void {
     below[i] = reserveMonths(S, i) < m.get(K.bopMonths) ? 1 : 0;
   }
 
-  for (const [fuel, price] of pricesByFuel(prices))
-    S.worldInternal.set(PREV_PRICE_KEYS[fuel], price / usdAfter);
+  for (const [fuel, quote] of pricesByFuel(quotes))
+    S.worldInternal.set(PREV_PRICE_KEYS[fuel], quote / usdAfter);
   S.worldInternal.set('econ.prevWheat', wheat);
 }
 

@@ -239,6 +239,28 @@ describe('couches de valeur et commandes', () => {
     expect(() => e.apply({ type: 'setModel', model: { economy: {} } })).toThrow(/invalide/);
   });
 
+  it('un coefficient modifié en cours de partie équivaut à le modifier avant le départ', () => {
+    // Les références de calage (prime et inflation anticipée de départ, prix de l'énergie de
+    // départ) sont recalculées avec les coefficients courants : aucun saut artificiel.
+    for (const [path, x] of [
+      ['economy.rates.spread_per_notch', 0.3],
+      ['economy.inflation.anchor_central_bank', 0.35],
+      ['markets.energy.oil_mwh_per_barrel', 1.5],
+    ] as const) {
+      const tree = structuredClone(model);
+      const keys = path.split('.');
+      let node = tree as Record<string, unknown>;
+      for (const k of keys.slice(0, -1)) node = node[k] as Record<string, unknown>;
+      (node[keys[keys.length - 1] as string] as { value: number }).value = x;
+      const before = Engine.create(data, { seed: 3, model: tree });
+      const live = make(3);
+      live.apply({ type: 'setCoefficient', path, value: x });
+      before.step(400);
+      live.step(400);
+      expect(live.hash(), path).toBe(before.hash());
+    }
+  });
+
   it('suit dans l’historique un paramètre modifié, mois passés compris', () => {
     const e = make();
     e.step(70);

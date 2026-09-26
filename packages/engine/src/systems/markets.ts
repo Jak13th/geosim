@@ -100,22 +100,59 @@ function mbdToTwh(mbd: number, mwhPerBarrel: number): number {
   return (mbd * 1e6 * 365 * mwhPerBarrel) / 1e6;
 }
 
-/** Prix des énergies fossiles en $/MWh (coûts de l'énergie des pays). */
-export function energyPricesPerMwh(
-  state: State,
-  model: SystemContext['model'],
-): { oil: number; gas: Record<GasZone, number>; coal: number } {
+/** Prix des énergies fossiles dans leurs unités de cotation ($/baril, $/MMBtu, $/t). */
+export interface EnergyPrices {
+  oil: number;
+  gas: Record<GasZone, number>;
+  coal: number;
+}
+
+/** Prix courants des énergies fossiles, dans leurs unités de cotation. */
+export function energyQuotes(state: State): EnergyPrices {
   const gas = state.worldVector('world.gas_price');
-  const perMwh = model.get(K.gasMwh);
   return {
-    oil: state.worldEff('world.oil_price') / model.get(K.oilMwh),
-    gas: {
-      europe: (gas.europe ?? 0) / perMwh,
-      asia: (gas.asia ?? 0) / perMwh,
-      americas: (gas.americas ?? 0) / perMwh,
-    },
-    coal: state.worldEff('world.coal_price') / model.get(K.coalMwh),
+    oil: state.worldEff('world.oil_price'),
+    gas: { europe: gas.europe ?? 0, asia: gas.asia ?? 0, americas: gas.americas ?? 0 },
+    coal: state.worldEff('world.coal_price'),
   };
+}
+
+/** Prix d'ancrage (au départ, en dollars courants) des énergies fossiles, dans leurs unités. */
+export function baseEnergyQuotes(state: State): EnergyPrices {
+  const gas = baseVector(state, 'world.gas_price');
+  return {
+    oil: baseNumber(state, 'world.oil_price'),
+    gas: { europe: gas.europe ?? 0, asia: gas.asia ?? 0, americas: gas.americas ?? 0 },
+    coal: baseNumber(state, 'world.coal_price'),
+  };
+}
+
+/** Énergie par unité de cotation (MWh par baril, par MMBtu, par tonne). */
+export function energyContent(model: SystemContext['model']): {
+  oil: number;
+  gas: number;
+  coal: number;
+} {
+  return { oil: model.get(K.oilMwh), gas: model.get(K.gasMwh), coal: model.get(K.coalMwh) };
+}
+
+/** Prix en $/MWh (coûts de l'énergie des pays), avec les pouvoirs calorifiques courants. */
+export function perMwh(prices: EnergyPrices, model: SystemContext['model']): EnergyPrices {
+  const c = energyContent(model);
+  return {
+    oil: prices.oil / c.oil,
+    gas: {
+      europe: prices.gas.europe / c.gas,
+      asia: prices.gas.asia / c.gas,
+      americas: prices.gas.americas / c.gas,
+    },
+    coal: prices.coal / c.coal,
+  };
+}
+
+/** Prix courants des énergies fossiles en $/MWh. */
+export function energyPricesPerMwh(state: State, model: SystemContext['model']): EnergyPrices {
+  return perMwh(energyQuotes(state), model);
 }
 
 /** Indice des prix du dollar (numéraire) depuis le départ. */

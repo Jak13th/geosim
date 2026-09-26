@@ -26,9 +26,9 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | ID | Paramètre | Unité · plage | Type | Source initiale |
 |---|---|---|---|---|
 | `demo.population` | Population | habitants · échelle log | S | WB:SP.POP.TOTL |
-| `demo.birth_rate` | Natalité | ‰/an · 0–60 | I | WB:SP.DYN.CBRT.IN |
+| `demo.birth_rate` | Natalité | ‰/an · 0–60 | D | WB:SP.DYN.CBRT.IN |
 | `demo.death_rate` | Mortalité | ‰/an · 0–40 | S | WB:SP.DYN.CDRT.IN |
-| `demo.fertility` | Fécondité | enfants/femme · 0,5–8 | I | WB:SP.DYN.TFRT.IN |
+| `demo.fertility` | Fécondité | enfants/femme · 0,5–8 | S | WB:SP.DYN.TFRT.IN |
 | `demo.life_expectancy` | Espérance de vie | ans · 30–95 | S | WB:SP.DYN.LE00.IN |
 | `demo.share_0_14` | Part des 0–14 ans | % · 0–60 | S | WB:SP.POP.0014.TO.ZS |
 | `demo.share_15_64` | Part des 15–64 ans | % · 30–85 | S | WB:SP.POP.1564.TO.ZS |

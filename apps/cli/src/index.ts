@@ -48,7 +48,9 @@ if (!(scenario in SCENARIOS)) {
 const years = integer('years', values.years, 1);
 const runs = integer('runs', values.runs, 1);
 const seed = integer('seed', values.seed, 0);
-const outDir = resolve(values.out ?? 'results');
+// `npm run sim` s'exécute dans le dossier du paquet : le chemin de sortie se lit depuis le dossier
+// où la commande a été lancée (INIT_CWD, fourni par npm).
+const outDir = resolve(process.env.INIT_CWD ?? process.cwd(), values.out ?? 'results');
 
 const data = loadData();
 const model = loadModel();

@@ -10,7 +10,7 @@
 #
 # Les valeurs par défaut sont des points de départ à calibrer (docs/CALIBRATION.md), jamais des vérités.
 # Les familles se remplissent au fil des phases, avec le système qui les utilise. Équations et hypothèses :
-# docs/MODELES.md (§1 pour `geo`, §3 à §6 pour les systèmes de la phase 3).
+# docs/MODELES.md (§1 pour `geo`, §3 pour le moteur, §4 à §7 pour les systèmes de la phase 3).
 version: 1
 geo:
   # Seuils utilisés par le pipeline de la carte (npm run data). Modifier une valeur demande de
@@ -156,7 +156,7 @@ geo:
       description: 'Multiplicateur du coût des trajets au-delà de polar_min_lat pour le choix des routes. La longueur rapportée reste la distance réelle.'
   population:
     # Répartition de la population et de la valeur économique par pixel (phase 1b).
-    # Hypothèses à calibrer ; équations : docs/MODELES.md §1.9.
+    # Hypothèses à calibrer ; équations : docs/MODELES.md §1.10.
     city_kernel_sigma_km:
       value: 8
       range: [2, 30]
@@ -233,7 +233,7 @@ demography:
       value: 2
       range: [0.1, 20]
       unit: '‰/an'
-      description: 'Mortalité de référence des 0–14 ans. Les trois taux de référence donnent la forme de la mortalité par âge ; un facteur propre à chaque pays, calé au départ, reproduit sa mortalité observée (MODELES §3.1).'
+      description: 'Mortalité de référence des 0–14 ans. Les trois taux de référence donnent la forme de la mortalité par âge ; un facteur propre à chaque pays, calé au départ, reproduit sa mortalité observée (MODELES §4).'
     age_15_64:
       value: 3.5
       range: [0.5, 20]
