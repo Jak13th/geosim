@@ -543,6 +543,54 @@ describe('politique intérieure', () => {
     expect(v(e, 'pol.electoral_democracy', 'NGA')).toBeLessThan(0.45);
   });
 
+  it('coup d’État : le revenu protège au-delà du seuil, à régime, stabilité et loyauté égaux', () => {
+    const e = calm();
+    e.apply({ type: 'setCoefficient', path: 'politics.coups.max', value: 100 });
+    for (const id of ['FRA', 'NGA']) {
+      e.apply({ type: 'set', slots: [country('pol.regime_type', id)], value: 'hybrid' });
+      e.apply({ type: 'set', slots: [country('pol.stability', id)], value: 30 });
+      e.apply({ type: 'set', slots: [country('pol.military_loyalty', id)], value: 70 });
+    }
+    const ctx = { model: e.model, state: e.state };
+    const rich = coupRisk(ctx, idx(e, 'FRA'));
+    const poor = coupRisk(ctx, idx(e, 'NGA'));
+    const income = (r: typeof rich): number =>
+      r.factors.find((f) => f.id === 'eco.gdp_per_capita')?.contribution ?? Number.NaN;
+    expect(income(poor)).toBe(1);
+    expect(income(rich)).toBeLessThan(0.5);
+    expect(rich.risk).toBeCloseTo(poor.risk * income(rich), 9);
+    // Élasticité nulle : le revenu ne protège plus.
+    e.apply({ type: 'setCoefficient', path: 'politics.coups.income_elasticity', value: 0 });
+    expect(coupRisk(ctx, idx(e, 'FRA')).risk).toBeCloseTo(poor.risk, 9);
+  });
+
+  it('transition d’une junte : régime civil (hybride), élections rétablies, facteurs consignés', () => {
+    const e = calm();
+    e.apply({ type: 'set', slots: [country('pol.regime_type', 'NGA')], value: 'junta' });
+    const before = e.state.genericValue('pol.next_election', idx(e, 'NGA'));
+    months(e, 1);
+    // Taux par défaut modéré : la transition n'est pas immédiate…
+    expect(e.journal.some((j) => j.kind === 'junta_transition')).toBe(false);
+    // … elle l'est à 100 %/an.
+    e.apply({
+      type: 'setCoefficient',
+      path: 'politics.coups.junta_transition_rate',
+      value: 100,
+    });
+    months(e, 1);
+    const t = e.journal.find((j) => j.kind === 'junta_transition');
+    expect(t?.entities[0]).toBe('NGA');
+    expect((t?.factors ?? []).map((f) => f.id)).toEqual(
+      expect.arrayContaining(['politics.coups.junta_transition_rate', 'pol.leader_tenure']),
+    );
+    const nga = idx(e, 'NGA');
+    expect(e.state.genericValue('pol.regime_type', nga)).toBe('hybrid');
+    const next = e.state.genericValue('pol.next_election', nga);
+    expect(typeof next).toBe('string');
+    expect(next).not.toBe(before);
+    expect(String(next) > e.date()).toBe(true);
+  });
+
   it('guerre civile au-delà du seuil d’insurrection, fin sous le seuil de sortie', () => {
     const e = calm();
     e.apply({ type: 'set', slots: [country('pol.insurgency', 'NGA')], value: 80 });

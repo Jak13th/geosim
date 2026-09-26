@@ -414,3 +414,118 @@ Un curseur envoie sa commande au relâchement (et un champ à la validation) : u
 ### D65. Valeurs au départ gardées par le moteur
 
 Le moteur conserve les valeurs après calage (tick 0), incluses dans les captures. L'interface distingue ainsi une valeur **simulée** (qui a bougé depuis le départ) d'une valeur **calculée** dès le départ par le moteur (budget de défense = PIB × part de la défense, différent du chiffre du SIPRI), et d'une valeur **modifiée** par l'utilisateur.
+
+## 2026-09-26 — Phase 4 (monde interconnecté)
+
+### D66. Données de 2024 : routes libres ; chocs mesurés par rapport au départ
+
+Les échanges bilatéraux (BACI 2024) et les productions d'énergie (OWID 2024) datent d'avant la fermeture d'Ormuz : ils décrivent des routes libres. Au départ, la capacité courante des détroits (`chokepoints.yaml` : Ormuz à 15 %, Bab-el-Mandeb à 23 %…) s'applique d'emblée aux échanges et à la production. Tout le reste (sanctions, guerres, droits de douane, blocs, relations) se mesure par rapport au départ (D49) : les données les intègrent déjà. Le commerce suit la gravité sur les PIB nominaux, les frictions relatives au départ et l'accès par les routes ; le commerce perdu se réoriente en partie selon sa cause (décomposition logarithmique des frictions), avec une décote à l'exportation et une prime à l'importation ; les gains à l'échange (Arkolakis, Costinot et Rodríguez-Clare, 2012) donnent un niveau du PIB.
+
+- _Écartées_ : repartir d'un monde « routes libres » (la situation de départ ne serait plus celle des données) ; simuler tous les chocs en absolu (les sanctions russes compteraient deux fois).
+
+### D67. Élections retenues : celles qui peuvent changer l'exécutif
+
+`pol.next_election` porte la prochaine élection qui peut changer le gouvernement : présidentielle en régime présidentiel, législatives en régime parlementaire. Les élections de mi-mandat (États-Unis, Mexique), les sénatoriales et les législatives d'un régime présidentiel (Corée du Sud) ne sont pas retenues (notes dans `elections.yaml`). La suivante est fixée à quatre ans (`politics.elections.term_years`), faute de durée propre à chaque pays.
+
+- _Écartée_ : toutes les élections nationales (une alternance au Congrès changerait le profil décisionnel de la présidence).
+- _Limite_ : les majorités législatives ne sont pas modélisées.
+
+### D68. Prime de crise du pétrole : prix structurel et élasticité calée sur l'avant-guerre
+
+Le prix de départ du Brent (≈ 104 $) contient la prime de la guerre de 2026. Le prix que vise l'investissement est p₀ · A₀^(1/ε), A₀ offre de départ / offre routes libres (0,893). ε = 0,31 place ce prix à 72,5 $, le Brent d'avant la guerre (février 2026) : rouvrir Ormuz ramène le Brent vers ce niveau en un an environ, et la fermeture de 85 % du détroit explique la prime observée.
+
+- _Écartée_ : ε = 0,2 de la phase 3 (prix structurel de 59 $, trop bas).
+
+### D69. Tirages rares désignés par une clé
+
+Élections, coups d'État, successions, révolutions et élections anticipées tirent un nombre uniforme désigné par une clé (graine, nature, pays, date) : le tirage d'un pays ne dépend pas de l'ordre des événements ni des tirages des autres. Deux branches de même graine partagent ainsi leurs tirages : seules les différences d'état séparent leurs issues (le scénario d'élection en dépend).
+
+### D70. Contrôle quotidien léger
+
+Les systèmes peuvent déclarer un contrôle quotidien (`daily`) : il sert aux élections, tenues à leur date exacte. Il ne coûte presque rien les jours sans élection.
+
+### D71. Commandes `bloc` et `unResolution`
+
+Adhérer à un bloc ou le quitter est une commande journalisée et annulable : les traités de défense mutuelle du bloc suivent ; adhérer à un bloc aux sanctions communes (UE) en adopte les sanctions. Un projet de résolution de l'ONU aussi : chaque membre du Conseil de sécurité vote selon sa relation avec le pays visé (plus un soutien de base selon la nature de la résolution, plus si le pays est en guerre) ; un vote contre d'un membre permanent est un veto ; 9 voix sont requises (Charte, article 27). En cas d'échec, l'Assemblée générale vote (non contraignant, effet sur les relations). Adoptée : sanctions appliquées par les États membres selon l'efficacité de l'ONU et leur proximité avec le pays visé, condamnation, mission de maintien de la paix (insurrection en recul), cessez-le-feu (consigné ; effet sur les combats en phase 5). Les votes sont les facteurs explicatifs de l'entrée.
+
+### D72. Relations : affinité, résidu de calage, mémoire des chocs
+
+La relation converge (κ = 0,05/mois) vers affinité structurelle + résidu + mémoire. Le résidu (relation de départ − affinité de départ) garde les relations curées et s'efface lentement (demi-vie de 10 ans) ; une relation saisie par l'utilisateur déplace le résidu d'autant (la saisie tient) ; une alternance en efface la moitié. La mémoire cumule les chocs des actions (sanctions imposées ou levées, guerre, paix, traités, condamnations, coups d'État), qui décroissent avec une demi-vie de 24 mois. Les paires sans relation curée partent de leur affinité.
+
+- _Écartée_ : relation qui converge vers l'affinité seule (les relations curées disparaîtraient en quelques années).
+
+### D73. Traités issus des blocs
+
+Le pipeline écrit les traités de défense mutuelle issus des blocs et de `treaties.yaml` dans `pair.treaty` ; le moteur ne les synchronise qu'aux changements d'appartenance (adhésion, retrait, suspension après un coup d'État pour l'UA et la CEDEAO), sans toucher aux traités bilatéraux ni à une saisie de l'utilisateur.
+
+### D74. Réfugiés : pression relative au départ, seuil, destinations par gravité
+
+Les réfugiés présents au départ (HCR) sont conservés ; seul l'écart de la pression de départ au départ (insurrection, guerre sur le territoire, famine, effondrement de l'État) crée de nouveaux réfugiés, au-delà d'un seuil de 0,1 (en deçà, les déplacements restent internes) : 0,15 de la population par unité au-delà du seuil, soit ≈ 13 % pour une guerre comme celle d'Ukraine et ≈ 21 % pour une guerre civile comme celle de Syrie. Destinations : population du pays d'accueil (élasticité 1 : charge par habitant neutre), proximité (voisins, puis e^(−km/1 000)), revenu relatif (élasticité 0,25, borné à 3), stabilité, ouverture migratoire, hostilité ; aucune vers un pays en crise, en blocus ou en guerre avec le pays de départ. Coût d'accueil au budget, charge sur la stabilité et la cohésion.
+
+- _Écartées_ : taille des destinations à l'élasticité 0,5 (les micro-États recevaient jusqu'à 28 % de leur population) ; pas de seuil (une hausse de 3 points d'insurrection au Pakistan envoyait 1,8 million de réfugiés à l'étranger).
+
+### D75. Guerres civiles sans faction en phase 4 ; soutien aux guerres en phase 5
+
+Une insurrection au-delà du seuil (60) ouvre une guerre civile : événement, freins à la croissance, départs de réfugiés. La faction qui prend des régions (SPEC §8.5) viendra avec les fronts (phase 5), comme le soutien à chaque guerre (`pol.war_support`), qui dépend des pertes et des gains.
+
+### D76. Politique intérieure : calage sur le départ et garde-fous de la trajectoire de référence
+
+Stabilité et approbation suivent les écarts de leurs facteurs au départ (D49). Réglages retenus pour qu'un monde sans intervention ne dérive pas (−1,35 point de stabilité moyenne en 20 ans, ≈ 2,7 coups par an) :
+
+- l'insurrection ne croît que si la stabilité passe sous un seuil de fragilité (30) plus bas qu'au départ : un État solide qui perd de la stabilité ne voit pas naître d'insurrection ;
+- l'usure du pouvoir sature (8 points au plus, durée caractéristique 3 ans) ;
+- la légitimité suit l'écart de l'approbation à son niveau de départ (0,2 point par point), autour d'une ancre abaissée par un coup d'État ;
+- successions non planifiées dans les régimes non démocratiques seulement ; élections anticipées seulement si la contestation dépasse son niveau de départ ;
+- coups d'État : risque de base de 2 %/an pour une junte, plafond de 15 %/an (≈ 2 coups par an attendus au départ, la moyenne des années 2020).
+
+- _Écartées_ (essais) : usure linéaire et légitimité à 0,5 point par point (stabilité moyenne −7 points en 20 ans, cascades de coups et de réfugiés).
+
+### D77. Énergie : flux établis, stocks en jours d'énergie, pas de prime de précaution
+
+Le manque d'un importateur se mesure par rapport aux flux établis, qui suivent les flux courants vite quand un fournisseur revient (3 mois) et lentement quand une perte dure (24 mois : le remplacement devient la nouvelle normale). Sans cela, une fermeture d'Ormuz après sa réouverture restait mesurée par rapport au départ (détroit déjà fermé) et ne créait aucune pénurie. Les stocks stratégiques, en jours de pétrole, couvrent « part du pétrole dans l'énergie » jours de consommation d'énergie. Remplacement en 3 mois.
+
+- _Limite_ : pas de prime de précaution (achats de précaution, spéculation) : le prix monte au rythme de l'ajustement du marché et des stocks, pas d'un bond à l'annonce.
+
+### D78. Hydrocarbures : effet de niveau sur le PIB
+
+La variation des volumes d'hydrocarbures produits agit sur le niveau du PIB (la production est de la valeur ajoutée), et non comme impulsion de l'écart de production : une fermeture durable ne s'effaçait pas avec la persistance du cycle, et la réouverture créait un faux boom.
+
+### D79. Pays enclavés : part terrestre des échanges
+
+Entre deux pays reliés par la terre, si l'un est enclavé (`geo.landlocked`), la part terrestre est au moins celle de deux voisins (0,8) : la Russie commerce avec l'Ouzbékistan par le rail et les oléoducs, pas par Ormuz.
+
+### D80. Facture du blé
+
+La facture céréalière d'un importateur est la consommation de blé par habitant (0,1 t/an, FAO) × population × (1 − autosuffisance céréalière) × écart du prix du blé.
+
+- _Écartée_ : consommation de toutes les céréales, alimentation animale comprise (0,34 t/an) : la facture du Yémen dépassait 17 % du PIB.
+
+### D81. Scénarios d'expérience dans le moteur
+
+Les expériences de la fin de phase (Ormuz, sanctions contre la Chine, blé × 2, alternance aux États-Unis) sont des suites de commandes datées (`packages/engine/src/scenarios.ts`), comparées à une référence de même graine. La CLI écrit leur rapport (`npm run sim -- --scenario ormuz`) ; des tests d'acceptation les vérifient sur les données construites. Le format de scénario versionné et les branches viendront en phase 8.
+
+### D82. Explications calculées à la demande
+
+Les décompositions (stabilité, approbation, risque de coup, pression de départ, sanctions, énergie, affinité) sont calculées par le moteur à la demande de l'interface (module `explain`), en lecture seule : elles ne créent aucun tableau interne et ne changent pas l'empreinte de l'état (testé).
+
+### D83. Ordre des sommes : jamais l'ordre d'insertion d'une table
+
+Une table bilatérale restaurée d'une capture a ses clés triées, alors que celle d'une simulation garde l'ordre des données : sommer dans l'ordre d'insertion donnait des arrondis différents et la relecture divergeait au dernier bit (relevé par `check:console`). Les sommes se font dans l'ordre des indices ; un test vérifie qu'une capture restaurée continue à l'identique.
+
+### D84. Performances : coefficients et distances hors des boucles N × N
+
+Les coefficients sont lus une fois par calcul et les distances et parts terrestres mises en cache (invalidées par les modifications) : un pas mensuel passe de ≈ 350 à ≈ 100 ms sur les données réelles, à résultats identiques (même empreinte).
+
+### D85. Griefs et proximités culturelles curés (`pair_ties.yaml`)
+
+50 griefs historiques (asymétriques) et 124 proximités culturelles pour les paires dont la relation ne s'explique pas par les autres facteurs (Chine–Japon, Inde–Pakistan, Russie–Ukraine, États-Unis–Canada…), chacun avec une justification d'une ligne, confiance `assumption` : hypothèses à valider. Les autres paires d'une même région ont une proximité par défaut (20).
+
+### D86. Coups d'État : revenu, compétitivité des successions, transition des juntes
+
+La référence de 5 × 20 ans produisait 2,6 coups réussis par an (base Powell et Thyne, version du 29/08/2026 : 1,5 par an de 2006 à 2025, 2,2 de 2020 à 2025), dont certains dans des pays riches (Canada, Liechtenstein, Saint-Marin, Chine, Turquie), et le nombre de juntes était multiplié par trois à cinq en 20 ans, faute de sortie des régimes militaires. Trois corrections minimales :
+
+- **Revenu** : le risque est multiplié par `min(1, (5 000 $ / PIB par habitant)^1)` (dollars du départ) : la richesse protège (Londregan et Poole, 1990 ; Przeworski et Limongi, 1997) ; en deçà du seuil, rien ne change.
+- **Successions non planifiées** : leur probabilité est multipliée par `1 − compétitivité` des élections (la même que pour l'alternance) : là où l'exécutif est choisi par des élections concurrentielles, la constitution règle la succession.
+- **Transition des juntes** : 11 %/an (durée moyenne d'environ 9 ans des régimes militaires de 1946 à 1999, Geddes 1999) ; la junte organise une élection qu'elle remporte le plus souvent (Tchad 2024, Gabon 2025) : régime hybride, même profil, élections rétablies au terme d'un mandat.
+
+Résultat : 2,0 coups par an, juntes stables (7 à 11 États au bout de 20 ans pour 7 au départ). Alternatives écartées pour l'instant : l'historique des coups (piège du coup d'État, données Powell et Thyne) et la loyauté de l'armée curée par pays (V-Dem, dimension militaire), qui demandent des données nouvelles ; proposées pour la validation. Le risque reste trop élevé pour de grandes autocraties électorales pauvres et sans tradition de coup (Inde : 1,2 %/an), faute de ces deux données.

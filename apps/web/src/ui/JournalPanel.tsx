@@ -41,6 +41,7 @@ const EVENT_LABELS: Record<string, string> = {
   election_alternance: 'Élection : alternance',
   election_continuity: 'Élection : gouvernement reconduit',
   coup: 'Coup d’État',
+  junta_transition: 'Transition civile d’une junte',
   succession: 'Succession non planifiée',
   revolution: 'Révolution',
 };

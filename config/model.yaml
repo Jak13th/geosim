@@ -1803,6 +1803,16 @@ politics:
       range: [0, 20]
       unit: ''
       description: 'Multiplicateur du risque : 1 + coefficient × sanctions visant les élites (au-delà du départ).'
+    income_reference:
+      value: 5000
+      range: [500, 100000]
+      unit: '$'
+      description: 'PIB par habitant (dollars du départ) au-delà duquel le revenu réduit le risque de coup : multiplicateur min(1, (référence / PIB par habitant)^élasticité) (Londregan et Poole, 1990 ; Przeworski et Limongi, 1997).'
+    income_elasticity:
+      value: 1
+      range: [0, 3]
+      unit: ''
+      description: 'Élasticité du risque de coup au PIB par habitant au-delà de la référence (0 : le revenu ne protège pas).'
     max:
       value: 15
       range: [0, 100]
@@ -1838,6 +1848,11 @@ politics:
       range: [0, 1]
       unit: 'indice'
       description: "Démocratie électorale (V-Dem) au-delà de laquelle un pays condamne un coup d'État (choc sur sa relation)."
+    junta_transition_rate:
+      value: 11
+      range: [0, 100]
+      unit: '%/an'
+      description: "Probabilité annuelle qu'une junte rende le pouvoir à un régime civil (élection qu'elle remporte le plus souvent : régime hybride). 11 %/an ≈ durée moyenne de 9 ans des régimes militaires de 1946 à 1999 (Geddes, 1999)."
   succession:
     stability_shock:
       value: -8

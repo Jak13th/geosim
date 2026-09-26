@@ -7,8 +7,9 @@
  *   intensité maximale du volet finance dans le groupe  +  w_PIB · Σ_émetteurs intensité · part du
  *   PIB mondial (une union monétaire compte une fois : l'euro) ;
  * - les sanctions secondaires : puissance des monnaies de réserve des émetteurs (dollar, euro) ;
- * - la pression technologique : Σ intensité · (moitié part de la fabrication mondiale de puces,
- *   moitié part du PIB mondial) de l'émetteur ; sur les élites : Σ intensité · part du PIB mondial ;
+ * - la pression technologique : Σ intensité · (w_puces · part de la fabrication mondiale de puces
+ *   + w_PIB · part du PIB mondial) de l'émetteur ; sur les élites : Σ intensité · part du PIB
+ *   mondial ;
  * - le contournement : capacité du pays (`trade.sanction_evasion`) × (1 − force des sanctions
  *   secondaires) × maturité (1 − e^(−âge/délai)), l'âge repartant de zéro à chaque durcissement ;
  * - le gel des réserves : part des réserves détenues dans les monnaies des émetteurs, mesurée par

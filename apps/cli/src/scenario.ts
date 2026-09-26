@@ -146,6 +146,29 @@ export function scenarioReport(scenario: Scenario, run: ScenarioRun, seed: numbe
       '',
     );
   }
+  if (scenario.id === 'sanctions-chine') {
+    lines.push('## Relations à la fin (−100 à 100)', '');
+    lines.push(
+      '| Paire | Référence | Scénario | Écart | Sens inverse (réf.) | Sens inverse (scén.) | Écart |',
+      '|---|---|---|---|---|---|---|',
+    );
+    lines.push(
+      ...relationRows(run, 'CHN', [
+        'USA',
+        'DEU',
+        'FRA',
+        'JPN',
+        'KOR',
+        'AUS',
+        'GBR',
+        'RUS',
+        'IND',
+        'BRA',
+        'VNM',
+      ]),
+      '',
+    );
+  }
   const events = scenarioEvents(run);
   const counts = new Map<string, number>();
   for (const e of events) counts.set(e.kind, (counts.get(e.kind) ?? 0) + 1);

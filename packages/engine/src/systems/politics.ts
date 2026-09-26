@@ -27,8 +27,10 @@
  * nouveau gouvernement (approbation, ancienneté) ; une part des griefs et amitiés propres au
  * gouvernement sortant s'efface des relations. Élections anticipées possibles en crise politique.
  * Régimes autoritaires : coups d'État (risque selon le régime, la stabilité, la loyauté de
- * l'armée, la récession, les sanctions visant les élites), successions non planifiées, révolutions
- * (stabilité très basse, répression faible). Tirages désignés par une clé (`keyedUniform`).
+ * l'armée, la récession, les sanctions visant les élites, atténué par le revenu), transition des
+ * juntes vers un régime civil, successions non planifiées (hors part compétitive du pouvoir),
+ * révolutions (stabilité très basse, répression faible). Tirages désignés par une clé
+ * (`keyedUniform`).
  */
 import type { ParamValue } from '@geosim/shared';
 import { keyedUniform } from '../rng.ts';
@@ -67,6 +69,7 @@ const C = {
   food: col('res.food_stress'),
   energyGap: col('energy.supply_gap'),
   pop: col('demo.population'),
+  gdp: col('eco.gdp_nominal'),
   refugees: col('demo.refugees_hosted'),
   infoWarfare: col('tech.info_warfare'),
 };
@@ -144,6 +147,9 @@ const K = {
   coupLoyaltyRef: 'politics.coups.loyalty_reference',
   coupRecession: 'politics.coups.recession',
   coupElites: 'politics.coups.elites',
+  coupIncome: 'politics.coups.income_reference',
+  coupIncomeElasticity: 'politics.coups.income_elasticity',
+  juntaTransition: 'politics.coups.junta_transition_rate',
   coupMax: 'politics.coups.max',
   coupShock: 'politics.coups.stability_shock',
   coupShockDays: 'politics.coups.shock_half_life_days',
@@ -531,6 +537,27 @@ function coupBase(ctx: Pick<SystemContext, 'model'>, regime: ParamValue): number
   }
 }
 
+/** PIB par habitant en dollars du départ (0 si inconnu). */
+function perCapitaIncome(state: State, i: number): number {
+  const pop = state.e(C.pop)[i] as number;
+  const gdp = state.e(C.gdp)[i] as number;
+  const usd = state.worldInternal.get('usdPriceIndex') ?? 1;
+  return pop > 0 && gdp > 0 ? (gdp * 1e9) / pop / usd : 0;
+}
+
+/**
+ * Compétitivité des élections de l'exécutif (0–1), croissante avec la démocratie électorale
+ * (V-Dem) entre deux seuils : elle règle la probabilité d'alternance et, à l'inverse, la part des
+ * successions qui échappent à la constitution.
+ */
+function competitiveness(ctx: Pick<SystemContext, 'model' | 'state'>, i: number): number {
+  const m = ctx.model;
+  const ed = clamp(fin(ctx.state.e(C.electoral)[i] as number), 0, 1);
+  const lo = m.get(K.competitiveMin);
+  const hi = Math.max(lo + 1e-6, m.get(K.competitiveMax));
+  return clamp((ed - lo) / (hi - lo), 0, 1);
+}
+
 /** Risque annuel de coup d'État (%) et ses facteurs. */
 export function coupRisk(
   ctx: Pick<SystemContext, 'model' | 'state'>,
@@ -553,7 +580,16 @@ export function coupRisk(
   const fLoyalty = Math.exp((m.get(K.coupLoyalty) * (m.get(K.coupLoyaltyRef) - loyalty)) / 10);
   const fRecession = 1 + m.get(K.coupRecession) * Math.max(0, -growth);
   const fElites = 1 + m.get(K.coupElites) * Math.max(0, elite - elite0);
-  const risk = Math.min(m.get(K.coupMax), base * fStability * fLoyalty * fRecession * fElites);
+  // Revenu : au-delà d'un seuil, la richesse protège du coup d'État (Londregan et Poole, 1990 ;
+  // Przeworski et Limongi, 1997) ; en deçà, le risque de base s'applique.
+  const income = perCapitaIncome(S, i);
+  const reference = Math.max(1, m.get(K.coupIncome));
+  const fIncome =
+    income > reference ? Math.pow(reference / income, m.get(K.coupIncomeElasticity)) : 1;
+  const risk = Math.min(
+    m.get(K.coupMax),
+    base * fStability * fLoyalty * fRecession * fElites * fIncome,
+  );
   return {
     risk,
     factors: [
@@ -590,6 +626,13 @@ export function coupRisk(
         value: elite - elite0,
         unit: '0–1',
         contribution: fElites,
+      },
+      {
+        id: 'eco.gdp_per_capita',
+        label: 'PIB par habitant (dollars du départ)',
+        value: income,
+        unit: '$',
+        contribution: fIncome,
       },
     ],
   };
@@ -875,9 +918,21 @@ function monthly(ctx: SystemContext): void {
       coup(ctx, i, factors, risk);
       continue;
     }
+    // Transition d'une junte vers un régime civil (taux constant : durée moyenne des régimes
+    // militaires).
+    if (regime === 'junta') {
+      const rate = clamp(m.get(K.juntaTransition), 0, 100) / 100;
+      if (keyedUniform(S.seed, `transition|${e.id}|${month}`) < 1 - Math.pow(1 - rate, ctx.dt)) {
+        juntaTransition(ctx, i, 100 * rate);
+        continue;
+      }
+    }
     // Succession non planifiée (régimes non démocratiques : en démocratie, la succession est
-    // réglée par la constitution sans changement de gouvernement).
-    const succession = clamp(fin(S.e(C.successionRisk)[i] as number), 0, 100) / 100;
+    // réglée par la constitution sans changement de gouvernement ; dans un régime hybride, seule
+    // la part non compétitive du pouvoir y échappe).
+    const succession =
+      (clamp(fin(S.e(C.successionRisk)[i] as number), 0, 100) / 100) *
+      (1 - competitiveness(ctx, i));
     const u = keyedUniform(S.seed, `succession|${e.id}|${month}`);
     if (!democratic && u < 1 - Math.pow(1 - succession, ctx.dt)) {
       unplannedSuccession(ctx, i, succession * 100);
@@ -1071,9 +1126,7 @@ function election(ctx: SystemContext, i: number, date: string): void {
   if (!e) return;
   const approval = S.effNow(C.approval, i);
   const ed = clamp(fin(S.e(C.electoral)[i] as number), 0, 1);
-  const lo = m.get(K.competitiveMin);
-  const hi = Math.max(lo + 1e-6, m.get(K.competitiveMax));
-  const competitive = clamp((ed - lo) / (hi - lo), 0, 1);
+  const competitive = competitiveness(ctx, i);
   const logistic =
     1 /
     (1 +
@@ -1263,6 +1316,50 @@ function coup(ctx: SystemContext, i: number, factors: Factor[], risk: number): v
     note: junta
       ? "L'armée prend le pouvoir : junte, profil décisionnel par défaut des juntes (defaults.yaml), élections suspendues."
       : "L'armée prend le pouvoir : junte, élections suspendues.",
+  });
+}
+
+/**
+ * Transition d'une junte vers un régime civil : elle organise une élection, que ses dirigeants
+ * remportent le plus souvent (Tchad 2024, Gabon 2025) ; le régime devient hybride, le profil
+ * décisionnel et les indices de démocratie restent ceux de la junte, les élections reprennent.
+ */
+function juntaTransition(ctx: SystemContext, i: number, rate: number): void {
+  const S = ctx.state;
+  const m = ctx.model;
+  const e = S.entities[i];
+  if (!e) return;
+  const tenure = fin(S.v(C.tenure)[i] as number);
+  const effects: Effect[] = [setRegime(S, i, 'hybrid', e.id)];
+  const years = Math.max(1, Math.round(m.get(K.termYears)));
+  const date = ctx.calendar.isoAt(S.tick + Math.round(years * 365.25));
+  const election = S.genericValue('pol.next_election', i);
+  S.writeGeneric('pol.next_election', i, date);
+  effects.push({
+    slot: { scope: 'country', param: 'pol.next_election', entity: e.id },
+    from: election,
+    to: date,
+  });
+  ctx.emit({
+    kind: 'junta_transition',
+    entities: [e.id],
+    severity: 2,
+    factors: [
+      {
+        id: 'politics.coups.junta_transition_rate',
+        label: "Probabilité annuelle de transition d'une junte",
+        value: rate,
+        unit: '%/an',
+      },
+      {
+        id: 'pol.leader_tenure',
+        label: 'Ancienneté du pouvoir en place',
+        value: tenure,
+        unit: 'ans',
+      },
+    ],
+    effects,
+    note: 'La junte organise une élection et se maintient sous un régime civil (hybride) ; élections suivantes au terme du mandat.',
   });
 }
 

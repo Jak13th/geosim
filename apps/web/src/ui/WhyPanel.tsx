@@ -34,6 +34,14 @@ function signed(x: number): string {
   return `${x >= 0 ? '+' : ''}${formatNumber(x)}`;
 }
 
+/** Libellé en minuscule initiale, sauf s'il commence par un sigle (« PIB par habitant »). */
+function lowerFirst(label: string): string {
+  const second = label.charAt(1);
+  return second !== '' && second === second.toUpperCase() && second !== second.toLowerCase()
+    ? label
+    : label.charAt(0).toLowerCase() + label.slice(1);
+}
+
 /** Facteurs dont la contribution compte, du plus fort au plus faible. */
 function mainFactors(factors: Factor[], threshold = 0.05, max = 8): Factor[] {
   return factors
@@ -89,8 +97,8 @@ export function CountryWhy({ data, entity }: { data: Dataset; entity: EntityView
         {x.coup.factors
           .map((f) =>
             f.contribution === undefined
-              ? `${formatNumber(f.value)} (${f.label.toLowerCase()})`
-              : `× ${formatNumber(f.contribution)} (${f.label.toLowerCase()})`,
+              ? `${formatNumber(f.value)} (${lowerFirst(f.label)})`
+              : `× ${formatNumber(f.contribution)} (${lowerFirst(f.label)})`,
           )
           .join(' ')}
       </p>

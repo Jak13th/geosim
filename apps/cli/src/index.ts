@@ -73,14 +73,15 @@ const outDir = resolve(process.env.INIT_CWD ?? process.cwd(), values.out ?? 'res
 const data = loadData();
 const model = loadModel();
 console.log(`GeoSim CLI — moteur ${ENGINE_VERSION}, données du ${data.countries.buildDate}`);
+const experiment = scenarioById(scenario);
+const period = experiment ? `jusqu’au ${experiment.until}` : `${years} an(s)`;
 console.log(
-  `Scénario « ${scenario} », ${years} an(s), ${runs} run(s), graine ${seed}, sortie ${outDir}/`,
+  `Scénario « ${scenario} », ${period}, ${runs} run(s), graine ${seed}, sortie ${outDir}/`,
 );
 
 mkdirSync(outDir, { recursive: true });
 const summaries: RunSummary[] = [];
 let failed = false;
-const experiment = scenarioById(scenario);
 if (experiment !== undefined) {
   for (let r = 0; r < runs; r++) {
     const runSeed = seed + r;
