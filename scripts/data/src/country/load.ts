@@ -12,6 +12,7 @@ import {
   parseUndpHdi,
   parseUngaIdealPoints,
   parseUnhcr,
+  parseWbAggregates,
   parseWbCountries,
   parseWgiCountryNames,
   parseWorldBank,
@@ -85,13 +86,16 @@ export async function loadAutomated(
     JSON.parse(await readFile(pathOf(key), 'utf8'));
   const text = async (key: string): Promise<string> => readFile(pathOf(key), 'utf8');
 
-  const wbMeta = parseWbCountries(await json('wbCountries'));
+  const wbCountries = await json('wbCountries');
+  const wbMeta = parseWbCountries(wbCountries);
+  const wbAggregates = parseWbAggregates(wbCountries);
   const wgiNames = parseWgiCountryNames(await json('wgiCountries'));
   const wb = new Map<string, WbSeries>();
   for (const code of [...Object.keys(WB_INDICATORS), ...Object.keys(WGI_INDICATORS)]) {
     const parsed = parseWorldBank(
       await json(wbSourceId(code)),
       code.startsWith('GOV_WGI') ? wgiNames : undefined,
+      wbAggregates,
     );
     wb.set(code, parsed);
     if (parsed.lastUpdated)

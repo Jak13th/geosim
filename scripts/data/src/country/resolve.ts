@@ -113,20 +113,25 @@ export function groupMedian(
   return null;
 }
 
+/** Replis par médiane d'un ratio : paramètre de référence et libellé du rapport. */
+const MEDIAN_SCALES: Partial<Record<Rule['fallback'], [string, string]>> = {
+  median_per_capita: ['demo.population', 'à la population'],
+  median_per_gdp: ['eco.gdp_nominal', 'au PIB'],
+  median_per_primary_energy: ['energy.primary_consumption', 'à la consommation d’énergie primaire'],
+};
+
 function applyFallback(ctx: Ctx, def: ParamDef, rule: Rule, e: EntityInfo): Resolved {
   const date = ctx.buildDate;
   switch (rule.fallback) {
     case 'median':
     case 'median_per_capita':
-    case 'median_per_gdp': {
-      const scaleBy =
-        rule.fallback === 'median_per_capita'
-          ? 'demo.population'
-          : rule.fallback === 'median_per_gdp'
-            ? 'eco.gdp_nominal'
-            : null;
+    case 'median_per_gdp':
+    case 'median_per_primary_energy': {
+      const scale = MEDIAN_SCALES[rule.fallback];
+      const scaleBy = scale?.[0] ?? null;
+      // Un ratio appliqué à une référence nulle (énergie primaire nulle d'un micro-État) donne 0.
       const own = scaleBy ? ctx.resolved.get(scaleBy)?.get(e.id)?.value : 1;
-      if (scaleBy && !(typeof own === 'number' && own > 0)) break;
+      if (scaleBy && !(typeof own === 'number' && own >= 0)) break;
       const pool: Pool[] = [];
       for (const other of ctx.entities) {
         if (other.kind === 'faction') continue;
@@ -149,7 +154,7 @@ function applyFallback(ctx: Ctx, def: ParamDef, rule: Rule, e: EntityInfo): Reso
         date,
         confidence: 'low',
         method: 'regional_median',
-        note: `médiane de ${m.n} pays comparables (${m.label})${scaleBy ? `, rapportée à ${scaleBy === 'demo.population' ? 'la population' : 'au PIB'}` : ''}`,
+        note: `médiane de ${m.n} pays comparables (${m.label})${scale ? `, rapportée ${scale[1]}` : ''}`,
       };
     }
     case 'default': {
@@ -246,9 +251,42 @@ export function resolveBase(ctx: Ctx): void {
   }
 }
 
-/** Passes 2 et 3 : tous les autres paramètres. */
+/** Parts qui doivent sommer à 100 % (structure par âge). */
+const SHARE_GROUPS = [['demo.share_0_14', 'demo.share_15_64', 'demo.share_65plus']] as const;
+
+/**
+ * Parts estimées indépendamment (médianes régionales) : ramenées à une somme de 100 %, la
+ * provenance le signale. Les parts issues d'une même source ne sont pas retouchées.
+ */
+function normalizeShares(ctx: Ctx): void {
+  for (const group of SHARE_GROUPS) {
+    for (const e of ctx.entities) {
+      const values = group.map((id) => ctx.resolved.get(id)?.get(e.id));
+      if (values.some((r) => r === undefined || typeof r.value !== 'number')) continue;
+      const rs = values as Resolved[];
+      const sum = rs.reduce((acc, r) => acc + (r.value as number), 0);
+      if (
+        !(sum > 0) ||
+        Math.abs(sum - 100) < 0.1 ||
+        rs.every((r) => r.method !== 'regional_median')
+      )
+        continue;
+      group.forEach((id, k) => {
+        const r = rs[k] as Resolved;
+        store(ctx, id, e.id, {
+          ...r,
+          value: ((r.value as number) * 100) / sum,
+          note: `${r.note ? `${r.note} ; ` : ''}parts d'âge ramenées à 100 % (somme des estimations : ${sum.toFixed(1)} %)`,
+        });
+      });
+    }
+  }
+}
+
+/** Passes 2 et 3 : tous les autres paramètres, puis cohérence des parts. */
 export function resolveAll(ctx: Ctx): void {
   const rest = countryParams().filter((d) => !(FIRST as readonly string[]).includes(d.id));
   for (const def of rest) resolveParam(ctx, def, 'steps');
   for (const def of rest) resolveParam(ctx, def, 'fallback');
+  normalizeShares(ctx);
 }

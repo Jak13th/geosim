@@ -6,6 +6,7 @@ import {
   parseUndpHdi,
   parseUnhcr,
   parseUngaIdealPoints,
+  parseWbAggregates,
   parseWbCountries,
   parseWorldBank,
 } from './providers.ts';
@@ -89,6 +90,40 @@ describe('Banque mondiale', () => {
     expect(series.get('FRA')).toEqual([{ year: 2024, value: 68.4 }]);
     expect(series.get('XKX')).toEqual([{ year: 2024, value: 1.7 }]);
     expect(series.size).toBe(2);
+  });
+
+  it('écarte les agrégats, même quand leur code coïncide avec une entité (OSS)', () => {
+    const countries = [
+      {},
+      [
+        { id: 'GEO', name: 'Georgia', region: { id: 'ECS' }, incomeLevel: { id: 'UMC' } },
+        { id: 'OSS', name: 'Other small states', region: { id: 'NA' }, incomeLevel: { id: 'NA' } },
+      ],
+    ];
+    const aggregates = parseWbAggregates(countries);
+    expect([...aggregates]).toEqual(['OSS']);
+    const { series } = parseWorldBank(
+      [
+        {},
+        [
+          {
+            country: { id: 'GE', value: 'Georgia' },
+            countryiso3code: 'GEO',
+            date: '2025',
+            value: 3.9e6,
+          },
+          {
+            country: { id: 'S2', value: 'Other small states' },
+            countryiso3code: 'OSS',
+            date: '2025',
+            value: 1.3e7,
+          },
+        ],
+      ],
+      undefined,
+      aggregates,
+    );
+    expect([...series.keys()]).toEqual(['GEO']);
   });
 
   it('rejette une réponse inattendue', () => {

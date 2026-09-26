@@ -1,7 +1,8 @@
 /**
  * Analyse des réponses des sources automatisées (SPEC §5.1) en séries par pays.
  * Les codes sont ramenés aux codes GeoSim (ISO 3166-1 alpha-3, XKX pour le Kosovo, PSE pour
- * la Palestine) ; les agrégats régionaux sont ignorés par la suite (aucune entité ne les porte).
+ * la Palestine). Les agrégats de la Banque mondiale sont écartés explicitement : certains codes
+ * d'agrégats coïncident avec des codes GeoSim (`OSS`, « Other small states », et l'Ossétie du Sud).
  */
 import { parseCsv } from '../io/csv.ts';
 import { addObs, finalize, type Series } from './series.ts';
@@ -36,6 +37,12 @@ interface WbCountryRow {
   name: string;
   region: { id: string };
   incomeLevel: { id: string };
+}
+
+/** Codes des agrégats de la Banque mondiale (régions, groupes de revenu, « Other small states »…). */
+export function parseWbAggregates(json: unknown): Set<string> {
+  const rows = (json as [unknown, WbCountryRow[]])[1] ?? [];
+  return new Set(rows.filter((row) => row.region.id === 'NA').map((row) => row.id));
 }
 
 export function parseWbCountries(json: unknown): Map<string, WbCountryMeta> {
@@ -75,7 +82,15 @@ export interface WbSeries {
   lastUpdated: string | null;
 }
 
-export function parseWorldBank(json: unknown, wgiNames?: Map<string, string>): WbSeries {
+/**
+ * Séries d'un indicateur de la Banque mondiale. `aggregates` : codes à écarter (agrégats), dont
+ * certains coïncident avec des codes GeoSim.
+ */
+export function parseWorldBank(
+  json: unknown,
+  wgiNames?: Map<string, string>,
+  aggregates: ReadonlySet<string> = new Set(),
+): WbSeries {
   const doc = json as [{ lastupdated?: string; message?: unknown }, WbRow[] | null];
   if (!Array.isArray(doc) || !Array.isArray(doc[1])) {
     throw new Error(`Réponse Banque mondiale inattendue : ${JSON.stringify(json).slice(0, 200)}`);
@@ -84,7 +99,7 @@ export function parseWorldBank(json: unknown, wgiNames?: Map<string, string>): W
   for (const row of doc[1]) {
     if (row.value === null) continue;
     const code = row.countryiso3code || wgiNames?.get(row.country.value) || '';
-    if (code === '') continue;
+    if (code === '' || aggregates.has(code)) continue;
     addObs(series, geoCode(code), Number(row.date), Number(row.value));
   }
   return { series: finalize(series), lastUpdated: doc[0]?.lastupdated ?? null };

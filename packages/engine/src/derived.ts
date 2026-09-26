@@ -32,6 +32,40 @@ export const DEFINITIONAL_DERIVATIONS: readonly Derivation[] = [
     formula: 'inflation + chômage (indice d’Okun)',
     compute: ([inflation = 0, unemployment = 0]) => inflation + unemployment,
   },
+  {
+    id: 'mil.budget',
+    inputs: ['eco.gdp_nominal', 'bud.defense'],
+    formula: 'PIB nominal × part de la défense',
+    compute: ([gdp = 0, share = 0]) => (gdp * share) / 100,
+  },
+  {
+    id: 'dip.aid_given',
+    inputs: ['eco.gdp_nominal', 'bud.foreign_aid'],
+    formula: 'PIB nominal (approximation du RNB) × aide extérieure versée',
+    compute: ([gdp = 0, share = 0]) => (gdp * share) / 100,
+  },
+  {
+    id: 'energy.intensity',
+    inputs: ['energy.primary_consumption', 'eco.gdp_nominal'],
+    formula: 'consommation d’énergie primaire (TWh) / PIB nominal (Md$)',
+    compute: ([energy = 0, gdp = 0]) => (gdp > 0 ? energy / gdp : 0),
+  },
+  {
+    id: 'energy.import_dependence',
+    inputs: [
+      'energy.oil_consumption',
+      'energy.gas_consumption',
+      'energy.coal_consumption',
+      'energy.oil_production',
+      'energy.gas_production',
+      'energy.coal_production',
+      'energy.primary_consumption',
+    ],
+    formula:
+      '(consommation − production de pétrole, de gaz et de charbon) / consommation d’énergie primaire',
+    compute: ([oc = 0, gc = 0, cc = 0, op = 0, gp = 0, cp = 0, primary = 0]) =>
+      primary > 0 ? ((oc + gc + cc - op - gp - cp) / primary) * 100 : 0,
+  },
 ];
 
 const derivationById = new Map(DEFINITIONAL_DERIVATIONS.map((d) => [d.id, d]));

@@ -8,6 +8,8 @@
  *   groupe de revenu, sinon même région, sinon monde) ;
  * - `median_per_capita` / `median_per_gdp` : idem sur le ratio à la population ou au PIB,
  *   pour les grandeurs extensives (population active, réserves…) ;
+ * - `median_per_primary_energy` : idem sur la part de la consommation d'énergie primaire
+ *   (consommations de pétrole, de gaz et de charbon : bornées par la consommation totale) ;
  * - `default` : hypothèse de defaults.yaml (confiance `assumption`) ;
  * - `zero` : absence documentée (certaine si le fichier curé est une liste exhaustive) ;
  *   `not_applicable` : sans objet ; `none` : lacune signalée.
@@ -30,6 +32,7 @@ export type Fallback =
   | 'median'
   | 'median_per_capita'
   | 'median_per_gdp'
+  | 'median_per_primary_energy'
   | 'default'
   | 'zero'
   | 'not_applicable'
@@ -425,6 +428,34 @@ const potentialGrowthWb: Step = (ctx, e) => {
   };
 };
 
+/**
+ * Solde migratoire structurel : moyenne des taux annuels (solde / population de l'année × 1 000)
+ * des dix dernières années. La dernière année seule reflète des mouvements transitoires (retours
+ * de réfugiés ukrainiens projetés par les Nations unies pour 2025 : Allemagne −4 ‰, Pologne −9 ‰).
+ */
+const netMigrationAverage: Step = (ctx, e) => {
+  const s = ctx.wb.get('SM.POP.NETM')?.series;
+  const list = (s?.get(e.id) ?? []).filter(
+    (o) => o.year > ctx.buildYear - 11 && o.year <= ctx.buildYear,
+  );
+  const rates: number[] = [];
+  for (const o of list) {
+    const pop = populationAt(ctx, e.id, o.year);
+    if (pop) rates.push((1000 * o.value) / pop);
+  }
+  if (rates.length < 5) return null;
+  const first = list[0]?.year ?? ctx.buildYear;
+  const last = list[list.length - 1]?.year ?? ctx.buildYear;
+  return {
+    value: rates.reduce((a, b) => a + b, 0) / rates.length,
+    source: 'WB:SM.POP.NETM',
+    date: `${first}-${last}`,
+    confidence: 'medium',
+    method: 'source',
+    note: `moyenne ${first}–${last} des soldes annuels rapportés à la population (× 1 000) ; la dernière année seule reflète des mouvements transitoires`,
+  };
+};
+
 const aidReceivedHighIncome: Step = (ctx, e) =>
   e.income === HIGH_INCOME
     ? {
@@ -460,6 +491,29 @@ const profile =
     return p && v ? curatedValue(v.value, 'profiles.yaml', p, v.why) : null;
   };
 
+/** Observation d'une série de la Banque mondiale ou du FMI à l'année donnée (ou avant). */
+function valueAt(series: Series | undefined, code: string, year: number): number | null {
+  const obs = series ? latest(series, code, year) : null;
+  return obs === null || obs.year < year - 1 ? null : obs.value;
+}
+
+/**
+ * Taux moyen apparent de la dette publique = intérêts versés (% des recettes de l'administration
+ * centrale, Banque mondiale) × ces recettes (% du PIB) / dette publique brute (% du PIB, FMI),
+ * la même année. Les intérêts de l'administration centrale rapportés à la dette de toutes les
+ * administrations sous-estiment le taux quand la dette locale est importante.
+ */
+const debtAverageRate: Step = wb('GC.XPN.INTP.RV.ZS', {
+  map: (v, e, ctx, obs) => {
+    const revenue = valueAt(ctx.wb.get('GC.REV.XGRT.GD.ZS')?.series, e.id, obs.year);
+    const debt =
+      valueAt(ctx.imf.get('GGXWDG_NGDP'), e.id, obs.year) ??
+      valueAt(ctx.wb.get('GC.DOD.TOTL.GD.ZS')?.series, e.id, obs.year);
+    return revenue !== null && debt !== null && debt > 1 ? (v * revenue) / debt : null;
+  },
+  note: 'intérêts (% des recettes de l’administration centrale) × recettes (% du PIB, WB:GC.REV.XGRT.GD.ZS) / dette publique brute (% du PIB, IMF:GGXWDG_NGDP), même année',
+});
+
 export const RULES: Record<string, Rule> = {
   // 1. Démographie
   'demo.population': R(
@@ -478,16 +532,7 @@ export const RULES: Record<string, Rule> = {
   'demo.share_15_64': median(wb('SP.POP.1564.TO.ZS'), cur('demo.share_15_64')),
   'demo.share_65plus': median(wb('SP.POP.65UP.TO.ZS'), cur('demo.share_65plus')),
   'demo.urbanization': median(wb('SP.URB.TOTL.IN.ZS'), cur('demo.urbanization')),
-  'demo.net_migration': median(
-    wb('SM.POP.NETM', {
-      map: (v, e, ctx, obs) => {
-        const pop = populationAt(ctx, e.id, obs.year);
-        return pop ? (1000 * v) / pop : null;
-      },
-      note: 'solde migratoire / population de la même année × 1 000',
-    }),
-    cur('demo.net_migration'),
-  ),
+  'demo.net_migration': median(netMigrationAverage, cur('demo.net_migration')),
   'demo.migration_openness': hyp('demo.migration_openness'),
   'demo.refugees_hosted': R(
     [
@@ -538,7 +583,9 @@ export const RULES: Record<string, Rule> = {
     potentialGrowthWb,
     cur('eco.potential_growth'),
   ),
+  'eco.long_run_growth': runtime,
   'eco.growth': runtime,
+  'eco.output_gap': runtime,
   'eco.inflation': median(
     imf('PCPIPCH'),
     wb('FP.CPI.TOTL.ZG', { method: 'fallback_source' }),
@@ -557,9 +604,12 @@ export const RULES: Record<string, Rule> = {
     cur('eco.public_debt'),
   ),
   'eco.debt_maturity': hyp('eco.debt_maturity'),
+  'eco.debt_avg_rate': median(debtAverageRate, cur('eco.debt_avg_rate')),
   'eco.foreign_held_debt': hyp('eco.foreign_held_debt'),
   'eco.sovereign_rate': runtime,
   'eco.credit_rating': hyp('eco.credit_rating'),
+  'eco.default_probability': runtime,
+  'eco.in_default': runtime,
   'eco.reserves': R(
     [wb('FI.RES.TOTL.CD', { map: (v) => v / 1e9 }), cur('eco.reserves')],
     'median_per_gdp',
@@ -574,6 +624,7 @@ export const RULES: Record<string, Rule> = {
     'zero',
     { exhaustive: 'sanctions.yaml (réserves gelées recensées)' },
   ),
+  'eco.reserves_months': runtime,
   'eco.current_account': median(
     imf('BCA_NGDPD'),
     wb('BN.CAB.XOKA.GD.ZS', { method: 'fallback_source' }),
@@ -602,9 +653,11 @@ export const RULES: Record<string, Rule> = {
   'eco.misery_index': runtime,
 
   // 3. Budget
+  // Administrations publiques (FMI), cohérentes avec le solde et la dette du FMI ; repli :
+  // administration centrale (Banque mondiale).
   'bud.revenue': median(
-    wb('GC.REV.XGRT.GD.ZS'),
-    imf('rev', { method: 'fallback_source' }),
+    imf('rev'),
+    wb('GC.REV.XGRT.GD.ZS', { method: 'fallback_source' }),
     cur('bud.revenue'),
   ),
   'bud.tax_efficiency': runtime,
@@ -620,6 +673,9 @@ export const RULES: Record<string, Rule> = {
   'bud.security': hyp('bud.security'),
   'bud.foreign_aid': hyp('bud.foreign_aid'),
   'bud.monetization': hyp('bud.monetization'),
+  'bud.other_spending': runtime,
+  'bud.fiscal_adjustment': runtime,
+  'bud.interest': runtime,
   'bud.balance': median(imf('GGXCNL_NGDP'), cur('bud.balance')),
 
   // 4. Commerce
@@ -642,12 +698,12 @@ export const RULES: Record<string, Rule> = {
   'energy.oil_production': R([owidEnergy('oil_production'), cur('energy.oil_production')], 'zero'),
   'energy.oil_consumption': R(
     [owidEnergy('oil_consumption'), cur('energy.oil_consumption')],
-    'median_per_capita',
+    'median_per_primary_energy',
   ),
   'energy.gas_production': R([owidEnergy('gas_production'), cur('energy.gas_production')], 'zero'),
   'energy.gas_consumption': R(
     [owidEnergy('gas_consumption'), cur('energy.gas_consumption')],
-    'median_per_capita',
+    'median_per_primary_energy',
   ),
   'energy.coal_production': R(
     [owidEnergy('coal_production'), cur('energy.coal_production')],
@@ -655,7 +711,7 @@ export const RULES: Record<string, Rule> = {
   ),
   'energy.coal_consumption': R(
     [owidEnergy('coal_consumption'), cur('energy.coal_consumption')],
-    'median_per_capita',
+    'median_per_primary_energy',
   ),
   'energy.nuclear_share_elec': R(
     [owidEnergy('nuclear_share_elec'), cur('energy.nuclear_share_elec')],
