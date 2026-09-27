@@ -260,6 +260,9 @@ params:
         theocracy: 75,
         absolute_monarchy: 80,
       }
+  pol.coup_history:
+    value: 0
+    note: Aucun coup d'État connu depuis 1950 par défaut ; curé (Powell et Thyne, via des synthèses secondaires) pour les pays à risque dans country_politics.yaml.
   pol.nationalism: { value: 50, note: Nationalisme moyen ; à curer pour les pays en conflit. }
   pol.casualty_tolerance:
     value: 45

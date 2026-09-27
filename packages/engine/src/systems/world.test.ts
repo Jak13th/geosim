@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 import { fixtureData, loadModelTree } from '../../test/fixture.ts';
 import { Engine } from '../engine.ts';
 import { checkInvariants } from '../invariants.ts';
-import type { Command, Slot } from '../types.ts';
+import type { Command, JournalEntry, Slot } from '../types.ts';
 import { affinityFactors } from './diplomacy.ts';
 import { ENERGY_OUT } from './energy.ts';
 import { coupRisk, stabilityContributions } from './politics.ts';
@@ -205,6 +205,11 @@ const internal = (e: Engine, key: string, id: string): number =>
   e.state.internalArray(key, 0)[idx(e, id)] as number;
 const zone = (e: Engine, param: string, id: string): number =>
   e.state.zoneValue(param, id) as number;
+const world = (e: Engine, id: string): number => e.state.worldNumber(id);
+const internalPair = (e: Engine, key: string, a: string, b: string): number => {
+  const n = e.state.n;
+  return e.state.internalArray(key, Number.NaN, n * n)[idx(e, a) * n + idx(e, b)] as number;
+};
 
 /** Moteur sans aléa (chocs de croissance et de prix nuls, pas de défaut). */
 function calm(seed = 1): Engine {
@@ -353,6 +358,47 @@ describe('sanctions', () => {
     months(b, 1);
     expect(internal(b, RESOURCES_OUT.impulse, 'FRA')).toBeGreaterThan(0);
   });
+
+  it(
+    'calibration : intensité du paquet occidental de 2022 contre la Russie ⇒ choc modéré, ' +
+      'pas le scénario catastrophe redouté initialement (repère réel, docs/CALIBRATION.md)',
+    () => {
+      const a = calm();
+      const b = calm();
+      // Intensité approximative des sanctions occidentales de 2022 (finance et technologie
+      // sévères, énergie épargnée puisque le pétrole et le gaz russes ont continué de couler).
+      b.apply(
+        sanctions(['USA', 'FRA'], 'NGA', {
+          trade: 0.35,
+          finance: 0.75,
+          technology: 0.65,
+          energy: 0.05,
+          elites: 0.5,
+          transport: 0.35,
+        }),
+      );
+      months(a, 1);
+      months(b, 1);
+      const gapMonth1 = v(b, 'eco.output_gap', 'NGA');
+      // Un choc réel et sensible...
+      expect(gapMonth1).toBeLessThan(-0.5);
+      // ...mais loin des prévisions initiales de -8,5 % (FMI, avril 2022) à -10,4 % (Commission
+      // européenne, printemps 2022) redoutées avant l'adaptation de l'économie russe.
+      expect(gapMonth1).toBeGreaterThan(-4);
+      const evasion1 = internal(b, SANCTIONS_OUT.evasion, 'NGA');
+      months(a, 11);
+      months(b, 11);
+      // Sur l'année, l'écart de production simulé reste proche du repère réel observé
+      // (Rosstat : -2,1 % ; FMI, estimation ultérieure : -1,2 % pour 2022), pas du scénario
+      // catastrophe initial.
+      const gapYear1 = v(b, 'eco.output_gap', 'NGA');
+      expect(gapYear1).toBeLessThan(-0.3);
+      expect(gapYear1).toBeGreaterThan(-3);
+      // Contournement croissant (financement, technologie de contrebande, routes tierces).
+      expect(internal(b, SANCTIONS_OUT.evasion, 'NGA')).toBeGreaterThan(evasion1);
+      expect(checkInvariants(b)).toEqual([]);
+    },
+  );
 });
 
 describe('énergie', () => {
@@ -398,6 +444,41 @@ describe('énergie', () => {
     // Rouvert puis refermé : la perte est mesurée par rapport aux flux rétablis (plus qu'au départ).
     expect(internal(e, ENERGY_OUT.shortfall, 'FRA')).toBeGreaterThan(early);
   });
+
+  it(
+    'prime d’anticipation du pétrole : le prix bondit dès la fermeture d’Ormuz, avant que le ' +
+      'trafic réel n’ait fini d’y converger, puis la prime s’estompe',
+    () => {
+      const withAnticipation = calm();
+      const withoutAnticipation = calm();
+      withoutAnticipation.apply({
+        type: 'setCoefficient',
+        path: 'markets.oil.anticipation_strength',
+        value: 0,
+      });
+      for (const e of [withAnticipation, withoutAnticipation]) {
+        e.apply({ type: 'set', slots: [hormuz], value: 'closed' });
+      }
+      months(withAnticipation, 1);
+      months(withoutAnticipation, 1);
+      // Le trafic réel (lent) est identique dans les deux moteurs : seule l'anticipation diffère.
+      expect(zone(withAnticipation, 'zone.chokepoint_traffic', 'hormuz')).toBeCloseTo(
+        zone(withoutAnticipation, 'zone.chokepoint_traffic', 'hormuz'),
+        6,
+      );
+      const priceMonth1 = world(withAnticipation, 'world.oil_price');
+      expect(priceMonth1).toBeGreaterThan(1.03 * world(withoutAnticipation, 'world.oil_price'));
+      // La prime s'estompe ensuite (demi-vie de deux mois) : l'écart avec le prix sans
+      // anticipation se réduit une fois l'offre réelle ajustée.
+      const gapMonth1 = priceMonth1 - world(withoutAnticipation, 'world.oil_price');
+      months(withAnticipation, 6);
+      months(withoutAnticipation, 6);
+      const gapMonth7 =
+        world(withAnticipation, 'world.oil_price') - world(withoutAnticipation, 'world.oil_price');
+      expect(gapMonth7).toBeLessThan(0.3 * gapMonth1);
+      expect(checkInvariants(withAnticipation)).toEqual([]);
+    },
+  );
 });
 
 describe('alimentation et produits critiques', () => {
@@ -543,6 +624,51 @@ describe('politique intérieure', () => {
     expect(v(e, 'pol.electoral_democracy', 'NGA')).toBeLessThan(0.45);
   });
 
+  it('coup d’État : efface une part du résidu des relations, comme une alternance', () => {
+    const e = calm();
+    e.apply({ type: 'setCoefficient', path: 'politics.coups.max', value: 100 });
+    e.apply({ type: 'setCoefficient', path: 'politics.coups.base_flawed_democracy', value: 100 });
+    e.apply({ type: 'set', slots: [country('pol.military_loyalty', 'NGA')], value: 0 });
+    // Relation saisie loin de ce que l'affinité seule produirait (comme le test des relations qui
+    // « tiennent » sans alternance) : tout l'écart vient du résidu de calage.
+    e.apply({ type: 'set', slots: [pair('pair.relation', 'NGA', 'FRA')], value: -90 });
+    months(e, 1);
+    let before = internalPair(e, 'dip.residual', 'NGA', 'FRA');
+    let coup: JournalEntry | undefined;
+    for (let k = 0; k < 35 && !coup; k++) {
+      before = internalPair(e, 'dip.residual', 'NGA', 'FRA');
+      months(e, 1);
+      coup = e.journal.find((j) => j.kind === 'coup' && j.entities[0] === 'NGA');
+    }
+    expect(coup).toBeDefined();
+    // Le coup efface 70 % du résidu de calage (`politics.coups.relation_reset`) : il n'en reste
+    // que 30 %, comme pour une alternance (mais à une part différente). Tolérance large : le
+    // résidu décroît aussi naturellement d'un mois sur l'autre (demi-vie propre, en années).
+    const after = internalPair(e, 'dip.residual', 'NGA', 'FRA');
+    expect(after / before).toBeCloseTo(0.3, 1);
+  });
+
+  it('succession non planifiée : efface une faible part du résidu des relations', () => {
+    const e = calm();
+    e.apply({ type: 'set', slots: [country('pol.regime_type', 'NGA')], value: 'hybrid' });
+    e.apply({ type: 'set', slots: [country('pol.succession_risk', 'NGA')], value: 100 });
+    e.apply({ type: 'set', slots: [pair('pair.relation', 'NGA', 'FRA')], value: -90 });
+    months(e, 1);
+    let before = internalPair(e, 'dip.residual', 'NGA', 'FRA');
+    let succession: JournalEntry | undefined;
+    for (let k = 0; k < 23 && !succession; k++) {
+      before = internalPair(e, 'dip.residual', 'NGA', 'FRA');
+      months(e, 1);
+      succession = e.journal.find((j) => j.kind === 'succession' && j.entities[0] === 'NGA');
+    }
+    expect(succession).toBeDefined();
+    // Reset faible (10 % du résidu, `politics.succession.relation_reset`) : régime et profil
+    // restent en place, nettement moins qu'après un coup d'État (70 %). Tolérance large : le
+    // résidu décroît aussi naturellement d'un mois sur l'autre (demi-vie propre, en années).
+    const after = internalPair(e, 'dip.residual', 'NGA', 'FRA');
+    expect(after / before).toBeCloseTo(0.9, 1);
+  });
+
   it('coup d’État : le revenu protège au-delà du seuil, à régime, stabilité et loyauté égaux', () => {
     const e = calm();
     e.apply({ type: 'setCoefficient', path: 'politics.coups.max', value: 100 });
@@ -562,6 +688,23 @@ describe('politique intérieure', () => {
     // Élasticité nulle : le revenu ne protège plus.
     e.apply({ type: 'setCoefficient', path: 'politics.coups.income_elasticity', value: 0 });
     expect(coupRisk(ctx, idx(e, 'FRA')).risk).toBeCloseTo(poor.risk, 9);
+  });
+
+  it("coup d'État : le piège du coup (historique curé) aggrave le risque, jusqu'à un plafond", () => {
+    const e = calm();
+    const ctx = { model: e.model, state: e.state };
+    const without = coupRisk(ctx, idx(e, 'NGA'));
+    expect(without.factors.find((f) => f.id === 'pol.coup_history')?.contribution).toBeCloseTo(
+      1,
+      9,
+    );
+    e.apply({ type: 'set', slots: [country('pol.coup_history', 'NGA')], value: 8 });
+    const withHistory = coupRisk(ctx, idx(e, 'NGA'));
+    expect(withHistory.risk).toBeCloseTo(without.risk * 1.24, 6);
+    // Plafonné (history_cap = 15) : un historique très long (Soudan, Bolivie) ne domine pas.
+    e.apply({ type: 'set', slots: [country('pol.coup_history', 'NGA')], value: 24 });
+    const capped = coupRisk(ctx, idx(e, 'NGA'));
+    expect(capped.risk).toBeCloseTo(without.risk * 1.45, 6);
   });
 
   it('transition d’une junte : régime civil (hybride), élections rétablies, facteurs consignés', () => {

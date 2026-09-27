@@ -673,3 +673,44 @@ Le moteur ne retient que les élections qui désignent le chef de l'exécutif (D
 ### Replis de la phase 4
 
 - Aucune source nouvelle inaccessible. Trois paramètres utilisés par la phase 4 n'ont pas de source automatisée : l'ouverture migratoire (`demo.migration_openness`), le risque de succession non planifiée (`pol.succession_risk`) et la capacité de contournement des sanctions (`trade.sanction_evasion`, curée pour les pays déjà sanctionnés). Ils prennent les hypothèses de `defaults.yaml` (confiance `assumption`, modulées par revenu ou par régime), signalées dans `data/build/report.md`.
+
+## Consolidation avant phase 5 (consultées le 27/09/2026)
+
+### Calibration des sanctions (D87) : épisode russe de 2022
+
+| Sujet                                                     | Source                                                                                                                                                                                                 |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| PIB russe 2022, estimation FMI ultérieure (−1,2 %)        | [IMF — World Economic Outlook Database (NGDP_RPCH, Russian Federation)](https://www.imf.org/external/datamapper/NGDP_RPCH@WEO/OEMDC/WEOWORLD/RUS)                                                      |
+| PIB russe 2022, estimation officielle Rosstat (−2,1 %)    | Cité par la presse économique (ex. BOFIT — Bank of Finland Institute for Emerging Economies, notes de suivi hebdomadaires) ; `confidence: medium` (source primaire Rosstat non consultée directement). |
+| Prévision FMI avril 2022 (−8,5 %)                         | [Interfax — IMF expects Russia's GDP to fall, avril 2022](https://interfax.com/newsroom/top-stories/81648/)                                                                                            |
+| Prévision Commission européenne, printemps 2022 (−10,4 %) | [European Commission — European Economic Forecast, Spring 2022](https://ec.europa.eu/economy_finance/forecasts/2022/spring/ecfin_forecast_spring_2022_ru_en.pdf)                                       |
+| Prévision EBRD, 31/03/2022 (−10 %)                        | European Bank for Reconstruction and Development, communiqué du 31/03/2022 (cité par la presse économique).                                                                                            |
+
+Note : le taux de change du rouble (effondrement puis rebond en 2022) n'est pas modélisé (pas de `eco.exchange_rate` au catalogue) — hors périmètre de cette calibration (voir D87).
+
+### Historique des coups d'État (`pol.coup_history`, 46 pays)
+
+Base primaire : Powell et Thyne, _Global Instances of Coups, 1950–Present_ ([jonathanmpowell.com/coups](https://jonathanmpowell.com/coups/) ; article original : [Powell & Thyne, _Journal of Peace Research_, 2011](https://www.uky.edu/~clthyn2/powell-thyne-JPR-2011.pdf)), non consultée directement (fichier volumineux) mais compilée par les sources secondaires suivantes :
+
+| Sujet                                       | Source                                                                                                                                                      |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 36 pays africains (Algérie à Zimbabwe)      | [VOA News — By The Numbers: Coups in Africa](https://projects.voanews.com/african-coups/)                                                                   |
+| Afghanistan, Bangladesh, Argentine, Bolivie | [Wikipedia — List of coups and coup attempts by country](https://en.wikipedia.org/wiki/List_of_coups_and_coup_attempts_by_country)                          |
+| Pakistan (1958, 1969, 1977, 1999)           | Fait notoire, plusieurs sources de presse concordantes.                                                                                                     |
+| Birmanie (1962, 1988, 2021)                 | Fait notoire, plusieurs sources de presse concordantes.                                                                                                     |
+| Honduras (1956, 1963, 2009)                 | Fait notoire, plusieurs sources de presse concordantes.                                                                                                     |
+| Fidji (1987 ×2, 2000, 2006)                 | Fait notoire, plusieurs sources de presse concordantes.                                                                                                     |
+| Venezuela (1992, 2002)                      | Fait notoire, plusieurs sources de presse concordantes.                                                                                                     |
+| Thaïlande (coups réussis depuis 1950)       | Recoupement de plusieurs synthèses de presse (dont CNBC, NPR) ; confidence `low` sur ce total précis (les sources divergent selon la période de référence). |
+
+Limite : chiffres de sources secondaires, pas le CSV primaire Powell et Thyne — à recaler si une précision plus fine est nécessaire. Liste limitée aux pays identifiés comme à risque (régime non démocratique actuel, ou historique substantiel) ; tous les autres pays restent à 0 par défaut (`defaults.yaml`).
+
+### Loyauté de l'armée (`pol.military_loyalty`, 9 pays)
+
+V-Dem (dimension militaire, `v2x_ex_military`) non consultée directement (jeu de données volumineux, hors périmètre d'un accès web ponctuel dans cette session) — limite explicite, à lever en accédant au jeu de données complet. En attendant, cas individuels bien documentés :
+
+| Sujet                                                            | Source                                                                                                                                                                                                                                                                                                                      |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Soudan : armée fracturée (guerre civile SAF–RSF depuis 2023)     | [CFR — Global Conflict Tracker: Civil War in Sudan](https://www.cfr.org/global-conflict-tracker/conflict/power-struggle-sudan) ; [Africa Center — Mapping the Armed Actors in the Sudan Conflict](https://africacenter.org/spotlight/sudan-conflict-armed-actors/)                                                          |
+| Inde : tradition durable de subordination au pouvoir civil       | [The Asia Times — India's Remarkable Democratic Stability](https://www.theasiatimes.com/indias-remarkable-democratic-stability-why-it-has-never-experienced-a-military-coup/) ; [ORF — Civil-military relations in Independent India](https://www.orfonline.org/expert-speak/civil-military-relations-in-independent-india) |
+| Birmanie, Égypte, Pakistan, Mali, Burkina Faso, Niger, Venezuela | Faits notoires (cohésion ou loyauté de l'armée envers le pouvoir en place), sans source unique dédiée ; `confidence: assumption` — à valider individuellement.                                                                                                                                                              |

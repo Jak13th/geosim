@@ -1032,6 +1032,16 @@ markets:
       range: [1, 24]
       unit: 'mois'
       description: "Délai de mobilisation de la capacité inutilisée (OPEP+, `energy.spare_capacity`) quand la demande dépasse l'offre."
+    anticipation_strength:
+      value: 0.2
+      range: [0, 2]
+      unit: ''
+      description: "Prime d'anticipation : bond immédiat du prix (fraction du prix) au changement de statut d'un détroit (`zone.chokepoint_status`), proportionnel à la part de trafic cible perdue ou regagnée, avant que le trafic réel n'ait fini d'y converger."
+    anticipation_half_life_months:
+      value: 2
+      range: [1, 24]
+      unit: 'mois'
+      description: "Demi-vie de la prime d'anticipation du pétrole : vitesse à laquelle elle s'efface vers le prix structurel une fois l'offre réelle ajustée."
   gas:
     price_elasticity:
       value: 0.25
@@ -1813,6 +1823,16 @@ politics:
       range: [0, 3]
       unit: ''
       description: 'Élasticité du risque de coup au PIB par habitant au-delà de la référence (0 : le revenu ne protège pas).'
+    history_weight:
+      value: 0.03
+      range: [0, 0.5]
+      unit: '/coup'
+      description: "Piège du coup d'État (Powell et Thyne) : multiplicateur du risque 1 + coefficient × historique des coups (`pol.coup_history`, plafonné à history_cap)."
+    history_cap:
+      value: 15
+      range: [0, 20]
+      unit: 'coups'
+      description: "Plafond de l'historique des coups pris en compte dans le risque, pour qu'un très long historique (Soudan, Bolivie) ne domine pas le calcul."
     max:
       value: 15
       range: [0, 100]
@@ -1853,12 +1873,22 @@ politics:
       range: [0, 100]
       unit: '%/an'
       description: "Probabilité annuelle qu'une junte rende le pouvoir à un régime civil (élection qu'elle remporte le plus souvent : régime hybride). 11 %/an ≈ durée moyenne de 9 ans des régimes militaires de 1946 à 1999 (Geddes, 1999)."
+    relation_reset:
+      value: 0.7
+      range: [0, 1]
+      unit: ''
+      description: "Part des griefs et amitiés propres au gouvernement renversé (résidu des relations) qui s'efface lors d'un coup d'État : une junte rompt plus nettement les alignements précédents qu'une alternance démocratique."
   succession:
     stability_shock:
       value: -8
       range: [-60, 0]
       unit: 'points'
       description: "Choc sur la stabilité d'une succession non planifiée."
+    relation_reset:
+      value: 0.1
+      range: [0, 1]
+      unit: ''
+      description: "Part du résidu des relations qui s'efface lors d'une succession non planifiée : régime et profil restent en place, seule l'incertitude sur le nouveau dirigeant joue."
   revolution:
     stability_threshold:
       value: 12

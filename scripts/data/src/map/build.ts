@@ -215,7 +215,14 @@ export async function buildMap(options: BuildMapOptions): Promise<BuiltMap> {
   layers.infrastructure.set(
     rasterizeInfrastructure(grid, layers.terrain, await ne('roads'), await ne('railroads')),
   );
-  const airports = markAirports(grid, topology, layers.terrain, layers.flags, await ne('airports'));
+  const airports = markAirports(
+    grid,
+    topology,
+    layers.terrain,
+    layers.owner,
+    layers.flags,
+    await ne('airports'),
+  );
   const { cities, capitals, unplaced } = buildCities(
     grid,
     topology,
@@ -246,7 +253,7 @@ export async function buildMap(options: BuildMapOptions): Promise<BuiltMap> {
     config.get('geo.ports.snap_radius_km'),
   );
   log(
-    `Fleuves : ${riverPixels} px ; aéroports : ${airports} ; villes : ${cities.length} ; capitales : ${capitals.length}/${table.entities.length} ; ports : ${ports.length} (${dropped.length} écartés)`,
+    `Fleuves : ${riverPixels} px ; aéroports : ${airports.length} ; villes : ${cities.length} ; capitales : ${capitals.length}/${table.entities.length} ; ports : ${ports.length} (${dropped.length} écartés)`,
   );
 
   // Population et valeur économique : chaque pixel relève de l'unité statistique qui le couvre.
@@ -430,6 +437,7 @@ export async function buildMap(options: BuildMapOptions): Promise<BuiltMap> {
     }),
     cities,
     ports,
+    airports,
     controlZones: options.zones.map((z) => ({
       id: z.id,
       nameFr: z.nameFr,

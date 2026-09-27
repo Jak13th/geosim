@@ -9,7 +9,7 @@ import { toCss } from './colors.ts';
 import { unitLabelPixels } from './labels.ts';
 import type { LayerId } from './layers.ts';
 import { splitAtAntimeridian, type MapProjector } from './projection.ts';
-import { CHOKEPOINT_COLORS } from './style.ts';
+import { CHOKEPOINT_COLORS, STYLE } from './style.ts';
 import { mapToScreen, visibleRect, type View, type Viewport } from './view.ts';
 
 interface Label {
@@ -42,6 +42,14 @@ interface Marker {
   status: 'open' | 'contested' | 'closed';
 }
 
+interface InfraPoint {
+  x: number;
+  y: number;
+  name: string;
+  kind: 'port' | 'airport';
+  scalerank: number;
+}
+
 type Rect = [number, number, number, number];
 
 function overlaps(a: Rect, list: readonly Rect[]): boolean {
@@ -62,6 +70,7 @@ export class OverlayModel {
   readonly labels: Label[];
   readonly places: Place[];
   readonly chokepoints: Marker[];
+  readonly infra: InfraPoint[];
   readonly seaLabels: { x: number; y: number; name: string }[];
   private routes: Map<string, MapRoute> | null = null;
   private readonly routeCache = new Map<string, [number, number][][]>();
@@ -94,6 +103,27 @@ export class OverlayModel {
       const p = c.lonLat ? projector.project(c.lonLat[0], c.lonLat[1]) : null;
       if (p) this.chokepoints.push({ x: p[0], y: p[1], name: c.nameFr, status: c.status.value });
     }
+
+    this.infra = [];
+    for (const p of data.raw.meta.ports) {
+      this.infra.push({
+        x: (p.pixel % w) + 0.5,
+        y: Math.floor(p.pixel / w) + 0.5,
+        name: p.name,
+        kind: 'port',
+        scalerank: p.scalerank,
+      });
+    }
+    for (const a of data.raw.meta.airports) {
+      this.infra.push({
+        x: (a.pixel % w) + 0.5,
+        y: Math.floor(a.pixel / w) + 0.5,
+        name: a.name,
+        kind: 'airport',
+        scalerank: a.scalerank,
+      });
+    }
+
     this.seaLabels = [];
     for (const z of data.raw.meta.seaZones) {
       if (z.labelLonLat === null) continue;
@@ -323,6 +353,27 @@ export function drawOverlay(
         placed.push(labelRect);
         drawText(ctx, c.name, sx + r + 4, sy, 11, 600, 'left');
       }
+    }
+  }
+
+  // Ports et aéroports (couche « infrastructures »), sous forme de marqueurs fixes à l'écran.
+  if (s.layer === 'infrastructure') {
+    const minScale = view.zoom >= 6 ? Infinity : view.zoom >= 2 ? 6 : 2;
+    for (const p of model.infra) {
+      if (p.scalerank > minScale) continue;
+      if (!visible(p.x, p.y, 8)) continue;
+      const [sx, sy] = mapToScreen(view, vp, p.x, p.y);
+      const r = 3;
+      const rect: Rect = [sx - r, sy - r, sx + r, sy + r];
+      if (overlaps(rect, placed)) continue;
+      ctx.beginPath();
+      ctx.arc(sx, sy, r, 0, Math.PI * 2);
+      ctx.fillStyle = toCss(p.kind === 'port' ? STYLE.port : STYLE.airport);
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.stroke();
+      placed.push(rect);
     }
   }
 

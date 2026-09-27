@@ -982,6 +982,7 @@ export const RULES: Record<string, Rule> = {
   'pol.leader_tenure': R([cur('pol.leader_tenure')], 'default'),
   'pol.succession_risk': hyp('pol.succession_risk'),
   'pol.coup_risk': runtime,
+  'pol.coup_history': R([cur('pol.coup_history')], 'default'),
   'pol.insurgency': R(
     [
       (ctx, e) => {

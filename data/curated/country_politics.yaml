@@ -369,3 +369,92 @@ params:
         ARE: 45,
         KWT: 40,
       }
+  pol.coup_history:
+    source:
+      "Nombre de coups d'État réussis et de tentatives depuis 1950 (ou l'indépendance), à partir de
+      la base Powell et Thyne (Global Instances of Coups, 1950–présent). Afrique : VOA News, « By The
+      Numbers: Coups in Africa » (https://projects.voanews.com/african-coups/), qui compile cette base.
+      Hors Afrique : Wikipedia, « List of coups and coup attempts by country »
+      (https://en.wikipedia.org/wiki/List_of_coups_and_coup_attempts_by_country) pour l'Afghanistan,
+      le Bangladesh, l'Argentine et la Bolivie ; pour le Pakistan (1958, 1969, 1977, 1999), la Birmanie
+      (1962, 1988, 2021), le Honduras (1956, 1963, 2009), les Fidji (1987 ×2, 2000, 2006), le Venezuela
+      (1992, 2002) et la Thaïlande (coups réussis depuis 1950), presse et synthèses généralistes citées
+      dans SOURCES.md."
+    date: '2026-09-27'
+    confidence: medium
+    note:
+      "Source secondaire (synthèses appuyées sur Powell et Thyne, pas le jeu de données brut) : à
+      recaler sur le CSV primaire si besoin de précision. Limité aux pays à risque identifiés (régime
+      non démocratique aujourd'hui, ou historique de coups substantiel) ; 0 par défaut ailleurs
+      (defaults.yaml)."
+    values:
+      {
+        DZA: 4,
+        BEN: 8,
+        BFA: 10,
+        BDI: 11,
+        CAF: 5,
+        TCD: 7,
+        COM: 9,
+        COD: 4,
+        EGY: 4,
+        GNQ: 2,
+        ETH: 5,
+        GAB: 3,
+        GHA: 10,
+        GIN: 6,
+        GNB: 9,
+        CIV: 4,
+        LSO: 4,
+        LBR: 4,
+        LBY: 3,
+        MDG: 4,
+        MLI: 8,
+        MRT: 7,
+        NER: 8,
+        NGA: 8,
+        COG: 7,
+        SLE: 10,
+        SOM: 3,
+        SDN: 18,
+        GMB: 3,
+        TGO: 7,
+        UGA: 5,
+        ZMB: 3,
+        ZWE: 1,
+        RWA: 2,
+        DJI: 1,
+        SWZ: 1,
+        AFG: 11,
+        BGD: 8,
+        ARG: 15,
+        BOL: 24,
+        PAK: 4,
+        MMR: 3,
+        HND: 3,
+        FJI: 4,
+        VEN: 2,
+        THA: 10,
+      }
+  pol.military_loyalty:
+    source:
+      "V-Dem (dimension militaire, v2x_ex_military) n'a pas pu être consultée directement dans cette
+      session (jeu de données volumineux, hors périmètre d'un accès web ponctuel) : à recaler quand
+      l'accès sera possible. En attendant, quelques cas bien documentés où la cohésion ou la loyauté
+      de l'armée envers le pouvoir en place est un fait notoire et sourcé individuellement (voir note
+      par pays ci-dessous et SOURCES.md), plutôt qu'une dérivation mécanique du régime ou de
+      l'historique des coups (qui biaiserait le risque de coup, déjà sensible à ces deux facteurs)."
+    date: '2026-09-27'
+    confidence: assumption
+    note: "Couverture partielle et provisoire (9 pays), à valider et étendre avec V-Dem : Soudan
+      (armée fracturée depuis la guerre civile SAF–RSF d'avril 2023, désertions documentées) ;
+      Birmanie (Tatmadaw resté cohérent depuis le coup de 2021, malgré la guerre civile face à
+      l'opposition) ; Égypte (institution dominante et unifiée depuis 2013, aucun coup depuis) ;
+      Pakistan (institution dominante et cohérente, ingérence politique récurrente sans fracture
+      interne) ; Mali, Burkina Faso, Niger (juntes consolidées depuis leurs coups respectifs de
+      2020-2023, sans fracture interne rapportée à ce jour) ; Venezuela (armée restée loyale à
+      Maduro malgré les crises de 2019 et suivantes, réseaux de corruption documentés) ; Inde
+      (aucun coup ni tentative depuis 1947, tradition durable de subordination au pouvoir civil et
+      de neutralité politique de l'armée, largement documentée en science politique — au-delà du
+      défaut plat par régime, qui surestimait par ailleurs son risque de coup, D86)."
+    values: { SDN: 25, MMR: 75, EGY: 80, PAK: 75, MLI: 65, BFA: 65, NER: 65, VEN: 70, IND: 95 }

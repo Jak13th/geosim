@@ -75,6 +75,26 @@ describe.skipIf(!built)('données construites : 20 ans de simulation', () => {
       expect(diverging).toEqual([]);
       const defaults = e.journal.filter((x) => x.kind === 'default').length;
       expect(defaults).toBeLessThan(80);
+
+      // Dérive de la stabilité et des coups d'État (D76, D86, D89, D90 : garde-fous et
+      // couplages étendus aux coups/successions) : bornes reprises des mesures de D76 (5 × 20
+      // ans sans garde-fous : −1,35 point de stabilité moyenne, ≈ 2,7 coups/an).
+      const countryOf = (i: number): boolean => (S.entities[i]?.kind ?? 'faction') !== 'faction';
+      const meanStability = (values: (i: number) => number): number => {
+        let sum = 0;
+        let n = 0;
+        for (let i = 0; i < S.n; i++) {
+          if (!countryOf(i)) continue;
+          sum += values(i);
+          n++;
+        }
+        return n > 0 ? sum / n : 0;
+      };
+      const stability0 = meanStability((i) => S.base[col('pol.stability') * S.n + i] as number);
+      const stability20 = meanStability((i) => S.e(col('pol.stability'))[i] as number);
+      expect(stability0 - stability20).toBeLessThan(3);
+      const coups = e.journal.filter((x) => x.kind === 'coup').length;
+      expect(coups / 20).toBeLessThan(4);
     },
   );
 

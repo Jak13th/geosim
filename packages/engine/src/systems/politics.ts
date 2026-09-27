@@ -58,6 +58,7 @@ const C = {
   repression: col('pol.repression_capacity'),
   information: col('pol.information_control'),
   loyalty: col('pol.military_loyalty'),
+  coupHistory: col('pol.coup_history'),
   tolerance: col('pol.casualty_tolerance'),
   interference: col('pol.interference_vulnerability'),
   ethnic: col('demo.ethnic_fractionalization'),
@@ -149,6 +150,8 @@ const K = {
   coupElites: 'politics.coups.elites',
   coupIncome: 'politics.coups.income_reference',
   coupIncomeElasticity: 'politics.coups.income_elasticity',
+  coupHistoryWeight: 'politics.coups.history_weight',
+  coupHistoryCap: 'politics.coups.history_cap',
   juntaTransition: 'politics.coups.junta_transition_rate',
   coupMax: 'politics.coups.max',
   coupShock: 'politics.coups.stability_shock',
@@ -157,7 +160,9 @@ const K = {
   coupDemocracyFactor: 'politics.coups.democracy_factor',
   coupCondemnation: 'politics.coups.condemnation',
   coupCondemnationDemocracy: 'politics.coups.condemnation_democracy',
+  coupRelationReset: 'politics.coups.relation_reset',
   successionShock: 'politics.succession.stability_shock',
+  successionRelationReset: 'politics.succession.relation_reset',
   revolutionThreshold: 'politics.revolution.stability_threshold',
   revolutionRate: 'politics.revolution.rate',
   revolutionShock: 'politics.revolution.stability_shock',
@@ -586,9 +591,13 @@ export function coupRisk(
   const reference = Math.max(1, m.get(K.coupIncome));
   const fIncome =
     income > reference ? Math.pow(reference / income, m.get(K.coupIncomeElasticity)) : 1;
+  // Piège du coup d'État (Powell et Thyne) : un pays qui en a déjà connu plusieurs y est plus
+  // exposé, au-delà de ce qu'expliquent seuls le régime, la stabilité et la loyauté de l'armée.
+  const history = Math.min(fin(S.e(C.coupHistory)[i] as number), m.get(K.coupHistoryCap));
+  const fHistory = 1 + m.get(K.coupHistoryWeight) * history;
   const risk = Math.min(
     m.get(K.coupMax),
-    base * fStability * fLoyalty * fRecession * fElites * fIncome,
+    base * fStability * fLoyalty * fRecession * fElites * fIncome * fHistory,
   );
   return {
     risk,
@@ -633,6 +642,13 @@ export function coupRisk(
         value: income,
         unit: '$',
         contribution: fIncome,
+      },
+      {
+        id: 'pol.coup_history',
+        label: "Historique des coups d'État depuis 1950",
+        value: history,
+        unit: 'coups',
+        contribution: fHistory,
       },
     ],
   };
@@ -1284,6 +1300,8 @@ function coup(ctx: SystemContext, i: number, factors: Factor[], risk: number): v
     });
   }
   effects.push(...newGovernment(ctx, i, S.effNow(C.approval, i)));
+  // La junte rompt avec une part des alignements hérités (résidu de calage), comme une alternance.
+  resetResidual(S, i, m.get(K.coupRelationReset));
   // Condamnation des démocraties (relations).
   for (let j = 0; j < S.n; j++) {
     if (j === i) continue;
@@ -1369,6 +1387,8 @@ function unplannedSuccession(ctx: SystemContext, i: number, risk: number): void 
   const e = S.entities[i];
   if (!e) return;
   const effects = newGovernment(ctx, i, S.effNow(C.approval, i));
+  // Régime et profil restent en place : effet mineur, incertitude sur le nouveau dirigeant.
+  resetResidual(S, i, m.get(K.successionRelationReset));
   ctx.emit({
     kind: 'succession',
     entities: [e.id],

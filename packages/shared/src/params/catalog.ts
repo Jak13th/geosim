@@ -313,7 +313,7 @@ export const CATALOG: readonly ParamDef[] = [
   p('pol.repression_capacity', 'Capacité répressive', 'I', 'indice', PCT, 'HYP', ['politics'], 'Capacité à réprimer une contestation (forces de sécurité, surveillance).'),
   p('pol.information_control', "Contrôle de l'information et propagande", 'I', 'indice', PCT, 'CUR', ['politics'], 'Contrôle des médias et de l’information (classement mondial de la liberté de la presse, inversé).'),
   p('pol.polarization', 'Polarisation', 'I', 'indice', PCT, 'OWID:vdem_polarization', ['politics'], 'Polarisation de la société en camps antagonistes (V-Dem, rééchelonné de [0 ; 4] vers [0 ; 100]).'),
-  p('pol.military_loyalty', "Loyauté de l'armée envers le pouvoir", 'I', 'indice', PCT, 'HYP', ['politics'], 'Loyauté de l’armée ; faible, elle augmente le risque de coup d’État.'),
+  p('pol.military_loyalty', "Loyauté de l'armée envers le pouvoir", 'I', 'indice', PCT, 'CUR', ['politics'], 'Loyauté de l’armée ; faible, elle augmente le risque de coup d’État.'),
   p('pol.nationalism', 'Nationalisme', 'I', 'indice', PCT, 'HYP', ['politics', 'ai'], 'Intensité du sentiment nationaliste.'),
   p('pol.casualty_tolerance', 'Tolérance aux pertes', 'I', 'indice', PCT, 'HYP', ['politics', 'combat'], 'Pertes militaires acceptées avant que le soutien à la guerre ne chute.'),
   p('pol.war_support', 'Soutien à chaque guerre en cours', 'S', '%', PCT, 'DER', ['politics'], 'Soutien de l’opinion à chaque guerre en cours.', { valueType: 'vector' }),
@@ -321,6 +321,7 @@ export const CATALOG: readonly ParamDef[] = [
   p('pol.leader_tenure', 'Ancienneté du pouvoir en place', 'S', 'années', [0, 80], 'CUR', ['politics'], 'Années écoulées depuis l’arrivée au pouvoir du gouvernement ou du régime en place.', { step: 0.1 }),
   p('pol.succession_risk', 'Risque de succession non planifiée', 'I', '%/an', PCT, 'HYP', ['politics', 'events'], 'Probabilité annuelle d’une succession non planifiée.', { step: 0.1 }),
   p('pol.coup_risk', "Risque de coup d'État", 'D', '%/an', PCT, 'DER', ['politics'], 'Probabilité annuelle de coup d’État, calculée.', { step: 0.1 }),
+  p('pol.coup_history', "Historique des coups d'État", 'I', 'coups', [0, 30], 'CUR', ['politics'], 'Nombre de coups d’État réussis et de tentatives depuis 1950 (piège du coup d’État : Powell et Thyne) ; élève le risque de coup au-delà de ce qu’expliquent le régime, la stabilité et la loyauté de l’armée seuls.', { step: 1 }),
   p('pol.insurgency', 'Insurrections et conflits internes', 'S', 'intensité', PCT, 'CUR', ['politics', 'economy'], 'Intensité des insurrections et conflits internes.'),
   p('pol.interference_vulnerability', "Vulnérabilité à l'ingérence étrangère", 'I', 'indice', PCT, 'HYP', ['politics', 'cyber'], 'Exposition à l’ingérence étrangère (désinformation, financement, corruption).'),
 
