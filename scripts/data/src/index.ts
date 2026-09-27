@@ -24,7 +24,7 @@ import {
 } from './country/entities.ts';
 import { geoZoneErrors, parseGeoZones } from './country/geozones.ts';
 import { loadAutomated } from './country/load.ts';
-import { countriesBase, pairsBase, worldBase } from './country/output.ts';
+import { compactRoutes, countriesBase, pairsBase, worldBase } from './country/output.ts';
 import { consistencyAlerts, writeReport } from './country/report.ts';
 import { checkRules, resolveAll, resolveBase } from './country/resolve.ts';
 import { MAP_PARAMS, RULES } from './country/rules.ts';
@@ -255,7 +255,15 @@ try {
     .filter(([, r]) => r.runtime)
     .map(([id]) => id);
   const countries = countriesBase(ctx, meta.buildId, runtimeParams);
-  const pairs = pairsBase(ctx, geo, routes);
+  const pairs = pairsBase(
+    ctx,
+    geo,
+    routes,
+    compactRoutes(
+      routesFile,
+      chokepoints.map((c) => c.id),
+    ),
+  );
   // Annotation : vérifie à la compilation que world.base.json respecte le contrat lu par l'interface.
   const world: WorldBaseFile = worldBase(ctx, meta, chokepoints, geoZones);
   await mkdir(BUILD_DIR, { recursive: true });

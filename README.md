@@ -70,14 +70,14 @@ npm run preview -w @geosim/web   # http://localhost:4173
 
 ## Tester
 
-| Commande                | Rôle                                                                                                                                                                                                                                                                                                                     |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `npm test`              | Tests unitaires (Vitest)                                                                                                                                                                                                                                                                                                 |
-| `npm run test:watch`    | Tests en continu pendant le développement                                                                                                                                                                                                                                                                                |
-| `npm run typecheck`     | Vérification TypeScript de chaque workspace                                                                                                                                                                                                                                                                              |
-| `npm run lint`          | ESLint, dont les règles d'architecture du moteur                                                                                                                                                                                                                                                                         |
-| `npm run format:check`  | Vérifie le formatage (Prettier) ; `npm run format` le corrige                                                                                                                                                                                                                                                            |
-| `npm run check:console` | Lance l'application dans Chromium headless, parcourt l'interface (couches, zoom, recherche, inspecteur, panneaux, temps réel, édition, modèle, captures, relecture, journal, graphiques) et échoue au moindre message d'erreur ou d'avertissement dans la console ; `-- --screenshots <dossier>` enregistre des captures |
+| Commande                | Rôle                                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm test`              | Tests unitaires (Vitest)                                                                                                                                                                                                                                                                                                                                       |
+| `npm run test:watch`    | Tests en continu pendant le développement                                                                                                                                                                                                                                                                                                                      |
+| `npm run typecheck`     | Vérification TypeScript de chaque workspace                                                                                                                                                                                                                                                                                                                    |
+| `npm run lint`          | ESLint, dont les règles d'architecture du moteur                                                                                                                                                                                                                                                                                                               |
+| `npm run format:check`  | Vérifie le formatage (Prettier) ; `npm run format` le corrige                                                                                                                                                                                                                                                                                                  |
+| `npm run check:console` | Lance l'application dans Chromium headless, parcourt l'interface (couches, zoom, recherche, inspecteur, « Pourquoi ? », blocs, panneaux, temps réel, édition, détroits, ONU, modèle, captures, relecture, journal, graphiques) et échoue au moindre message d'erreur ou d'avertissement dans la console ; `-- --screenshots <dossier>` enregistre des captures |
 
 Vérification complète, celle de chaque fin de phase :
 
@@ -93,7 +93,20 @@ Le moteur (`packages/engine`) doit rester pur et déterministe : il tourne à l'
 npm run sim -- --scenario <nom> --years <n> --runs <n> --seed <n> --out <dossier>
 ```
 
-Exemple : `npm run sim -- --years 20 --runs 5 --seed 1 --out results/essai`. Chaque run part des données construites et de `config/model.yaml`, avec la graine `seed + numéro du run`, et écrit dans `<dossier>/run-NNN/` les séries mensuelles par pays (`countries.csv`) et mondiales (`world.csv`) et le journal des événements (`journal.json`), plus un résumé (`summary.json` : empreinte d'état, invariants, croissance mondiale par an, événements, pays clés). Seul le scénario `monde` (situation au jour des données) existe ; les autres scénarios et le Monte Carlo parallèle arrivent en phase 8.
+Exemple : `npm run sim -- --years 20 --runs 5 --seed 1 --out results/essai`. Chaque run part des données construites et de `config/model.yaml`, avec la graine `seed + numéro du run`, et écrit dans `<dossier>/run/` (un run) ou `<dossier>/run-NNN/` les séries mensuelles par pays (`countries.csv` : économie, échanges, énergie, tension alimentaire, stabilité, soutien au gouvernement, insurrection, réfugiés) et mondiales (`world.csv`) et le journal des événements (`journal.json`), plus un résumé (`summary.json` : empreinte d'état, invariants, croissance mondiale par an, événements, pays clés).
+
+Scénarios :
+
+| Nom                  | Contenu                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------- |
+| `monde`              | Situation au jour des données, sans intervention (par défaut ; durée `--years`)                     |
+| `ormuz`              | Détroit d'Ormuz entièrement fermé trois mois à partir de la situation actuelle (trafic déjà réduit) |
+| `ormuz-avant-guerre` | Détroit rouvert, puis fermé trois mois                                                              |
+| `sanctions-chine`    | Sanctions financières et commerciales larges du G7, de l'UE et de leurs alliés contre la Chine      |
+| `ble-x2`             | Prix du blé doublé pendant un an                                                                    |
+| `election-usa`       | Élection présidentielle américaine de 2028 perdue par le gouvernement sortant                       |
+
+Un scénario d'expérience a sa propre durée (`--years` ignoré) : chaque run le déroule avec sa référence (même graine, sans le choc ou avec son contraire) et écrit dans le dossier du run les séries et journaux des deux (`scenario/`, `reference/`) et un rapport `report.md` : écarts des indicateurs, événements propres au scénario et leurs facteurs explicatifs. Exemple : `npm run sim -- --scenario ormuz-avant-guerre --seed 1 --out results/ormuz`. Le Monte Carlo parallèle arrive en phase 8.
 
 ## Données
 

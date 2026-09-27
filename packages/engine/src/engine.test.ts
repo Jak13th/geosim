@@ -125,10 +125,14 @@ describe('couches de valeur et commandes', () => {
     });
     const id = entry.effects?.[0]?.modifier as number;
     expect(value(e, 'pol.stability', 'NGA')).toBeCloseTo(before - 20, 9);
+    expect(core(e, 'pol.stability', 'NGA')).toBe(before);
+    // La stabilité évolue chaque mois (politique intérieure) : l'effet se lit par rapport à la
+    // valeur courante, que le modificateur ne touche pas.
     e.step(30);
-    expect(value(e, 'pol.stability', 'NGA')).toBeCloseTo(before - 10, 9);
+    const shift = value(e, 'pol.stability', 'NGA') - core(e, 'pol.stability', 'NGA');
+    expect(shift).toBeCloseTo(-10, 9);
     e.step(30);
-    expect(value(e, 'pol.stability', 'NGA')).toBeCloseTo(before, 9);
+    expect(value(e, 'pol.stability', 'NGA')).toBeCloseTo(core(e, 'pol.stability', 'NGA'), 9);
     expect(e.state.modifiers.find((m) => m.id === id)).toBeUndefined();
   });
 

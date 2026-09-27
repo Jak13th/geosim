@@ -588,7 +588,14 @@ export function ParamEditor({
               </button>
             )}
           </div>
-          {panel === 'modifier' && <ModifierForm slots={[slot]} onDone={() => setPanel('none')} />}
+          {panel === 'modifier' && (
+            <ModifierForm
+              slots={[slot]}
+              // La réponse du moteur arrive après l'image : ne ferme que si le formulaire est
+              // encore ouvert (un autre panneau a pu être ouvert entre-temps).
+              onDone={() => setPanel((p) => (p === 'modifier' ? 'none' : p))}
+            />
+          )}
           {panel === 'bulk' && slot.scope === 'country' && (
             <BulkEdit
               def={def}

@@ -19,6 +19,7 @@ import { PairPanel } from './PairPanel.tsx';
 import { isEstimate } from './ParamRow.tsx';
 import { normalize } from './search.ts';
 import { Sparkline, useSeries } from './Sparkline.tsx';
+import { CountryWhy, LiveMemberships } from './WhyPanel.tsx';
 
 /** Indicateurs clés de l'aperçu. */
 const OVERVIEW = [
@@ -231,8 +232,13 @@ function Overview({
       </section>
       <section>
         <h3>Appartenances</h3>
-        <p>{memberships(entity, data, names)}</p>
+        {live !== null ? (
+          <LiveMemberships data={data} entity={entity} live={live} />
+        ) : (
+          <p>{memberships(entity, data, names)}</p>
+        )}
       </section>
+      {live !== null && <CountryWhy data={data} entity={entity} />}
       {conflicts.length > 0 && (
         <section>
           <h3>Conflits</h3>

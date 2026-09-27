@@ -231,11 +231,14 @@ elections:
     confidence: medium
     note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
   JPN:
-    date: '2028-07-15'
-    type: Élection de la Chambre des conseillers, date indicative
-    source: https://en.wikipedia.org/wiki/2028_Japanese_House_of_Councillors_election (consulté le 2026-09-25)
+    date: '2030-02-08'
+    type: Élections générales (Chambre des représentants), au plus tard, date indicative
+    source: https://en.wikipedia.org/wiki/House_of_Representatives_(Japan) (consulté le 2026-09-26)
     confidence: low
-    note: Chambre des représentants élue le 08/02/2026 (supermajorité du PLD).
+    note:
+      "Chambre des représentants élue le 08/02/2026 pour quatre ans (dissolution possible avant).
+      L'élection de la Chambre des conseillers de juillet 2028 ne désigne pas le Premier ministre : non
+      retenue (DECISIONS D67)."
   KAZ:
     date: '2029-11-15'
     type: Élection présidentielle, date indicative
@@ -254,10 +257,14 @@ elections:
     confidence: medium
     note: 'Jour non fixé dans le calendrier : milieu du mois retenu.'
   KOR:
-    date: '2028-04-12'
-    type: Élections législatives, date indicative
-    source: https://en.wikipedia.org/wiki/2028_South_Korean_legislative_election (consulté le 2026-09-25)
-    confidence: medium
+    date: '2030-03-27'
+    type: Élection présidentielle, date indicative
+    source: https://en.wikipedia.org/wiki/Elections_in_South_Korea (consulté le 2026-09-26)
+    confidence: low
+    note:
+      "Mandat unique de cinq ans depuis le 04/06/2025 ; élection fixée par la loi environ 70 jours avant
+      la fin du mandat (date retenue : premier mercredi suivant). Les législatives d'avril 2028 ne
+      changent pas l'exécutif : non retenues (DECISIONS D67)."
   LBY:
     date: '2027-12-15'
     type: President
@@ -276,10 +283,13 @@ elections:
     source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
     confidence: high
   MEX:
-    date: '2027-06-06'
-    type: Chamber of Deputies
-    source: https://en.wikipedia.org/wiki/2027_national_electoral_calendar (consulté le 2026-09-25)
-    confidence: high
+    date: '2030-06-02'
+    type: Élection présidentielle
+    source: https://en.wikipedia.org/wiki/Elections_in_Mexico (consulté le 2026-09-26)
+    confidence: medium
+    note:
+      "Mandat présidentiel unique de six ans (2024-2030). Les législatives de mi-mandat du 06/06/2027
+      ne changent pas l'exécutif : non retenues (DECISIONS D67)."
   MNE:
     date: '2027-12-15'
     type: Parliament
@@ -425,10 +435,13 @@ elections:
     source: https://en.wikipedia.org/wiki/2028_Taiwanese_presidential_election (consulté le 2026-09-25)
     confidence: medium
   USA:
-    date: '2026-11-03'
-    type: House of Representatives
-    source: https://en.wikipedia.org/wiki/2026_national_electoral_calendar (consulté le 2026-09-25)
+    date: '2028-11-07'
+    type: Élection présidentielle
+    source: https://en.wikipedia.org/wiki/2028_United_States_presidential_election (consulté le 2026-09-26)
     confidence: high
+    note:
+      "Date fixée par la loi. Les élections de mi-mandat du 03/11/2026 (Chambre des représentants, un
+      tiers du Sénat) ne changent pas l'exécutif : non retenues (DECISIONS D67)."
   XKX:
     date: '2026-12-15'
     type: President

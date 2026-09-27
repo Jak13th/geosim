@@ -1,10 +1,13 @@
 /**
  * Moteur de simulation (SPEC §7) : un tick = un jour ; systèmes mensuels le premier jour de
- * chaque mois ; commandes horodatées journalisées (annuler, rétablir, relecture) ; captures.
+ * chaque mois ; contrôles quotidiens légers (élections à leur date) ; commandes horodatées
+ * journalisées (annuler, rétablir, relecture) ; captures.
  *
- * Ordonnancement d'un pas mensuel : marchés (prix du mois) → démographie → économie → budget,
- * puis valeurs dérivées et historique. Après chaque commande, les valeurs dérivées sont
- * recalculées sans avancer le temps : une modification se voit aussitôt.
+ * Ordonnancement d'un pas mensuel : sanctions → commerce (détroits, routes, échanges) → énergie
+ * (pénuries, stocks) → marchés (prix du mois) → ressources (alimentation, produits critiques) →
+ * démographie → réfugiés → économie → budget → politique intérieure → diplomatie, puis valeurs
+ * dérivées et historique. Après chaque commande, les valeurs dérivées sont recalculées sans
+ * avancer le temps : une modification se voit aussitôt.
  */
 import type { CoefficientTree, ParamValue } from '@geosim/shared';
 import { Calendar } from './calendar.ts';
@@ -28,16 +31,57 @@ import type { SimEvent, System, SystemContext } from './system.ts';
 import { accounts } from './systems/accounts.ts';
 import { budget } from './systems/budget.ts';
 import { demography } from './systems/demography.ts';
+import { applyBloc, applyUnResolution, diplomacy } from './systems/diplomacy.ts';
 import { economy } from './systems/economy.ts';
+import { energy } from './systems/energy.ts';
 import { FINANCE } from './systems/finance.ts';
 import { markets } from './systems/markets.ts';
-import type { Command, JournalEntry, Modifier, Slot } from './types.ts';
+import { politics } from './systems/politics.ts';
+import { refugees } from './systems/refugees.ts';
+import { resources } from './systems/resources.ts';
+import { sanctions } from './systems/sanctions.ts';
+import { tradeSystem } from './systems/trade.ts';
+import type { Command, Factor, JournalEntry, Modifier, Slot } from './types.ts';
 
-export const ENGINE_VERSION = '0.3.0';
+export const ENGINE_VERSION = '0.4.0';
 
-const INIT_ORDER: readonly System[] = [demography, markets, economy, budget, accounts];
-const MONTHLY_ORDER: readonly System[] = [markets, demography, economy, budget];
-const DERIVE_ORDER: readonly System[] = [demography, budget, accounts];
+const INIT_ORDER: readonly System[] = [
+  demography,
+  sanctions,
+  tradeSystem,
+  markets,
+  energy,
+  resources,
+  economy,
+  budget,
+  diplomacy,
+  politics,
+  refugees,
+  accounts,
+];
+const MONTHLY_ORDER: readonly System[] = [
+  sanctions,
+  tradeSystem,
+  energy,
+  markets,
+  resources,
+  demography,
+  refugees,
+  economy,
+  budget,
+  politics,
+  diplomacy,
+];
+const DERIVE_ORDER: readonly System[] = [
+  demography,
+  tradeSystem,
+  resources,
+  budget,
+  politics,
+  diplomacy,
+  accounts,
+];
+const DAILY_ORDER: readonly System[] = INIT_ORDER.filter((s) => s.daily !== undefined);
 export const SYSTEMS: readonly System[] = INIT_ORDER;
 
 /** Coefficients de config/model.yaml lus par les systèmes (vérifiés au chargement). */
@@ -258,6 +302,8 @@ export class Engine {
     }
     this.monthCount++;
     this.derive();
+    // Relations, échanges et affinités évoluent chaque mois.
+    this.pairVersion++;
     this.history.record(this.state);
   }
 
@@ -274,8 +320,26 @@ export class Engine {
         this.state.refreshEffective();
         this.version++;
       }
+      this.daily();
     }
     return this.journal.slice(first);
+  }
+
+  /** Contrôles quotidiens (élections à leur date) ; dérivés recalculés s'ils changent l'état. */
+  private daily(): void {
+    if (DAILY_ORDER.length === 0) return;
+    const ctx = this.context();
+    let changed = false;
+    for (const system of DAILY_ORDER) {
+      if (system.daily?.(ctx) === true) {
+        changed = true;
+        this.state.refreshEffective();
+      }
+    }
+    if (changed) {
+      this.derive();
+      this.pairVersion++;
+    }
   }
 
   /** Avance jusqu'au tick donné (inclus). */
@@ -293,7 +357,7 @@ export class Engine {
   private execute(
     command: Command,
     seq: number,
-  ): { entry: Partial<JournalEntry>; inverse: StoredInverse } {
+  ): { entry: Partial<JournalEntry> & { factors?: Factor[] }; inverse: StoredInverse } {
     switch (command.type) {
       case 'setCoefficient': {
         const from = this.model.get(command.path);
@@ -309,6 +373,29 @@ export class Engine {
         const changes = this.modelChanges(next);
         this.model = next;
         return { entry: { coefficients: changes, entities: [] }, inverse: { model: previous } };
+      }
+      case 'bloc': {
+        const applied = applyBloc(this.state, command);
+        return {
+          entry: {
+            effects: applied.effects,
+            entities: applied.entities,
+            ...(applied.note ? { note: applied.note } : {}),
+          },
+          inverse: applied.inverse,
+        };
+      }
+      case 'unResolution': {
+        const applied = applyUnResolution({ state: this.state, model: this.model }, command, seq);
+        return {
+          entry: {
+            effects: applied.effects,
+            entities: applied.entities,
+            ...(applied.factors ? { factors: applied.factors } : {}),
+            ...(applied.note ? { note: applied.note } : {}),
+          },
+          inverse: applied.inverse,
+        };
       }
       case 'undo':
       case 'redo':
@@ -368,12 +455,19 @@ export class Engine {
       command,
       ...(entry.effects ? { effects: entry.effects } : {}),
       ...(entry.coefficients ? { coefficients: entry.coefficients } : {}),
+      ...(entry.factors ? { factors: entry.factors } : {}),
+      ...(entry.note ? { note: entry.note } : {}),
     };
     this.journal.push(full);
     this.inverses.set(seq, inverse);
     this.undoStack.push(seq);
     this.redoStack = [];
-    this.afterChange('slots' in command && command.slots.some((s) => s.scope === 'pair'));
+    this.afterChange(
+      command.type === 'bloc' ||
+        command.type === 'unResolution' ||
+        ('slots' in command &&
+          command.slots.some((s) => s.scope === 'pair' || s.scope === 'country')),
+    );
     return full;
   }
 

@@ -11,8 +11,10 @@
  *   g_structurelle = g_pot − e_stab·[pénalité(S) − pénalité(S₀)] − e_debt·[excès(d)·prime − excès(d₀)·prime₀]
  *                  + e_inv·(investissement public − initial)
  *   écart x (en % du PIB potentiel) : x(t+1) = φ·x(t) + (1 − φ)·e_trade·Σ_j (exportations i→j / PIB_i)·x_j
- *                  + impulsion énergie + ε,   ε ~ N(0, σ_pays)
- *   PIB en volume = PIB potentiel · (1 + x) ; le PIB potentiel croît au rythme g_structurelle.
+ *                  + impulsion énergie (termes de l'échange) + ε,   ε ~ N(0, σ_pays)
+ *   PIB en volume = PIB potentiel · niveau commercial · niveau des hydrocarbures · (1 + x) ; le PIB
+ *   potentiel croît au rythme g_structurelle ; niveau des hydrocarbures = 1 + e_vol · Σ rentes₀ ·
+ *   (production / production de référence − 1) (la production est de la valeur ajoutée).
  *   La croissance affichée est le glissement sur douze mois.
  * La croissance potentielle converge vers la croissance de long terme :
  *   g_LT = progrès de la frontière + β·ln(frontière / revenu)·institutions + α·croissance des 15–64 ans
@@ -20,6 +22,13 @@
  * en douze mois) ; le cœur converge vers l'ancrage (cible, indépendance de la banque centrale),
  * plus la surchauffe (écart de production), la monétisation du déficit et une part des chocs.
  * Chômage : loi d'Okun sur l'écart de production, retour lent vers le taux initial.
+ *
+ * Monde interconnecté (phase 4), chocs mesurés par rapport au départ et calculés par les autres
+ * systèmes : niveau du PIB dû aux gains à l'échange (commerce), chocs de demande sur
+ * l'écart de production (pertes d'exportations, sanctions financières, pénuries d'énergie et de
+ * produits critiques, termes de l'échange céréaliers), frein technologique des sanctions et coût
+ * de l'insurrection sur la croissance structurelle, saut des prix importés (droits de douane,
+ * remplacement des fournisseurs), solde courant.
  */
 import { NUMERAIRE } from '../constants.ts';
 import { col, type State } from '../state.ts';
@@ -37,6 +46,11 @@ import {
   type GasZone,
 } from './markets.ts';
 import { expectedInflation, spreadOf } from './finance.ts';
+import { ENERGY_OUT } from './energy.ts';
+import { startProduction } from './markets.ts';
+import { RESOURCES_OUT } from './resources.ts';
+import { SANCTIONS_OUT } from './sanctions.ts';
+import { TRADE_OUT } from './trade.ts';
 
 const C = {
   pop: col('demo.population'),
@@ -74,6 +88,8 @@ const C = {
   gasCons: col('energy.gas_consumption'),
   coalProd: col('energy.coal_production'),
   coalCons: col('energy.coal_consumption'),
+  selfSufficiency: col('res.grain_self_sufficiency'),
+  insurgency: col('pol.insurgency'),
 };
 
 const K = {
@@ -119,6 +135,10 @@ const K = {
   bopSupport: 'economy.external.crisis_support_months',
   bopNotches: 'economy.external.crisis_rating_notches',
   rentFiscal: 'economy.budget.rent_fiscal_share',
+  insurgencyDrag: 'economy.growth.insurgency_drag',
+  foodImporter: 'economy.growth.food_importer',
+  foodExporter: 'economy.growth.food_exporter',
+  wheatPerCapita: 'markets.food.wheat_per_capita',
 } as const;
 
 /** Valeur absente (donnée manquante) comptée comme nulle dans les sommes. */
@@ -194,7 +214,8 @@ function hydrocarbonVolume(ctx: SystemContext, i: number): number {
     [C.oilProd, C.oilRents, 'oil'],
     [C.gasProd, C.gasRents, 'gas'],
   ] as const) {
-    const p0 = S.base[prod * S.n + i] as number;
+    // Référence : production de départ (après l'effet des routes au départ).
+    const p0 = startProduction(S, fuel)[i] as number;
     const r0 = S.base[rents * S.n + i] as number;
     if (!(p0 > 0) || !(r0 > 0)) continue;
     const zone = gasZoneOf(S.entities[i]?.region ?? '');
@@ -202,6 +223,21 @@ function hydrocarbonVolume(ctx: SystemContext, i: number): number {
     v += r0 * ((S.e(prod)[i] as number) / reference - 1);
   }
   return v;
+}
+
+/**
+ * Facture du blé nette par rapport au prix de départ (% du PIB) : importations nettes de blé
+ * (consommation par habitant × population × (1 − autosuffisance céréalière)) × écart du prix du
+ * blé ; négative pour un exportateur net quand le prix monte.
+ */
+function foodBill(ctx: SystemContext, i: number, price: number, price0: number): number {
+  const S = ctx.state;
+  const gdp = S.e(C.gdp)[i] as number;
+  const pop = S.e(C.pop)[i] as number;
+  if (!(gdp > 0) || !(pop > 0) || !(price0 > 0)) return 0;
+  const ss = fin(S.e(C.selfSufficiency)[i] as number);
+  const net = pop * ctx.model.get(K.wheatPerCapita) * (1 - ss / 100);
+  return ((net * (price - price0)) / 1e9 / gdp) * 100;
 }
 
 function reserveAccumulation(ctx: SystemContext, regime: unknown): number {
@@ -235,6 +271,12 @@ function longRunGrowth(ctx: SystemContext, i: number): number {
   return Math.min(m.get(K.longRunMax), Math.max(m.get(K.longRunMin), g));
 }
 
+/** Prix du blé de départ en dollars courants. */
+function baseWheat(state: State): number {
+  const v = state.worldBase.get('world.wheat_price');
+  return typeof v === 'number' ? v * (state.worldInternal.get('usdPriceIndex') ?? 1) : Number.NaN;
+}
+
 function numeraireIndex(state: State): number {
   return state.byId.get(NUMERAIRE) ?? -1;
 }
@@ -262,6 +304,7 @@ function init(ctx: SystemContext): void {
   S.internalArray('econ.importShock', 0);
   S.internalArray('econ.tot', 0);
   S.internalArray('econ.volume', 0);
+  S.internalArray('econ.foodBill', 0);
   const factor = S.internalArray('econ.monthlyGrowthFactor', 1);
   const history = S.internalArray('econ.gdpHistory', 1, N * YOY_MONTHS);
   const below = S.internalArray('econ.bopBelow', 0);
@@ -343,6 +386,17 @@ function monthly(ctx: SystemContext): void {
   const volumePrev = S.internalArray('econ.volume', 0);
   const below = S.internalArray('econ.bopBelow', 0);
   const slot = ctx.month % YOY_MONTHS;
+  const foodBillPrev = S.internalArray('econ.foodBill', 0);
+  const tradeLevel = S.internalArray(TRADE_OUT.level, 1);
+  const tradeImpulse = S.internalArray(TRADE_OUT.impulse, 0);
+  const tradeJump = S.internalArray(TRADE_OUT.jump, 0);
+  const tradeCa = S.internalArray(TRADE_OUT.ca, 0);
+  const sanctionImpulse = S.internalArray(SANCTIONS_OUT.impulse, 0);
+  const techDrag = S.internalArray(SANCTIONS_OUT.techDrag, 0);
+  const shortageImpulse = S.internalArray(ENERGY_OUT.impulse, 0);
+  const criticalImpulse = S.internalArray(RESOURCES_OUT.impulse, 0);
+  const wheatNow = S.worldEff('world.wheat_price');
+  const wheatStart = baseWheat(S);
 
   const phi = m.get(K.gapPersistence);
   const sigma = m.get(K.noise);
@@ -373,22 +427,41 @@ function monthly(ctx: SystemContext): void {
     const invest =
       m.get(K.publicInvestment) *
       ((S.e(C.infrastructure)[i] as number) - (S.base[C.infrastructure * N + i] as number));
-    const structural = gp + stab + debt + invest;
+    // Insurrection et guerre civile au-delà du niveau de départ ; contrôles technologiques.
+    const insurgency =
+      (-m.get(K.insurgencyDrag) *
+        (fin(S.e(C.insurgency)[i] as number) - fin(S.base[C.insurgency * N + i] as number))) /
+      100;
+    const structural = gp + stab + debt + invest + insurgency + (techDrag[i] as number);
 
     // Écart de production : persistance, contagion des partenaires, énergie, aléa.
     const { tot, exporter } = termsOfTrade(ctx, i);
     const volume = hydrocarbonVolume(ctx, i);
     const energyImpulse =
       -(exporter ? m.get(K.energyExporter) : m.get(K.energyImporter)) *
-        (tot - (totPrev[i] as number)) +
-      m.get(K.hydrocarbonVolume) * (volume - (volumePrev[i] as number));
+      (tot - (totPrev[i] as number));
+    // Volumes d'hydrocarbures produits : effet de niveau (la production est de la valeur ajoutée),
+    // qui dure autant que la variation de production (fermeture d'un détroit, quotas).
+    const hydroLevel = Math.max(0.05, 1 + (m.get(K.hydrocarbonVolume) * volume) / 100);
     const fragility = 1 - Math.min(100, Math.max(0, stability)) / 100;
     const sd = sigma * (1 + m.get(K.instability) * fragility * fragility);
     const xPrev = gaps[i] as number;
+    // Termes de l'échange céréaliers (importateurs perdants, exportateurs gagnants).
+    const bill = foodBill(ctx, i, wheatNow, wheatStart);
+    const dBill = bill - (foodBillPrev[i] as number);
+    const foodImpulse = -(bill > 0 ? m.get(K.foodImporter) : m.get(K.foodExporter)) * dBill;
+    foodBillPrev[i] = bill;
+    const worldImpulse =
+      (tradeImpulse[i] as number) +
+      (sanctionImpulse[i] as number) +
+      (shortageImpulse[i] as number) +
+      (criticalImpulse[i] as number) +
+      foodImpulse;
     const x =
       phi * xPrev +
       (1 - phi) * m.get(K.tradeSpillover) * (spill[i] as number) +
       energyImpulse +
+      worldImpulse +
       sd * (shocks[i] as number);
     S.write(C.gap, i, x);
     const xNow = S.effNow(C.gap, i);
@@ -396,7 +469,10 @@ function monthly(ctx: SystemContext): void {
     // PIB en volume, glissement annuel, PIB en dollars courants.
     potentialOutput[i] = (potentialOutput[i] as number) * Math.pow(1 + structural / 100, dt);
     const yBefore = realGdp[i] as number;
-    const yAfter = Math.max(1e-9, (potentialOutput[i] as number) * (1 + xNow / 100));
+    const yAfter = Math.max(
+      1e-9,
+      (potentialOutput[i] as number) * (tradeLevel[i] as number) * hydroLevel * (1 + xNow / 100),
+    );
     realGdp[i] = yAfter;
     const f = yAfter / yBefore;
     factor[i] = f;
@@ -428,7 +504,8 @@ function monthly(ctx: SystemContext): void {
         gdp) *
       100;
     const foodJump = ((S.e(C.foodShare)[i] as number) / 100) * wheatChange * 100;
-    const jump = m.get(K.energyPass) * energyJump + m.get(K.foodPass) * foodJump;
+    const jump =
+      m.get(K.energyPass) * energyJump + m.get(K.foodPass) * foodJump + (tradeJump[i] as number);
     const shockBefore = importShock[i] as number;
     const shock = shockBefore * IMPORT_SHOCK_DECAY + jump;
     importShock[i] = shock;
@@ -462,7 +539,7 @@ function monthly(ctx: SystemContext): void {
       [C.gasRents, C.gasProd, prices.gas[zone], basePrice(S, m, zone), 'gas'],
     ] as const) {
       const r0 = S.base[rents * N + i] as number;
-      const p0 = S.base[prod * N + i] as number;
+      const p0 = startProduction(S, fuel)[i] as number;
       if (!(r0 > 0) || !(p0 > 0) || !(price0 > 0)) continue;
       const reference = p0 * Math.exp(S.worldInternal.get(capacityKeyOf(fuel, zone)) ?? 0);
       S.write(rents, i, r0 * (price / price0) * ((S.e(prod)[i] as number) / reference));
@@ -480,6 +557,8 @@ function monthly(ctx: SystemContext): void {
       ca -
         (tot - (totPrev[i] as number)) +
         (volume - (volumePrev[i] as number)) +
+        (tradeCa[i] as number) -
+        dBill +
         ((ca0 - ca) * dt) / m.get(K.caYears),
     );
     totPrev[i] = tot;

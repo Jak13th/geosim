@@ -16,6 +16,17 @@ export const CSV_PARAMS = [
   'eco.credit_rating',
   'eco.current_account',
   'eco.reserves_months',
+  // Monde interconnecté (phase 4).
+  'trade.exports',
+  'trade.imports',
+  'energy.supply_gap',
+  'trade.oil_stocks',
+  'res.food_stress',
+  'pol.stability',
+  'pol.approval',
+  'pol.insurgency',
+  'demo.refugees_abroad',
+  'demo.refugees_hosted',
 ] as const;
 
 /** Pays commentés dans le résumé affiché. */

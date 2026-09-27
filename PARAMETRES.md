@@ -123,6 +123,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `trade.hightech_exports` | Exportations de haute technologie | % des exportations manufacturières | S | WB:TX.VAL.TECH.MF.ZS |
 | `trade.tariff_level` | Droits de douane moyens | % · 0–100 | I | WB:TM.TAX.MRCH.WM.AR.ZS |
 | `trade.maritime_share` | Part du commerce par voie maritime | % | D | MAP (routes) |
+| `trade.route_access` | Accès des routes commerciales | % · 0–100 | D | DER (routes, capacité des détroits) |
 | `trade.sanction_evasion` | Capacité de contournement des sanctions | 0–1 | I | HYP |
 | `trade.oil_stocks` | Stocks stratégiques de pétrole | jours de consommation · 0–365 | S | CUR (AIE) |
 | `trade.grain_stocks` | Stocks stratégiques de céréales | jours de consommation · 0–365 | S | HYP |
@@ -144,6 +145,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `energy.oil_reserves` | Réserves prouvées de pétrole | milliards de barils | I | CUR (Energy Institute, EIA) |
 | `energy.gas_reserves` | Réserves prouvées de gaz | Tm³ | I | CUR |
 | `energy.import_dependence` | Dépendance énergétique nette | % | D | DER |
+| `energy.supply_gap` | Pénurie d'énergie | % de la consommation · 0–100 | D | DER (importations coupées, remplacement, stocks) |
 | `energy.intensity` | Intensité énergétique | kWh/$ | D | DER |
 | `energy.opec_quota` | Quota OPEP+ | Mb/j | I | CUR |
 | `energy.spare_capacity` | Capacité de production inutilisée | Mb/j | I | CUR / HYP |
@@ -160,6 +162,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `res.grain_export_share` | Part des exportations mondiales de céréales | % | S | FAO |
 | `res.fertilizer_export_share` | Part des exportations mondiales d'engrais | % | S | FAO / CUR |
 | `res.food_spending_share` | Part de l'alimentation dans la consommation des ménages | % | I | CUR / HYP |
+| `res.food_stress` | Tension alimentaire | points · 0–100 | D | DER (prix du blé, dépendance, part de l'alimentation) |
 | `res.water_stress` | Stress hydrique | % des ressources prélevées | I | WB:ER.H2O.FWST.ZS |
 | `res.upstream_dependence` | Dépendance aux eaux venant de l'étranger | 0–1 | I | CUR (FAO AQUASTAT) |
 | `res.critical_minerals` | Parts de production et de raffinage (terres rares, lithium, cobalt, nickel, cuivre, gallium, germanium, graphite, uranium) | % par minerai | I | USGS |
@@ -227,6 +230,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `pol.liberal_democracy` | Démocratie libérale | 0–1 | I | OWID (V-Dem) |
 | `pol.regime_type` | Type de régime | démocratie / démocratie imparfaite / régime hybride / autocratie / junte / théocratie / monarchie absolue | I | DER (V-Dem) + CUR |
 | `pol.stability` | Stabilité politique | 0–100 | S | WGI:GOV_WGI_PV.EST (rééchelonné, D9) |
+| `pol.unrest` | Contestation | calme / manifestations / crise politique / soulèvement | D | DER (stabilité, insurrection) |
 | `pol.gov_effectiveness` | Efficacité gouvernementale | 0–100 | I | WGI:GOV_WGI_GE.EST |
 | `pol.rule_of_law` | État de droit | 0–100 | I | WGI:GOV_WGI_RL.EST |
 | `pol.corruption_control` | Contrôle de la corruption | 0–100 | I | WGI:GOV_WGI_CC.EST |
@@ -240,7 +244,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `pol.nationalism` | Nationalisme | 0–100 | I | HYP |
 | `pol.casualty_tolerance` | Tolérance aux pertes | 0–100 | I | DER (régime, nationalisme) + HYP |
 | `pol.war_support` | Soutien à chaque guerre en cours | % | S | DER |
-| `pol.next_election` | Prochaine élection nationale | date | I | CUR |
+| `pol.next_election` | Prochaine élection nationale | date (élection qui peut changer l'exécutif) | I | CUR |
 | `pol.leader_tenure` | Ancienneté du pouvoir en place | années | S | CUR |
 | `pol.succession_risk` | Risque de succession non planifiée | %/an | I | HYP |
 | `pol.coup_risk` | Risque de coup d'État | %/an | D | DER |
@@ -359,7 +363,9 @@ Toutes ces valeurs sont des **hypothèses** : Claude Code les propose, avec une 
 | `zone.claim` | Revendications terrestres et maritimes | zones + revendiquants | I | CUR |
 | `zone.separatism` | Séparatismes et insurrections | zones + intensité | S | CUR |
 | `zone.fortification` | Lignes fortifiées, zones démilitarisées, champs de mines | zones + niveau | S | CUR / DER |
-| `zone.chokepoint_status` | Statut des détroits | ouvert / contesté / fermé + trafic en % | S | CUR |
+| `zone.chokepoint_status` | Statut des détroits | ouvert / contesté / fermé | S | CUR |
+| `zone.chokepoint_traffic` | Capacité de passage des détroits | % du trafic normal · 0–100 | S | CUR (trafic observé), puis DER (statut) |
+| `zone.chokepoint_flow` | Flux par les détroits | % du trafic normal · 0–300 | D | DER (routes) |
 | `zone.sea_control` | Contrôle naval par zone maritime | pays + degré | S | DER |
 | `zone.fallout` | Contamination radioactive | niveau | S | DER |
 

@@ -225,22 +225,23 @@ Pas mensuel (dt = 1/12 an), par pays, trois tranches d'âge A₀ (0–14), A₁ 
 
 - Croissance de long terme : `g_LT = g_frontière + β · max(0, ln(Y_frontière / y) − seuil) · institutions + α · croissance des 15–64 ans`, bornée à [−1 ; 7] %/an. Frontière : 85 000 $ PPA par habitant croissant de 1,3 %/an ; y = revenu PPA réel par habitant ; institutions = (efficacité de l'État + état de droit) / 200 ; β = 2,5 %/an par point de log au-delà d'un seuil de 0,3 (convergence conditionnelle) ; α = 0,7.
 - La croissance potentielle (état, initialisée aux projections du FMI) converge vers g_LT : `g_pot ← g_pot + (g_LT − g_pot)·dt / 8 ans`.
-- Croissance structurelle du mois : `g_s = g_pot − e_stab·[pén(S) − pén(S₀)] − e_dette·[excès(d)·prime(n) − excès(d₀)·prime(n₀)] + e_inv·(investissement public − initial)`, avec `pén(S) = max(0, 50 − S)²` (stabilité), `excès(d) = max(0, d − 90 − 150·monnaie de réserve)` et la prime de risque de la notation (§5.8).
+- Croissance structurelle du mois : `g_s = g_pot − e_stab·[pén(S) − pén(S₀)] − e_dette·[excès(d)·prime(n) − excès(d₀)·prime(n₀)] + e_inv·(investissement public − initial) − e_ins·(insurrection − insurrection₀)/100 + frein technologique`, avec `pén(S) = max(0, 50 − S)²` (stabilité), `excès(d) = max(0, d − 90 − 150·monnaie de réserve)`, la prime de risque de la notation (§5.8), e_ins = 4 %/an pour 100 points d'insurrection (phase 4) et le frein des contrôles technologiques (§9).
 
 ### 5.2 Cycle : écart de production
 
-`x(t+1) = φ·x(t) + (1 − φ)·e_trade·Σ_j (exportations i→j / PIB_i)·x_j(t) + impulsion énergie + ε`
+`x(t+1) = φ·x(t) + (1 − φ)·e_trade·Σ_j (exportations i→j / PIB_i)·x_j(t) + impulsion énergie + impulsions du monde + ε`
 
 - φ = 0,95 par mois (demi-vie d'un an), e_trade = 1 (contagion par les exportations).
-- Impulsion énergie : `−e_imp·Δ(facture nette)` pour un importateur, `−e_exp·Δ(facture nette)` pour un exportateur (`energy_importer` = 0,6, `energy_exporter` = 0,15), la facture nette étant (consommation − production) × (prix courant − prix initial indexé), en % du PIB ; plus `e_vol` × l'écart des volumes d'hydrocarbures à leur trajectoire de référence, pondéré par les rentes initiales.
+- Impulsion énergie : `−e_imp·Δ(facture nette)` pour un importateur, `−e_exp·Δ(facture nette)` pour un exportateur (`energy_importer` = 0,6, `energy_exporter` = 0,15), la facture nette étant (consommation − production) × (prix courant − prix initial indexé), en % du PIB.
+- Impulsions du monde (phase 4, variations du mois) : pertes d'exportations hors énergie (`−0,6 × Δpertes`, §8), choc financier des sanctions (§9), pénurie d'énergie (`−0,5 × Δpénurie`, §10), pénurie de produits critiques (§11), facture du blé (`−0,6 × Δfacture` pour un importateur net, `−0,15 × Δfacture` pour un exportateur, §11).
 - ε ~ N(0, σ·(1 + k·fragilité²)), fragilité = 1 − stabilité/100, σ = 0,3 point, k = 3 : les pays instables ont des cycles plus amples.
-- PIB en volume = PIB potentiel × (1 + x/100), le PIB potentiel croissant au rythme g_s. La croissance affichée est le glissement sur douze mois (historique reconstitué au rythme potentiel initial : elle part de g_pot).
+- PIB en volume = PIB potentiel × niveau commercial × niveau des hydrocarbures × (1 + x/100), le PIB potentiel croissant au rythme g_s. Niveau commercial : gains à l'échange (§8). Niveau des hydrocarbures : `1 + e_vol × Σ rente₀ × (production / production de référence − 1) / 100` (e_vol = 1) : la production est de la valeur ajoutée, l'effet dure autant que la variation de production (DECISIONS D78). La croissance affichée est le glissement sur douze mois (historique reconstitué au rythme potentiel initial : elle part de g_pot).
 - PIB en dollars courants : suit le volume et l'inflation du dollar (numéraire, les États-Unis) ; le PIB en PPA suit le même rythme.
 
 ### 5.3 Inflation
 
 - π = cœur + choc de prix importés. Le choc cumule les sauts de prix (énergie, alimentation, dévaluation) et s'estompe en douze mois (facteur e^(−1/12) par mois).
-- Saut énergie (points) : `pass_énergie × Σ_combustibles consommation × Δprix / PIB` ; saut alimentation : `pass_alim × part de l'alimentation × variation du prix du blé`.
+- Saut énergie (points) : `pass_énergie × Σ_combustibles consommation × Δprix / PIB` ; saut alimentation : `pass_alim × part de l'alimentation × variation du prix du blé` ; saut des prix importés (phase 4) : `0,5 × Δ(surcoût des importations)`, droits de douane et primes des fournisseurs de remplacement (§8).
 - Cœur : `cœur ← cœur + (cible_cœur − cœur) / 12`, avec `cible_cœur = ancrage + monétisation + 0,3·x + 0,3·choc`. Ancrage = a·cible + (1 − a)·π₀, a = 0,2 + 0,7 × indépendance de la banque centrale (bornée à [0, 1]) : les banques centrales indépendantes ramènent l'inflation vers leur cible, les autres restent près de l'inflation de départ.
 - Monétisation : `m = part monétisée × déficit` (% du PIB) ; `3 × m × (1 + (m / 8)²)` points d'inflation : au-delà de 8 % du PIB monétisés, l'emballement est rapide (hyperinflation).
 
@@ -251,14 +252,14 @@ Loi d'Okun sur la variation de l'écart de production et retour lent vers le tau
 ### 5.5 Comptes extérieurs
 
 - Rentes d'hydrocarbures : `rente = rente₀ × (prix / prix₀) × (production / production de référence)`, la référence suivant la capacité mondiale (§6) ; rentes des ressources = initiales + variations.
-- Solde courant : `CA ← CA − Δ(facture énergétique) + Δ(volumes) + (CA₀ − CA)·dt / 5 ans`.
+- Solde courant : `CA ← CA − Δ(facture énergétique) + Δ(volumes) − Δ(pertes d'exportations) + Δ(importations perdues) − Δ(surcoût des importations) − Δ(facture du blé) + (CA₀ − CA)·dt / 5 ans`.
 - Réserves : suivent le PIB nominal (le déficit courant initial est financé par les entrées de capitaux) ; les écarts du solde courant à son niveau initial les font varier selon le régime de change (flottant 0,1 ; administré 0,3 ; fixe ou dollarisé 0,5 ; union monétaire 0). Mois d'importations = réserves utilisables (hors gelées) / importations × 12.
 - **Crise de balance des paiements** (changes administrés, fixes ou dollarisés ; hors factions) : quand les réserves passent sous 1,5 mois d'importations, dévaluation de 30 % (saut des prix importés = 0,5 × importations × 30 %, transmis à l'inflation), soutien extérieur de 2 mois d'importations, notation −2 crans et −3 points de croissance potentielle décroissant sur un an. Journalisée avec ses facteurs.
 
 ### 5.6 Budget et dette
 
 - Recettes = `recettes × efficacité / efficacité initiale + 0,6 × (rentes − rentes initiales)`. Efficacité de collecte (levier) calculée au départ : `0,5 + 0,5 × (efficacité de l'État + contrôle de la corruption) / 200`.
-- Dépenses primaires = Σ postes (défense, social, santé, éducation, R&D, infrastructures, subventions, sécurité, aide) + autres dépenses − ajustement de la règle budgétaire. Les **autres dépenses** sont calées au départ pour que le solde soit celui du FMI (elles absorbent postes non ventilés et écarts de définition).
+- Dépenses primaires = Σ postes (défense, social, santé, éducation, R&D, infrastructures, subventions, sécurité, aide) + autres dépenses − ajustement de la règle budgétaire + coût d'accueil des nouveaux réfugiés (§14). Les **autres dépenses** sont calées au départ pour que le solde soit celui du FMI (elles absorbent postes non ventilés et écarts de définition).
 - Intérêts = taux moyen apparent × dette ; solde = recettes − dépenses primaires − intérêts (recalculés à chaque commande).
 - Financement mensuel : un déficit est couvert d'abord par le fonds souverain, au prorata de sa taille (`min(1, tirage × fonds / PIB)`, sans dépasser ce qu'il contient), puis par la dette pour sa part non monétisée ; un excédent va au fonds (pays qui en ont un) ou au désendettement. `dette ← (dette + déficit financé par emprunt × dt) / (croissance nominale du mois)`.
 
@@ -270,7 +271,7 @@ Le solde primaire se rapproche d'une cible : `cible = (i − g_n) / (100 + g_n) 
 
 - Inflation anticipée = a·cible + (1 − a)·π (même ancrage qu'au §5.3).
 - Prime de risque = `0,3 × e^(0,2 × (20 − notation))` (notation 0–20, 20 = AAA ; en défaut, notation 0).
-- Taux de marché = `taux moyen initial + Δ taux directeur mondial + 1 × Δ inflation anticipée + Δ prime`, plancher −1 % : le niveau initial vient des données (dette concessionnelle comprise), seuls les écarts à la situation de départ le déplacent. Un pays déjà en défaut au départ paie le taux de sa dette restructurée.
+- Taux de marché = `taux moyen initial + Δ taux directeur mondial + 1 × Δ inflation anticipée + Δ prime + prime des sanctions financières (§9)`, plancher −1 % : le niveau initial vient des données (dette concessionnelle comprise), seuls les écarts à la situation de départ le déplacent. Un pays déjà en défaut au départ paie le taux de sa dette restructurée.
 - Le taux moyen apparent converge vers le taux de marché au rythme du renouvellement de la dette : `i ← i + (taux de marché − i)·dt / maturité` (gelé pendant un défaut).
 
 ### 5.9 Notation et défaut souverain
@@ -279,7 +280,7 @@ Le solde primaire se rapproche d'une cible : `cible = (i − g_n) / (100 + g_n) 
 - Probabilité annuelle de défaut : `min(30 %, 0,1 % × e^(0,43 × (12 − notation)))` (BBB : 0,1 %/an ; B− : ≈ 2 % ; CCC+ : ≈ 3 % ; C : ≈ 11 %), proche des fréquences historiques de défaut des souverains. Tirage mensuel `1 − (1 − p)^(1/12)` (hors factions).
 - Défaut : notation 0, `eco.in_default`, −4 points de croissance potentielle (décroissance linéaire sur deux ans) et −10 points de stabilité (demi-vie de six mois) ; journalisé avec ses facteurs (notation, probabilité, dette, intérêts / recettes, taux, croissance, réserves). Restructuration au bout de 24 mois : décote de 30 % sur la dette, notation 4 (CCC+), et le taux moyen repart du taux de marché d'après la restructuration (nouveaux coupons).
 
-**Limites** : pas de secteur bancaire ni de taux de change explicite (hors crises) ; politique monétaire résumée par l'ancrage et le taux directeur mondial (levier) ; règle budgétaire uniforme ; cycles d'autant plus amples que la stabilité est faible (y compris pour de grandes économies diversifiées) : σ et k sont à calibrer (CALIBRATION.md) ; commerce, sanctions et effets des détroits sur l'activité en phase 4.
+**Limites** : pas de secteur bancaire ni de taux de change explicite (hors crises) ; politique monétaire résumée par l'ancrage et le taux directeur mondial (levier) ; règle budgétaire uniforme ; cycles d'autant plus amples que la stabilité est faible (y compris pour de grandes économies diversifiées) : σ et k sont à calibrer (CALIBRATION.md).
 
 ## 6. Marchés mondiaux simplifiés (`systems/markets.ts`, SPEC §8.3)
 
@@ -287,33 +288,205 @@ Pour chaque produit (pétrole, gaz par zone, charbon, blé, engrais, cuivre, lit
 
 `prix* = prix d'ancrage × (demande / offre)^(1/ε)` ; `ln p(t+1) = ln p + (ln p* − ln p) / délai + σ·N(0, 1)`
 
-- **Ancrage** : prix au jour des données, en dollars constants (indexé sur l'inflation du dollar). Il contient la prime de crise du départ (guerre d'Iran, détroit d'Ormuz), qui sera expliquée par le statut des détroits en phase 4.
-- **Demande et offre** : indices relatifs au départ. Énergies fossiles : consommation de chaque pays déplacée par son PIB en volume (élasticité-revenu), une tendance et le prix (élasticité-prix appliquée après la formation du prix) ; production de chaque pays croissant avec la capacité mondiale, `capacité += (tendance + réponse × ln(p / p_ancrage))·dt` : l'investissement ramène le prix vers l'ancrage à long terme. Blé, engrais : offre selon les parts d'exportation (`res.*`), demande selon la population mondiale ; métaux : parts de production minière (USGS), demande selon le PIB mondial.
-- **Pétrole** : la capacité inutilisée (OPEP+, `energy.spare_capacity`) se mobilise en trois mois quand la demande dépasse l'offre.
+- **Ancrage** : prix au jour des données, en dollars constants (indexé sur l'inflation du dollar). Il contient la prime de crise du départ (guerre d'Iran, détroit d'Ormuz), expliquée par les routes (phase 4) : le prix structurel que vise l'investissement est `p₀ · A₀^(1/ε)`, A₀ offre de départ / offre routes libres (0,893 pour le pétrole), et ε = 0,31 le place à 72,5 $, le Brent d'avant la guerre (DECISIONS D68). Rouvrir les détroits y ramène le prix.
+- **Demande et offre** : indices relatifs au départ. Énergies fossiles : consommation de chaque pays déplacée par son PIB en volume (élasticité-revenu), une tendance et le prix (élasticité-prix appliquée après la formation du prix) ; production de chaque pays = capacité × [d + (1 − d)·a], d part consommée sur place, a accès de ses exportations (routes, sanctions, guerres ; §8), la capacité croissant avec la capacité mondiale, `capacité += (tendance + réponse × ln(p / p_structurel))·dt` : l'investissement ramène le prix vers son niveau structurel à long terme. Blé, engrais : offre selon les parts d'exportation (`res.*`), demande selon la population mondiale ; métaux : parts de production minière (USGS), demande selon le PIB mondial.
+- **Pétrole** : la capacité inutilisée (OPEP+, `energy.spare_capacity`) se mobilise en trois mois quand la demande dépasse l'offre (indices relatifs au départ, qui intègre déjà la crise d'Ormuz : il faut un marché plus tendu qu'au départ), seulement celle des producteurs dont les exportations passent (un producteur bloqué derrière Ormuz ne peut la vendre) ; les prélèvements sur les stocks stratégiques des importateurs (§10) réduisent les achats sur le marché.
 - **Gaz** : trois zones (Europe : Europe, Moyen-Orient, Afrique ; Asie ; Amériques). L'écart de chaque zone est mélangé à la moyenne des autres par l'arbitrage du GNL (0,3).
 - **Engrais** : prix d'équilibre multiplié par (gaz européen / initial)^part du gaz dans le coût.
 - **Puces avancées** : indice d'offre = 100 × parts de fabrication courantes / initiales.
 - Consommation d'énergie primaire : activité (élasticité 0,6) et efficacité (−1 %/an).
 
-**Limites** : pas de stocks ni de spéculation ; demande et offre en indices (les volumes mondiaux des sources ne s'équilibrent pas) ; pas de commerce bilatéral des matières premières ni de routes (phase 4) ; coûts de production implicites dans l'ancrage.
+**Limites** : pas de spéculation ni de prime de précaution (le prix monte au rythme de l'ajustement, pas d'un bond à l'annonce d'une fermeture) ; demande et offre en indices (les volumes mondiaux des sources ne s'équilibrent pas) ; coûts de production implicites dans l'ancrage.
 
 ## 7. Comptes dérivés (`systems/accounts.ts`, `derived.ts`)
 
 Recalculés après chaque pas et chaque commande, sans coefficient : PIB par habitant, indice de misère (inflation + chômage), budget de défense (PIB × part de la défense), aide versée (PIB × part de l'aide, approximation du RNB), intensité énergétique (énergie primaire / PIB), dépendance énergétique ((consommation − production de pétrole, gaz et charbon) / énergie primaire). Croissance mondiale : moyenne des croissances pondérée par le PIB en PPA (convention du FMI), hors factions.
 
+## 8. Commerce, routes et détroits (`systems/trade.ts`, SPEC §8.3, phase 4)
+
+Pas mensuel ; accès, parts maritimes et flux par les détroits recalculés après chaque commande. Principe (DECISIONS D66) : le commerce observé est celui de routes libres (BACI 2024, avant la fermeture d'Ormuz) ; les frictions se mesurent par rapport au départ, les données les intégrant déjà.
+
+### 8.1 Détroits
+
+La capacité de passage `zone.chokepoint_traffic` (% du trafic normal) rejoint la cible de son statut : ouvert 100 ; contesté : capacité de départ si le passage l'était déjà, sinon `contested_capacity` = 50 ; fermé 0. Délai : 1 mois à la fermeture, 3 mois à la réouverture.
+
+### 8.2 Routes
+
+- Part terrestre L d'une paire : voisins 0,8 ; reliés par la terre `0,6 · e^(−km / 2 500)` ; au moins 0,8 si l'un des deux est enclavé (rail, route, oléoducs plutôt qu'un port étranger ; D79).
+- Accès : `ρ_ij = L + (1 − L) · [p_p + (1 − p_p) · p_a · (km_p / km_a)^γ]`, p_p et p_a produits des capacités des détroits de la route principale et de l'alternative (graphe océanique, §1.8), γ = 0,5 : le détour coûte du volume ; sans alternative, la part maritime bloquée est coupée.
+
+### 8.3 Échanges bilatéraux
+
+`T_ij = T⁰_ij · (Y_i / Y_i⁰)^α · (Y_j / Y_j⁰)^β / (Y_w / Y_w⁰)^(α+β−1) · Φ_ij` (α = β = 1), exportations de i vers j.
+
+Φ rejoint `Φ* = min(20, ρ_ij(t) · Π_k F_k(t) / F_k(0))`, vite à la baisse (1,5 mois), lentement à la hausse (6 mois). Frictions, en logarithme :
+
+| Friction                     | ln F                                                                                                                                                                                                                                                                                                                                               |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Droits de douane             | `−4 · ln(1 + (droit moyen de j + droit bilatéral de j sur i) / 100)`                                                                                                                                                                                                                                                                               |
+| Sanctions (dans chaque sens) | `ln(1 − b)`, `b = min(0,95 ; 1 − (1 − min(1, g)) · (1 − 0,3 · finance) · (1 − 0,5 · transport · part maritime))`, g = Σ biens poids × volet : énergie (volet énergie), alimentation et minerais (commerce), puces (technologie), manufacturés (max(commerce, 0,3 · technologie)) ; poids = composition des exportations de i (`trade.composition`) |
+| État de la relation          | `ln(1 − coupure)` : guerre 0,95, blocus 0,9, cessez-le-feu 0,5, crise 0,3, tension 0,1                                                                                                                                                                                                                                                             |
+| Bloc commercial commun       | +0,5                                                                                                                                                                                                                                                                                                                                               |
+| Relations                    | `+0,2 · (R_ij + R_ji) / 200`                                                                                                                                                                                                                                                                                                                       |
+| Fragmentation                | `−0,5 · (fragmentation mondiale / 100) · \|alignement_i − alignement_j\| / 200`                                                                                                                                                                                                                                                                    |
+
+### 8.4 Réorientation
+
+La perte `T_réf − T` est répartie entre ses causes par la décomposition logarithmique des frictions (routes comprises). Part reportée par l'exportateur : droits, blocs, relations, fragmentation 0,5 ; sanctions contre lui : son contournement (§9) ; sanctions qu'il impose 0,6 ; guerre 0,5 ; routes 0,2. Part remplacée par l'importateur : 0,7 (droits, sanctions qu'il impose, blocs, relations, fragmentation) ; sanctions contre lui : son contournement ; guerre 0,5 ; routes 0,6. Décote de 15 % sur les exportations réorientées, prime de 15 % sur les importations de remplacement.
+
+### 8.5 Effets sur l'économie
+
+Hors énergie (marchés, §6, et approvisionnement, §10), en % du PIB, variations du mois :
+
+- pertes d'exportations nettes des reports → impulsion `−0,6 · Δ` sur l'écart de production ;
+- importations perdues non remplacées → niveau du PIB par les gains à l'échange (Arkolakis, Costinot et Rodríguez-Clare, 2012) : `niveau = (λ / λ₀)^(−1/θ)`, λ = 1 − m₀ + pertes / 100 part de la demande servie par la production nationale, m₀ importations de départ, θ = 5 ;
+- surcoût des importations (droits en plus, primes de remplacement) → saut de prix `0,5 · Δ` ;
+- solde courant : `−Δ(pertes d'exportations) + Δ(importations perdues) − Δ(surcoût)`.
+
+**Limites** : les échanges de services ne sont pas bilatéralisés ; la réorientation ne choisit pas de partenaire (elle s'agrège par pays) ; pas de coût de transport explicite au-delà du détour.
+
+## 9. Sanctions (`systems/sanctions.ts`, SPEC §8.6, phase 4)
+
+`pair.sanctions` (émetteur → visé) porte six volets d'intensité 0–1 : commerce, finance, technologie, énergie, élites, transport. Les effets sur les flux sont dans le commerce (§8), l'énergie (§10) et les produits critiques (§11). Pour chaque pays visé :
+
+- **pression financière** : `0,8 · Σ_groupes monétaires part de réserve du groupe · intensité maximale du volet finance dans le groupe + 0,2 · Σ_émetteurs intensité · part du PIB mondial` (une union monétaire compte une fois : l'euro) ;
+- **sanctions secondaires** : puissance des monnaies de réserve des émetteurs (dollar, euro) ;
+- **pression technologique** : `Σ intensité · (0,5 · part de la fabrication mondiale de puces + 0,5 · part du PIB mondial)` de l'émetteur ; **élites** : `Σ intensité · part du PIB mondial` ;
+- **contournement** : `capacité (trade.sanction_evasion) · (1 − 0,8 · secondaires) · (1 − e^(−âge / 12 mois))`, l'âge repartant de zéro quand la pression d'ensemble augmente de plus de 0,02 ;
+- **réserves gelées** : part des réserves détenues dans les monnaies des émetteurs, par rapport au départ (les gels en cours sont dans les données).
+
+Effets, par rapport au départ, avec l'exposition financière = pression financière × intégration financière :
+
+- choc financier : impulsion `−3 · Δ(exposition)` sur l'écart de production ;
+- prime de risque souveraine : `+3 points · (exposition − exposition₀)` ;
+- exposition aux contrôles à l'exportation = donnée de départ + écart de pression technologique ; frein de la croissance potentielle `−1 %/an · Δexposition · (1 − autonomie en semi-conducteurs)` ;
+- élites : stabilité `−10 points × Δ` (§13) et risque de coup d'État `× (1 + 2 · Δ)`.
+
+## 10. Énergie (`systems/energy.ts`, SPEC §8.4, phase 4)
+
+Chaque importateur j reçoit de chaque fournisseur i une part de ses importations d'énergie (`pair.energy_dependence`, chapitre 27 du SH). Le flux passe selon la route, les sanctions sur l'énergie (dans un sens ou dans l'autre) et la guerre : `f_ij = ρ_ij · (1 − sanctions_énergie) · (1 − 0,95 · guerre)`.
+
+- **Flux établis** E_ij (ceux sur lesquels l'importateur compte, D77) : flux de départ, qui suivent ensuite les flux courants, en 3 mois quand un fournisseur revient, en 24 mois quand une perte dure et devient la nouvelle normale.
+- **Manque** : `manque_j = Σ_i dép_ji · max(0, E_ij − f_ij) / Σ_i dép_ji · E_ij`, remplacé par d'autres fournisseurs en 3 mois (au prix mondial, qui monte avec la perte d'offre).
+- **Stocks stratégiques** (`trade.oil_stocks`, jours de consommation de pétrole) : convertis en jours d'énergie primaire par la part du pétrole ; prélèvement `min(stock × part du pétrole, besoin en jours)`, reconstitution en 12 mois quand l'approvisionnement revient ; les prélèvements réduisent les achats sur le marché du pétrole.
+- **Pénurie** (% de la consommation d'énergie) : `(manque − remplacé) · dépendance aux importations − prélèvement`. Effets : impulsion `−0,5 · Δpénurie` sur l'écart de production ; stabilité `−0,5` et approbation `−0,8` point par point ; événement au-delà de 2 %, avec les fournisseurs perdus pour facteurs.
+
+Volumes et prix : la production d'un exportateur bloqué baisse (§6), avec un effet de niveau sur son PIB (§5.2, D78) ; les prix alimentent la facture énergétique (§5.2, §5.5).
+
+**Limites** : pas de réseau de gazoducs explicite (les dépendances bilatérales en tiennent lieu) ; électricité non modélisée ; pas de prime de précaution sur les prix (§6).
+
+## 11. Alimentation et produits critiques (`systems/resources.ts`, phase 4)
+
+- **Tension alimentaire** (points de consommation des ménages, recalculée après chaque commande) : `tension = part de l'alimentation · (0,3 + 0,7 · dépendance céréalière) · max(0, p / p₀ − 1)`, dépendance = 1 − autosuffisance (bornée à [0, 1]), p prix effectif du blé, p₀ prix de départ indexé sur le dollar. Effets : stabilité `−0,4`, approbation `−0,5` point par point (§13).
+- **Famine** : surmortalité (‰/an) `= 0,05 · max(0, tension − 15) · max(0, 1 − PIB par habitant / 4 000 $)`, lue par la démographie ; consignée au-delà de 0,5 ‰/an ; elle alimente la pression de départ des réfugiés (§14).
+- **Facture du blé** (D80) : importations nettes `population · 0,1 t · (1 − autosuffisance)` (négatives pour un exportateur) × (p − p₀), en % du PIB ; impulsion `−0,6 · Δfacture` (importateur net), `−0,15 · Δfacture` (exportateur : gain) ; solde courant.
+- **Produits critiques** (puces, terres rares) : chaque importateur reçoit de chaque fournisseur une part (`pair.critical_dependence`). Le flux passe selon la route, les sanctions (technologie pour les puces, commerce pour les terres rares), les restrictions d'exportation du fournisseur et la guerre. La part perdue depuis le départ est remplacée en 6 mois ; le reste freine l'activité : `impulsion = −e · 100 · Δ(non remplacé) · part manufacturière · exposition`, e = 0,15 (puces, exposition = 1 − autonomie en semi-conducteurs) ou 0,05 (terres rares, exposition = 1). Les sommes se font dans l'ordre des indices (D83).
+
+**Limites** : un seul produit alimentaire (le blé) ; pas d'eau ni de sécheresse (phase 6) ; engrais par le prix seulement (§6).
+
+## 12. Relations, affinité, blocs et ONU (`systems/diplomacy.ts`, SPEC §8.6, phase 4)
+
+### 12.1 Affinité structurelle
+
+Affinité de i envers j (−100 à +100), somme bornée de facteurs, chacun consultable dans « Pourquoi ? » :
+
+| Facteur                | Contribution (points)                                                                                               |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Similarité des régimes | `15 · (1 − 2 · \|dém._i − dém._j\|) · (0,5 + idéologie_i)`                                                          |
+| Blocs communs          | `25 · min(1, Σ poids)` : militaire 1, union 0,6, économique et sécurité 0,4, régional 0,25, énergie 0,2, forum 0,15 |
+| Interdépendance        | `15 · min(1, (T_ij + T_ji) / PIB_i / 5 %)`                                                                          |
+| Ennemis communs        | `10 · min(1, communs / 2)` (relation < −40)                                                                         |
+| Griefs, revendications | `−30 · grief / 100`, `−30 · revendication / 100` (`pair_ties.yaml`, D85)                                            |
+| Proximité culturelle   | `15 · proximité / 100` (20 par défaut dans la même région)                                                          |
+| Votes à l'AGNU         | `25 · (1 − \|alignement_i − alignement_j\| / 100)`                                                                  |
+| Aide reçue de j        | `10 · min(1, aide / PIB_i / 1 %)`                                                                                   |
+| Menace perçue          | `−25 · part militaire de j · proximité · hostilité de j` (proximité 1 si frontière, sinon `e^(−km / 2 000)`)        |
+| État de la relation    | `−50 ×` guerre 1, blocus 0,8, crise 0,5, cessez-le-feu 0,4, tension 0,2                                             |
+| Sanctions              | `−25 · max(intensités dans les deux sens)`                                                                          |
+| Traité                 | `20 ×` défense mutuelle 1, partenariat 0,5, non-agression 0,25, `× (0,5 + loyauté envers les alliés)`               |
+| Écart de révisionnisme | `−15 · \|révisionnisme_i − révisionnisme_j\|`                                                                       |
+
+### 12.2 Relation
+
+`R_ij(t+1) = R_ij + 0,05 · (A_ij + résidu_ij + mémoire_ij − R_ij)` (D72) :
+
+- **résidu de calage** = relation de départ (`relations_seed.yaml`) − affinité de départ ; demi-vie 10 ans ; une alternance en efface la moitié (§13) ; une relation saisie par l'utilisateur déplace le résidu d'autant ;
+- **mémoire des chocs**, demi-vie 24 mois : sanctions imposées (visé −0,3, émetteur −0,15 point par % d'intensité), levées (+0,1), guerre −40, paix +10, traité +5 par niveau, condamnations de coup d'État et de l'ONU.
+
+### 12.3 Blocs
+
+Les appartenances (`dip.memberships`) se modifient par la commande `bloc` (adhésion, retrait, D71) : les traités de défense mutuelle des blocs militaires suivent (crédibilité 0,8, D73), un bloc aux sanctions communes (UE) transmet ses sanctions à l'adhérent, le bloc commercial joue sur les frictions (§8.3) et l'affinité.
+
+### 12.4 ONU
+
+Commande `unResolution` (sanctions, condamnation, cessez-le-feu, maintien de la paix), pays visé, auteur facultatif. Soutien de chaque membre du Conseil de sécurité : `−R_mt / 100 + base du type (sanctions −0,1, condamnation 0, cessez-le-feu 0,2, maintien de la paix 0,3) + 0,2 si le pays visé est en guerre` ; pour au-delà de 0,15, contre en deçà de −0,15 ou si allié par défense mutuelle, abstention sinon. Adoption : 9 voix et aucun veto d'un membre permanent (Charte, article 27) ; sinon, vote non contraignant de l'Assemblée générale. Effets d'une résolution adoptée :
+
+- sanctions : chaque État les applique à hauteur de `(0,5 + 0,5 · efficacité de l'ONU) · (1 − max(0, R_it) / 100)` (commerce 0,5 si aucun volet n'est précisé) ;
+- condamnation : relations du pays visé envers les votants −10 (réciproque × 0,5) ; sanctions et vote de l'Assemblée : moitié de ce choc ;
+- maintien de la paix : insurrection `−15 × (0,5 + 0,5 · efficacité)` pendant 730 jours ;
+- cessez-le-feu : consigné (fronts en phase 5).
+
+Les facteurs (votes, relations, veto) sont consignés au journal.
+
+**Limites** : les pays ne décident pas encore (sanctions, adhésions, résolutions viennent de l'utilisateur ou des scénarios, IA en phase 7) ; pas de soutien militaire aux factions (phase 5) ; l'aide compte pour son destinataire seulement.
+
+## 13. Politique intérieure (`systems/politics.ts`, SPEC §8.5, phase 4)
+
+### 13.1 Stabilité
+
+Calée sur la situation de départ (WGI, D49) : `S* = S₀ + Σ_k signe_k · a_k · (f_k(t) − f_k(0))`, `S(t+1) = S + 0,08 · (S* − S)`. Facteurs et coefficients (points par point sauf mention) : misère (chômage + inflation amortie, échelle 10 %) 0,4 ; récession 1 ; tension alimentaire 0,4 ; pénurie d'énergie 0,5 ; lassitude de la guerre 8 points sur 3 ans selon la tolérance aux pertes ; ralliement au drapeau 8 points, demi-vie 6 mois ; inégalités 0,3 ; corruption 0,15 ; contrôle de l'information 0,1 ; répression 0,1 (hors démocraties) ; légitimité 0,3 ; fragmentation × insurrection 20 points ; ingérence étrangère 5 points ; sanctions visant les élites 10 points ; réfugiés 2 points par % de la population au-delà de la capacité d'absorption (1 % × cohésion / 50). Les chocs d'événements (défaut, coup d'État, révolution…) sont des effets temporaires sur la valeur effective.
+
+### 13.2 Approbation, légitimité, cohésion
+
+- **Approbation** du gouvernement, calée sur son début : croissance 1, misère 0,8, tension alimentaire 0,5, pénurie d'énergie 0,8, ralliement 15 points, usure `8 · (1 − e^(−ancienneté / 3 ans))` (elle sature), état de grâce 8 points (demi-vie 6 mois) ; inertie 0,15/mois ; un nouveau gouvernement part de 50 %.
+- **Légitimité** : `L* = ancre + 0,2 · (approbation − approbation de départ)`, inertie 0,05/mois ; ancre = légitimité de départ `0,5 · voix et responsabilité + 0,5 · efficacité du gouvernement`, abaissée par un coup d'État (× 0,6).
+- **Cohésion sociale** : départ `100 · (1 − 0,35 · fractionnement ethnique − 0,25 · religieux) − 0,8 · max(0, Gini − 30)` ; baisse de 3 points par % de réfugiés et de 0,2 par point d'insurrection au-delà du départ ; inertie 0,02/mois.
+- **Insurrection** : `I* = I₀ + [fragile(S) − fragile(S₀)] · (0,5 + fragmentation)`, `fragile(x) = max(0, 30 − x)`, fragmentation = 1 − cohésion / 100, inertie 0,05/mois (D76 : un État solide qui perd de la stabilité ne voit pas naître d'insurrection). Guerre civile à 60, fin à 30 (sans faction armée : phase 5, D75) ; l'insurrection freine la croissance (§5.1).
+- **Contestation** : manifestations sous 30 de stabilité, crise politique sous 20, soulèvement sous 8, avec une marge de 3 points (hystérésis) ; retour au calme consigné.
+
+### 13.3 Élections (démocraties, à la date de `pol.next_election`, contrôle quotidien, D70)
+
+`p(alternance) = compétitivité · σ(0,12 · (50 − approbation − 4))`, compétitivité = `(démocratie électorale − 0,3) / (0,7 − 0,3)` bornée à [0, 1]. Tirage désigné par une clé (`election|pays|date`, D69). Alternance (D67) : le profil d'opposition (`ai.opposition_profile`) remplace le profil décisionnel, qui devient l'opposition ; nouveau gouvernement (approbation 50 %, ancienneté 0) ; la moitié du résidu de calage des relations s'efface. Prochaine élection au même jour, un mandat (4 ans par défaut) plus tard. En crise politique, élections anticipées : 5 %/mois, 60 jours après.
+
+### 13.4 Régimes non démocratiques
+
+- **Coup d'État** : `risque (%/an) = min(15, base · e^(0,4 · (40 − S) / 10) · e^(0,3 · (80 − loyauté de l'armée) / 10) · (1 + 0,1 · max(0, −croissance)) · (1 + 2 · max(0, élites − élites₀)) · min(1, (5 000 $ / PIB par habitant)^1))`, base : junte 2, autocratie 0,6, hybride 0,8, démocratie imparfaite 0,2, démocratie 0,02, autre 0,5 ; le PIB par habitant est en dollars du départ, et la richesse protège au-delà du seuil (Londregan et Poole, 1990 ; Przeworski et Limongi, 1997 ; D86). Un coup réussi : régime de junte (profil par défaut des juntes), stabilité −15 (demi-vie 180 jours), ancre de légitimité × 0,6, démocratie électorale × 0,3, élections suspendues, suspension de l'UA et de la CEDEAO, condamnation (−10) par les démocraties (indice ≥ 0,5).
+- **Transition d'une junte** : 11 %/an (durée moyenne d'environ 9 ans des régimes militaires de 1946 à 1999, Geddes 1999) : régime hybride, même profil, élections rétablies au terme d'un mandat (la junte gagne le plus souvent l'élection qu'elle organise).
+- **Succession non planifiée** : probabilité annuelle `pol.succession_risk` (hypothèse par défaut selon le régime) `× (1 − compétitivité)` : là où les élections choisissent l'exécutif, la constitution règle la succession ; stabilité −8, nouveau gouvernement.
+- **Révolution** (stabilité < 12) : `taux = 10 %/an · (12 − S) / 12 · (1 − répression · loyauté)` ; stabilité −10, démocratie électorale au moins 0,4, élection un an plus tard.
+
+**Limites** : pas de partis ni de résultats en voix ; la guerre civile ne crée pas encore de faction (phase 5) ; le soutien à la guerre (`pol.war_support`) viendra avec les guerres (phase 5).
+
+## 14. Réfugiés (`systems/refugees.ts`, SPEC §8.1, phase 4)
+
+Pas mensuel, après la démographie ; les réfugiés présents au départ (HCR) sont conservés.
+
+- **Pression de départ** : `D = 1 · insurrection / 100 + 1 · exposition à une guerre terrestre + 0,1 · surmortalité de famine (‰/an) + 0,1 · max(0, 10 − stabilité) / 10` ; exposition : part militaire de l'ennemi le plus fort parmi les voisins terrestres en guerre avec le pays.
+- **Stock visé de nouveaux réfugiés** : `population · 0,15 · max(0, D − D₀ − 0,1)` (zone morte : une hausse modérée déplace surtout à l'intérieur du pays, D74). Départs vers ce stock en 4 mois (au plus 20 % de la population par mois), retours en 24 mois, depuis les pays d'accueil au prorata des nouveaux réfugiés qu'ils accueillent.
+- **Destinations** : poids `(population_j / 10⁶)^1 · proximité · revenu · stabilité · ouverture · (1 − hostilité)`, proximité 1 si frontière, sinon `e^(−km / 1 000)` ; revenu `(PIB/hab._j / PIB/hab._i)^0,25` borné à [1/3, 3] ; stabilité `max(0,05, S_j / 50)` ; ouverture `demo.migration_openness / 100` ; hostilité = max(0, −R_ji) / 100 ; aucun départ vers un pays en crise, en blocus ou en guerre avec le pays de départ.
+- La population passe d'un pays à l'autre avec la structure par âge du pays de départ (conservation de la population mondiale).
+- **Accueil** : coût budgétaire `0,3 · PIB par habitant` par réfugié supplémentaire, dont 30 % couverts par l'aide internationale ; charge pour la stabilité et la cohésion (§13) ; crise des réfugiés consignée au-delà de 0,1 % de la population (fin consignée, hystérésis).
+
+**Limites** : pas de migrations économiques ; pas de camps ni de routes migratoires ; l'ouverture migratoire vient d'un repli par défaut pour de nombreux pays (PARAMETRES.md).
+
+## 15. Scénarios et explications (`scenarios.ts`, `explain.ts`, phase 4)
+
+- **Scénarios** (D81) : suites de commandes datées (`SCENARIOS`), comparées à une référence de même graine sans ces commandes (ou avec leur contraire) : même journal hors scénario, tirages désignés par une clé, donc l'écart mesure l'effet du scénario et non l'aléa. `npm run sim -- --scenario <nom> --seed <n> --out <dossier>` écrit les deux trajectoires, les journaux et un rapport (`report.md` : monde, pays, événements propres au scénario avec leurs facteurs). Scénarios fournis : `ormuz` (fermeture de trois mois à partir de l'état de départ, où le détroit est déjà contesté), `ormuz-avant-guerre` (détroit rouvert, puis fermé trois mois), `sanctions-chine` (sanctions larges du G7, de l'UE et de leurs partenaires), `ble-x2` (prix du blé doublé pendant un an), `election-usa` (élection de 2028 perdue par le gouvernement sortant).
+- **Explications** (D82) : `explainCountry` décompose la stabilité, l'approbation (valeur, cible, ancre, chocs temporaires, facteurs), le risque de coup d'État, la pression de départ, les pressions des sanctions et le contournement, l'approvisionnement en énergie (fournisseurs perdus), le niveau commercial et les appartenances ; `explainPair` décompose l'affinité (§12.1), le résidu et la mémoire. Fonctions en lecture seule : elles ne modifient pas l'empreinte de l'état.
+
 ## Systèmes à venir
 
-| Section SPEC | Système                                      | Phase                     |
-| ------------ | -------------------------------------------- | ------------------------- |
-| §8.1         | Démographie                                  | 3 (fait)                  |
-| §8.2         | Économie et finances publiques               | 3 (fait)                  |
-| §8.3         | Commerce, routes maritimes, marchés          | 3 (marchés simplifiés), 4 |
-| §8.4         | Énergie, alimentation, eau, minerais         | 4                         |
-| §8.5         | Politique intérieure                         | 4                         |
-| §8.6         | Diplomatie, alliances, sanctions, ONU        | 4                         |
-| §8.7         | Forces armées                                | 5                         |
-| §8.8         | Guerre et fronts                             | 5                         |
-| §8.9         | Nucléaire, escalade, missiles, cyber, espace | 6                         |
-| §8.10        | Événements                                   | 6                         |
-| §8.11        | IA des pays                                  | 7                         |
-| §8.12        | Santé, climat, technologie                   | 6                         |
+| Section SPEC | Système                                      | Phase               |
+| ------------ | -------------------------------------------- | ------------------- |
+| §8.1         | Démographie, réfugiés                        | 3, 4 (fait)         |
+| §8.2         | Économie et finances publiques               | 3 (fait)            |
+| §8.3         | Commerce, routes maritimes, marchés          | 3, 4 (fait)         |
+| §8.4         | Énergie, alimentation, minerais              | 4 (fait) ; eau en 6 |
+| §8.5         | Politique intérieure                         | 4 (fait)            |
+| §8.6         | Diplomatie, alliances, sanctions, ONU        | 4 (fait)            |
+| §8.7         | Forces armées                                | 5                   |
+| §8.8         | Guerre et fronts                             | 5                   |
+| §8.9         | Nucléaire, escalade, missiles, cyber, espace | 6                   |
+| §8.10        | Événements                                   | 6                   |
+| §8.11        | IA des pays                                  | 7                   |
+| §8.12        | Santé, climat, technologie                   | 6                   |

@@ -9,8 +9,8 @@
 | 1a — Géographie et carte                           | terminée                               | 2026-09-25 |
 | 1b — Données pays et fichiers curés                | terminée                               | 2026-09-25 |
 | 2 — Carte interactive (lecture seule)              | terminée                               | 2026-09-26 |
-| 3 — Moteur et temps réel                           | **terminée**, en attente de validation | 2026-09-26 |
-| 4 — Monde interconnecté                            | à faire                                |            |
+| 3 — Moteur et temps réel                           | terminée                               | 2026-09-26 |
+| 4 — Monde interconnecté                            | **terminée**, en attente de validation | 2026-09-26 |
 | 5 — Forces armées et guerre                        | à faire                                |            |
 | 6 — Escalade, nucléaire, cyber, espace, événements | à faire                                |            |
 | 7 — IA des pays et mode joueur                     | à faire                                |            |
@@ -199,6 +199,62 @@ La phase 1 est découpée en deux jalons avec arrêt (voir `DECISIONS.md`).
 - Une capture ne se restaure que sur les mêmes données ; le format de scénario versionné viendra en phase 8.
 - Ce conteneur n'a pas de GPU : fluidité de la carte mesurée en rendu logiciel uniquement (≈ 4 images/s) ; le moteur, lui, tourne dans son worker sans bloquer l'interface.
 
-## Prochaines étapes (phase 4)
+## Phase 4 — Monde interconnecté (2026-09-26)
 
-Monde interconnecté (SPEC §12) : commerce, routes et détroits ; énergie, alimentation, minerais ; sanctions ; relations et affinité ; blocs ; ONU ; politique intérieure (stabilité, élections, coups, guerres civiles simples) ; réfugiés.
+**Fait**
+
+- **Commerce, routes et détroits** (`systems/trade.ts`, MODELES §8) : échanges bilatéraux par gravité, calés sur le commerce observé (BACI) ; part terrestre, route maritime principale et contournement, capacité de passage des détroits qui suit leur statut ; frictions (droits de douane, sanctions par volet, guerre, bloc commercial, relations, fragmentation) mesurées par rapport au départ (D66) ; réorientation du commerce perdu selon sa cause ; effets sur l'activité (demande extérieure), le niveau du PIB (gains à l'échange), les prix importés et le solde courant.
+- **Énergie** (§10) : approvisionnement de chaque importateur par fournisseur, flux établis (D77), remplacement, stocks stratégiques, pénuries expliquées par les fournisseurs perdus ; production des exportateurs bloqués en baisse, avec effet de niveau sur leur PIB (D78) ; capacité inutilisée de l'OPEP+ mobilisable seulement si elle peut passer ; prix structurel du pétrole (D68).
+- **Alimentation et produits critiques** (§11) : tension alimentaire, surmortalité de famine dans les pays pauvres, facture du blé (D80) ; puces avancées et terres rares par fournisseur (routes, sanctions, restrictions, guerre).
+- **Sanctions** (§9) : six volets par paire (commerce, finance, technologie, énergie, élites, transport) ; pression financière par groupe monétaire, sanctions secondaires, contournement qui mûrit, gel des réserves, contrôles technologiques ; choc financier, prime de risque, frein technologique, pression sur les élites.
+- **Relations, blocs et ONU** (§12) : affinité structurelle en 14 facteurs ; relation = affinité + résidu de calage + mémoire des chocs (D72) ; griefs et proximités culturelles curés (D85) ; commande `bloc` (adhésion, retrait : traités, sanctions communes ; suspension de l'UA et de la CEDEAO après un coup) (D71, D73) ; commande `unResolution` : vote du Conseil de sécurité avec veto, Assemblée générale sinon, effets (sanctions appliquées par les États, condamnation, maintien de la paix, cessez-le-feu consigné).
+- **Politique intérieure** (§13) : stabilité et approbation calées sur le départ, légitimité, cohésion, insurrection et guerres civiles simples (D75, D76), contestation (manifestations, crise, soulèvement) ; élections à leur date, qui changent le profil décisionnel en cas d'alternance (D67, D70) ; coups d'État, transition des juntes, successions, révolutions (D86) ; tirages désignés par une clé (D69).
+- **Réfugiés** (§14) : pression de départ mesurée par rapport au départ, zone morte, destinations par gravité (population, proximité, revenu, stabilité, ouverture, hostilité), personnes transférées avec leur structure par âge, coût budgétaire et charge d'accueil (D74).
+- **Scénarios et explications** (§15, D81, D82) : cinq scénarios d'expérience comparés à leur référence de même graine ; « Pourquoi ? » calculé par le moteur à la demande.
+- **Données** : 6 nouveaux paramètres (accès des routes, pénurie d'énergie, tension alimentaire, contestation ; capacité de passage et flux des détroits) ; `pair_ties.yaml` (50 griefs, 124 proximités, hypothèses) ; élections ramenées à celles qui désignent l'exécutif (États-Unis 2028, Japon, Corée du Sud, Mexique) ; règle de suspension après un coup (UA, CEDEAO) ; routes compactes dans `pairs.base.json`.
+- **Coefficients** : 426 dans `config/model.yaml` (196 en phase 3), chacun avec valeur, plage, unité et description.
+- **Interface** : « Pourquoi ? » d'un pays (stabilité, approbation, risque de coup, gains à l'échange, énergie et fournisseurs perdus, sanctions et contournement, pression de départ) et d'une paire (affinité décomposée, résidu, mémoire), avec sanctions larges ou levée en un clic ; appartenances aux blocs en direct (adhérer, quitter) ; résolutions de l'ONU (onglet Monde) ; détroits avec capacité et flux ; couche des blocs en direct ; journal des nouveaux événements avec leurs facteurs ; badge « phase N » des paramètres encore sans valeur.
+- **CLI** : `--scenario <nom>` déroule un scénario et sa référence, écrit leurs séries et journaux et un rapport `report.md` (écarts, événements propres au scénario et leurs facteurs) ; séries CSV étendues (échanges, pénurie d'énergie, stocks, tension alimentaire, stabilité, soutien, insurrection, réfugiés).
+- **Performances** : coefficients et distances hors des boucles N × N (D84) ; 20 ans simulés en ≈ 16 s sans interface.
+
+**Critères de fin de phase** : quatre tests qualitativement plausibles et expliqués (graine 1, écarts à la référence de même graine ; détails dans CALIBRATION.md, tests automatiques dans `scenarios.built.test.ts`) :
+
+- **(a) Fermeture d'Ormuz pendant trois mois** (`ormuz-avant-guerre`, détroit rouvert au préalable) : Brent +14 $ au pic, puis retour ; PIB de l'Arabie saoudite −11 %, du Qatar −35 %, rattrapés à la réouverture ; écart de production de l'Inde −2,7 et du Pakistan −2,1 points ; stocks stratégiques du Japon et de la Corée entamés, ceux de l'Inde et du Pakistan vidés, pénuries de 4,8 et 3,5 % expliquées par les fournisseurs du Golfe perdus ; la Norvège gagne. À partir de la situation actuelle (`ormuz`, trafic déjà réduit à ≈ 15 %), l'effet marginal est faible (Brent +1,8 $).
+- **(b) Sanctions financières et commerciales larges contre la Chine** (`sanctions-chine`) : écart de production chinois −3,9 points, PIB −4,3 % au pic, exportations −5,2 points de PIB ; coût pour les émetteurs (Corée −1,4, Japon −0,55, Allemagne −0,44, États-Unis −0,13) ; croissance mondiale −1 point au pic ; relations de la Chine en baisse avec les émetteurs, inchangées avec la Russie, l'Inde et le Brésil.
+- **(c) Doublement du prix du blé** (`ble-x2`) : tension alimentaire et inflation (+5,5 points) chez les importateurs pauvres, instabilité (Égypte −5,9, Liban −8,8), famines expliquées dans 15 pays pauvres, manifestations et soulèvements, réfugiés yéménites ; effets faibles chez les pays riches.
+- **(d) Élection qui change le profil d'un grand pays** (`election-usa`) : alternance aux États-Unis le 07/11/2028, le profil d'opposition devient le profil du gouvernement (loyauté envers les alliés 45 → 75, révisionnisme 45 → 15, agressivité 60 → 30) ; relations avec les alliés en hausse (Canada +21, Danemark +18, France +14, Allemagne +13).
+
+**Vérifications** : `npm run typecheck`, `npm test` (50 fichiers, 294 tests, dont les tests d'acceptation (a) à (d) sur les données construites), `npm run lint`, `npm run format:check`, `npm run build`, `npm run check:console` (phase 3, plus « Pourquoi ? » d'un pays, adhésion puis retrait d'un bloc, affinité d'une paire, Ormuz fermé avec capacité et flux, résolution de l'ONU : aucune erreur ni aucun avertissement). Référence de 5 runs de 20 ans sans violation d'invariant ; sensibilité ±50 % sur 31 coefficients de la phase 4 (CALIBRATION.md).
+
+**Comment tester**
+
+1. `npm run data -- --skip-map` (nouvelles données : griefs et proximités, élections, routes compactes ; ≈ 1 min), ou `npm run data` complet.
+2. `npm run dev`, puis http://localhost:5173 (« Moteur 0.4.0 » en haut à droite).
+3. Ormuz : onglet « Monde », détroit d'Ormuz sur « ouvert », « avancer jusqu'à » quelques mois (le trafic se rétablit), puis « fermé » et lecture : le Brent monte ; Ctrl+K « Inde » : « Pourquoi ? » montre l'énergie perdue par fournisseur et le soutien au gouvernement ; « Journal » : pénuries d'énergie et leurs facteurs.
+4. Sanctions : Ctrl+K « Chine », puis Ctrl+K « États-Unis » et Maj+Entrée : panneau bilatéral, « Sanctions larges USA → CHN » ; l'affinité et la relation se décomposent, les échanges de la Chine baissent au fil des mois (« Graphiques »).
+5. Blé : onglet « Monde », prix du blé, « Effet temporaire » ×2 sur 365 jours ; « Pourquoi ? » de l'Égypte ou du Liban : tension alimentaire dans la stabilité ; journal : famines et manifestations.
+6. Élection : « avancer jusqu'au » 08/11/2028 : le journal consigne l'élection présidentielle américaine avec son « Pourquoi ? » (soutien au gouvernement sortant, compétitivité, probabilité d'alternance) ; en cas d'alternance, les paramètres du profil décisionnel des États-Unis ont changé. Pour la forcer, fixe et verrouille le « Soutien au gouvernement » à 10 % quelques jours avant.
+7. Blocs et ONU : « Appartenances » d'un pays (adhérer, quitter) ; onglet « Monde », section ONU : résolution contre un pays, votes et veto consignés.
+8. Sans interface : `npm run sim -- --scenario ormuz-avant-guerre --seed 1 --out results/ormuz`, puis `results/ormuz/run/report.md` ; de même `ormuz`, `sanctions-chine`, `ble-x2`, `election-usa`.
+
+**À valider par toi**
+
+- Les hypothèses curées : `pair_ties.yaml` (50 griefs et 124 proximités culturelles, D85), les profils d'opposition (`profiles.yaml`) qui remplacent le profil décisionnel en cas d'alternance, les dates d'élection retenues (D67).
+- Les coefficients de la phase 4 (points de départ) et les choix D66 à D86, en particulier : prix structurel du pétrole (D68), flux énergétiques établis (D77), hydrocarbures en effet de niveau (D78), réfugiés (D74), coups d'État (facteur de revenu, transition des juntes, D86).
+- Les hypothèses par défaut sans donnée curée : risque de succession non planifiée (`pol.succession_risk`, 1 à 8 %/an selon le régime : 3,2 successions par an), loyauté de l'armée (70 pour tous les régimes hybrides), ouverture migratoire. Proposition : curer la loyauté de l'armée (V-Dem, dimension militaire) et l'historique des coups (Powell et Thyne) pour les pays à risque.
+- Points des phases précédentes toujours ouverts : profils décisionnels et relations initiales (D35), ligne de front DeepStateMap (D31), Sahara occidental (D32), drapeaux (D43), coefficients de la phase 3 (croissance de long terme sous les projections du FMI).
+
+**Limites connues**
+
+- Pas de prime de précaution sur le pétrole : le prix monte au rythme de l'ajustement, pas dès l'annonce d'une fermeture (+14 $ pour trois mois de fermeture totale, amortis par les stocks et la capacité inutilisée).
+- Les pays ne décident pas encore (IA en phase 7) : sanctions, adhésions, résolutions et contre-mesures viennent de l'utilisateur ou des scénarios ; la réorientation du commerce est agrégée par pays (pas de nouveaux partenaires nommés).
+- Guerres civiles sans faction armée ni soutien extérieur, soutien à la guerre et cessez-le-feu sans effet sur les combats : phase 5.
+- Après une alternance, la relation États-Unis → Ukraine baisse légèrement (−5,7) : l'alternance efface la moitié du résidu de calage, et l'aide ne compte dans l'affinité que pour son destinataire.
+- Coups d'État : 2,0 par an (1,5 à 2,2 dans les décennies récentes), mais encore 1,2 %/an pour de grandes autocraties électorales pauvres sans tradition de coup (Inde), faute d'historique des coups et de loyauté de l'armée curée.
+- Effet de base du glissement annuel après un choc de niveau (Qatar : +47 points de croissance un an après la réouverture d'Ormuz).
+- Un seul produit alimentaire (le blé) ; pas d'eau ni de sécheresse (phase 6) ; électricité et réseaux de gazoducs implicites dans les dépendances bilatérales.
+- Réouverture ou fermeture des passages terrestres (frontières) non modélisée ; pas de migrations économiques.
+
+## Prochaines étapes (phase 5)
+
+Forces armées et guerre (SPEC §12) : capital militaire, mobilisation, industrie et munitions, projection ; fronts pixel par pixel (terrain, fortifications, ravitaillement, encerclements, saisons) ; air, mer, blocus, débarquements ; occupation, pertes, réfugiés ; négociations et paix ; animations. S'y rattacheront les factions issues des guerres civiles, le soutien à la guerre et l'effet des cessez-le-feu de l'ONU sur les combats.

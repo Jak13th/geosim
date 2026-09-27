@@ -1,7 +1,9 @@
 /**
  * Invariants de l'état (CLAUDE.md, « Qualité ») : pas de NaN ni d'infini là où une valeur existe,
  * bornes du catalogue, populations positives, parts d'âge qui somment à 100, prix positifs,
- * relations dans [−100, 100]. Renvoie la liste des violations (vide si tout va bien).
+ * relations dans [−100, 100], échanges bilatéraux positifs, capacités des détroits dans [0, 100],
+ * états internes du monde interconnecté finis (mémoire et résidu des relations, commerce, flux
+ * d'énergie établis, réfugiés). Renvoie la liste des violations (vide si tout va bien).
  */
 import type { ParamDef } from '@geosim/shared';
 import type { Engine } from './engine.ts';
@@ -14,6 +16,31 @@ const PRICES = [
   'world.fertilizer_price',
 ];
 const PRICE_VECTORS = ['world.gas_price', 'world.metals_prices'];
+
+/** États internes du monde interconnecté qui doivent rester finis. */
+const FINITE_INTERNALS = [
+  'dip.memory',
+  'dip.residual',
+  'trade.phi',
+  'trade.level',
+  'energy.established',
+  'energy.replaced',
+  'refugees.flows',
+  'refugees.newAbroad',
+  'refugees.newHosted',
+  'econ.impulse.trade',
+  'econ.impulse.sanctions',
+  'econ.impulse.energy',
+  'econ.impulse.critical',
+];
+
+/** Stocks et flux qui ne peuvent pas être négatifs. */
+const NON_NEGATIVE_INTERNALS = [
+  'refugees.flows',
+  'refugees.newAbroad',
+  'refugees.newHosted',
+  'trade.phi',
+];
 
 export function checkInvariants(engine: Engine, limit = 50): string[] {
   const S = engine.state;
@@ -66,6 +93,39 @@ export function checkInvariants(engine: Engine, limit = 50): string[] {
     const r = relations[k] as number;
     if (!Number.isNaN(r) && (r < -100 || r > 100))
       add(`pair.relation [${k}] : ${r} hors de [−100, 100]`);
+  }
+  const trade = S.pairMatrix('pair.trade');
+  for (let k = 0; k < trade.length; k++) {
+    const t = trade[k] as number;
+    if (!Number.isNaN(t) && !(t >= 0 && Number.isFinite(t))) add(`pair.trade [${k}] : ${t}`);
+  }
+  for (const [id, x] of S.zone.get('zone.chokepoint_traffic') ?? []) {
+    if (typeof x === 'number' && !(x >= 0 && x <= 100))
+      add(`zone.chokepoint_traffic (${id}) : ${x}`);
+  }
+  for (const [id, x] of S.zone.get('zone.chokepoint_flow') ?? []) {
+    if (typeof x === 'number' && !(x >= 0 && Number.isFinite(x)))
+      add(`zone.chokepoint_flow (${id}) : ${x}`);
+  }
+  for (const key of FINITE_INTERNALS) {
+    const a = S.internal.get(key);
+    if (a === undefined) continue;
+    for (let k = 0; k < a.length; k++) {
+      if (!Number.isFinite(a[k] as number)) {
+        add(`${key} [${k}] : valeur non finie`);
+        break;
+      }
+    }
+  }
+  for (const key of NON_NEGATIVE_INTERNALS) {
+    const a = S.internal.get(key);
+    if (a === undefined) continue;
+    for (let k = 0; k < a.length; k++) {
+      if ((a[k] as number) < -1e-6) {
+        add(`${key} [${k}] : ${a[k]} < 0`);
+        break;
+      }
+    }
   }
   return out;
 }

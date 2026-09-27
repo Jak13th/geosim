@@ -36,6 +36,7 @@ export const PAIR_GENERIC: readonly ParamDef[] = CATALOG.filter(
 );
 export const WORLD_PARAMS: readonly ParamDef[] = CATALOG.filter((d) => d.scope === 'world');
 export const SIM_PARAMS: readonly ParamDef[] = CATALOG.filter((d) => d.scope === 'sim');
+const ZONE_BY_ID = new Map(CATALOG.filter((d) => d.scope === 'zone').map((d) => [d.id, d]));
 
 const COUNTRY_COL = new Map(COUNTRY_NUMERIC.map((d, k) => [d.id, k]));
 const WORLD_BY_ID = new Map(WORLD_PARAMS.map((d) => [d.id, d]));
@@ -134,6 +135,8 @@ export class State {
   readonly pairNum = new Map<string, Float64Array>();
   /** Paires non numériques : valeurs différentes du défaut, indexées par i × N + j. */
   readonly pairGen = new Map<string, Map<number, ParamValue>>();
+  /** Nombre de modifications de chaque paramètre bilatéral par commande (invalide les caches). */
+  private readonly pairEdits = new Map<string, number>();
   readonly pairDefault = new Map<string, ParamValue>();
 
   readonly world = new Map<string, ParamValue>();
@@ -233,9 +236,26 @@ export class State {
       this.worldBase.set(def.id, v);
     }
     const status = new Map<string, ParamValue>();
-    for (const c of data.world.chokepoints) status.set(c.id, c.status.value);
-    this.zone.set('zone.chokepoint_status', status);
-    this.zoneBase.set('zone.chokepoint_status', new Map(status));
+    const capacity = new Map<string, ParamValue>();
+    const flow = new Map<string, ParamValue>();
+    for (const c of data.world.chokepoints) {
+      status.set(c.id, c.status.value);
+      // Capacité de passage : trafic observé d'un passage contesté ou fermé ; un passage ouvert
+      // est libre (son trafic observé résulte des détournements : il est calculé, flux).
+      capacity.set(
+        c.id,
+        c.status.value === 'open' ? 100 : Math.max(0, Math.min(100, c.status.traffic_pct)),
+      );
+      flow.set(c.id, null);
+    }
+    for (const [id, table] of [
+      ['zone.chokepoint_status', status],
+      ['zone.chokepoint_traffic', capacity],
+      ['zone.chokepoint_flow', flow],
+    ] as const) {
+      this.zone.set(id, table);
+      this.zoneBase.set(id, new Map(table));
+    }
   }
 
   // ——— Paramètres pays numériques ———
@@ -324,6 +344,15 @@ export class State {
     return m;
   }
 
+  /** Révision d'un paramètre bilatéral : change à chaque modification par une commande. */
+  pairVersionOf(id: string): number {
+    return this.pairEdits.get(id) ?? 0;
+  }
+
+  touchPair(id: string): void {
+    this.pairEdits.set(id, (this.pairEdits.get(id) ?? 0) + 1);
+  }
+
   pairValue(id: string, i: number, j: number): ParamValue {
     const m = this.pairNum.get(id);
     if (m !== undefined) {
@@ -385,6 +414,27 @@ export class State {
     x = x * mul + add;
     const def = WORLD_BY_ID.get(id);
     return def ? clampTo(def, x) : x;
+  }
+
+  // ——— Zones ———
+
+  zoneValue(id: string, target: string): ParamValue {
+    return this.zone.get(id)?.get(target) ?? null;
+  }
+
+  /** Écriture par la simulation d'un paramètre de zone (ignorée si verrouillé, bornée). */
+  writeZone(id: string, target: string, v: ParamValue): void {
+    const table = this.zone.get(id);
+    if (table === undefined || !table.has(target)) return;
+    if (this.slotLocks.has(`z|${id}|${target}`)) return;
+    if (typeof v === 'number') {
+      if (!Number.isFinite(v))
+        throw new Error(`Valeur de zone non finie pour ${id} (${target}) au tick ${this.tick}`);
+      const def = ZONE_BY_ID.get(id);
+      table.set(target, def ? clampTo(def, v) : v);
+      return;
+    }
+    table.set(target, v);
   }
 
   // ——— Aléa et états internes ———

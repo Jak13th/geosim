@@ -20,6 +20,7 @@ import { laterPhase, useLive } from './live.ts';
 import { namesFor } from './names.ts';
 import { ParamEditor } from './ParamEditor.tsx';
 import { Linkified, SourceBadge } from './ParamRow.tsx';
+import { PairWhy } from './WhyPanel.tsx';
 
 const PAIR_PARAMS = CATALOG.filter((d) => d.scope === 'pair');
 
@@ -193,6 +194,7 @@ export function PairPanel({ data, a, b }: { data: Dataset; a: EntityView; b: Ent
           Inverser A et B
         </button>
       </p>
+      {live !== null && <PairWhy a={a} b={b} />}
       {PAIR_PARAMS.map((def) => (
         <PairRow key={def.id} data={data} def={def} a={a} b={b} names={names} live={live} />
       ))}

@@ -38,6 +38,8 @@ export interface Inverse {
   /** Modificateurs à rétablir (retirés par la commande). */
   addModifiers?: Modifier[];
   coefficients?: { path: string; value: number }[];
+  /** Entrées de tableaux internes des systèmes à rétablir : [nom, indice, valeur]. */
+  internal?: [string, number, number][];
 }
 
 export class CommandError extends Error {}
@@ -50,8 +52,12 @@ const SIM_EDITABLE = new Set([
   'sim.ai_aggression',
   'sim.fog_of_war',
 ]);
-/** Paramètres de zone modifiables en phase 3 (les zones géographiques relèvent des outils de scénario). */
-const ZONE_EDITABLE = new Set(['zone.chokepoint_status']);
+/** Paramètres de zone modifiables (les zones géographiques relèvent des outils de scénario). */
+const ZONE_EDITABLE = new Set([
+  'zone.chokepoint_status',
+  'zone.chokepoint_traffic',
+  'zone.chokepoint_flow',
+]);
 
 /**
  * Raison pour laquelle un emplacement n'est pas modifiable par commande (null s'il l'est) :
@@ -249,6 +255,7 @@ function writeSlot(state: State, slot: Slot, value: ParamValue): void {
     case 'pair': {
       const i = state.byId.get(slot.from) as number;
       const j = state.byId.get(slot.to) as number;
+      state.touchPair(slot.param);
       const m = state.pairNum.get(slot.param);
       if (m !== undefined) {
         m[i * state.n + j] = typeof value === 'number' ? value : Number.NaN;
@@ -458,6 +465,10 @@ export function checkModifier(spec: ModifierSpec): ModifierSpec {
 
 export function applyInverse(state: State, inverse: Inverse): void {
   for (const s of [...(inverse.slots ?? [])].reverse()) restoreSlot(state, s);
+  for (const [name, index, value] of [...(inverse.internal ?? [])].reverse()) {
+    const a = state.internal.get(name);
+    if (a !== undefined && index >= 0 && index < a.length) a[index] = value;
+  }
   if (inverse.removeModifiers) {
     const ids = new Set(inverse.removeModifiers);
     state.modifiers = state.modifiers.filter((m) => !ids.has(m.id));

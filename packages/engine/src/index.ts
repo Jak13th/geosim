@@ -59,6 +59,26 @@ export { checkInvariants } from './invariants.ts';
 export { fromBase64, parseSnapshot, serializeSnapshot, toBase64 } from './codec.ts';
 export { GAS_ZONES, METALS, gasZoneOf } from './systems/markets.ts';
 export {
+  explainCountry,
+  explainPair,
+  type CountryExplanation,
+  type Decomposition,
+  type PairExplanation,
+} from './explain.ts';
+export { blocNames } from './systems/diplomacy.ts';
+export {
+  SCENARIOS,
+  compareCountry,
+  compareWorld,
+  runScenario,
+  scenarioById,
+  scenarioEvents,
+  type Scenario,
+  type ScenarioRun,
+  type ScenarioStep,
+  type SeriesComparison,
+} from './scenarios.ts';
+export {
   slotFromKey,
   slotKey,
   type Author,

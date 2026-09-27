@@ -6,8 +6,14 @@
  *
  * Hypothèses :
  * - Prix d'ancrage = prix au jour des données (base de `world.*_price`), en dollars constants : il
- *   suit l'inflation du dollar (numéraire). La prime de crise qu'il contient (détroit d'Ormuz)
- *   sera expliquée par le statut des détroits en phase 4.
+ *   suit l'inflation du dollar (numéraire). Demande et offre sont mesurées par rapport au départ.
+ * - Offre et routes (phase 4) : la production d'un pays est sa capacité × [d + (1 − d)·a], d part
+ *   consommée sur place, a accès de ses exportations (routes et détroits, commerce) ; les
+ *   sanctions et les guerres la déplacent par rapport au départ. Les données de production (2024)
+ *   décrivent des routes libres : au départ, la production des pays bloqués par un détroit
+ *   (Ormuz) est réduite d'emblée. La prime de crise du prix de départ s'explique ainsi : le prix
+ *   structurel (celui que vise l'investissement) est p₀ · A₀^(1/ε), A₀ offre de départ / offre
+ *   routes libres ; rouvrir les détroits y ramène le prix.
  * - Demande et offre sont des indices relatifs au départ (les volumes des sources ne s'équilibrent
  *   pas exactement). Demande : consommation de chaque pays, qui suit son PIB en volume (élasticité
  *   au revenu), une tendance (efficacité, substitution) et le prix (élasticité-prix). Offre :
@@ -23,6 +29,8 @@
  */
 import { col, type State } from '../state.ts';
 import type { System, SystemContext } from '../system.ts';
+import { listOf } from './pairs.ts';
+import { TRADE_OUT } from './trade.ts';
 
 const C = {
   pop: col('demo.population'),
@@ -39,6 +47,13 @@ const C = {
   fertilizerExports: col('res.fertilizer_export_share'),
   chipFab: col('res.chip_fab_share'),
 };
+
+/** Produits fossiles et colonnes de production et de consommation. */
+const FOSSIL_COLUMNS = {
+  oil: { prod: C.oilProd, cons: C.oilCons },
+  gas: { prod: C.gasProd, cons: C.gasCons },
+  coal: { prod: C.coalProd, cons: C.coalCons },
+} as const;
 
 /** Coefficients communs à chaque produit (`markets.<produit>.<nom>`). */
 const COMMODITY_KEYS = [
@@ -180,13 +195,6 @@ function nextPrice(current: number, equilibrium: number, months: number, shock: 
   return Math.exp(lp + shock);
 }
 
-/** Somme d'une colonne (valeurs finies et positives). */
-function total(values: Float64Array): number {
-  let s = 0;
-  for (const x of values) if (x > 0) s += x;
-  return s;
-}
-
 function sumBase(state: State, p: number): number {
   let s = 0;
   for (let i = 0; i < state.n; i++) {
@@ -196,18 +204,115 @@ function sumBase(state: State, p: number): number {
   return s;
 }
 
+/** Production mondiale de départ d'un combustible (après l'effet des routes au départ). */
+function sumStart(state: State, fuel: 'oil' | 'gas' | 'coal'): number {
+  let s = 0;
+  for (const x of startProduction(state, fuel)) if (x > 0) s += x;
+  return s;
+}
+
 /** Facteur de croissance mensuel du PIB en volume du mois écoulé (économie). */
 function growthFactor(state: State, i: number): number {
   return state.internalArray('econ.monthlyGrowthFactor', 1)[i] as number;
 }
 
+/** Production de départ d'un combustible (après l'effet des routes au départ). */
+export function startProduction(state: State, fuel: 'oil' | 'gas' | 'coal'): Float64Array {
+  return state.internalArray(`markets.prod0.${fuel}`, Number.NaN);
+}
+
+/**
+ * Part de la production qui sort du pays selon les routes, les sanctions et les guerres : facteur
+ * d + (1 − d)·a_routes, multiplié par l'effet des sanctions et des guerres par rapport au départ.
+ */
+function accessFactor(state: State, i: number, share: number, start: boolean): number {
+  const d = Math.min(1, Math.max(0, share));
+  const g = (a: number): number => d + (1 - d) * Math.min(1, Math.max(0, a));
+  const route = state.internalArray(start ? TRADE_OUT.exportRoute0 : TRADE_OUT.exportRoute, 1)[
+    i
+  ] as number;
+  if (start) return g(route);
+  const sw = state.internalArray(TRADE_OUT.exportSW, 1)[i] as number;
+  const sw0 = state.internalArray(TRADE_OUT.exportSW0, 1)[i] as number;
+  const g0 = g(sw0);
+  return g(route) * (g0 > 0 ? g(sw) / g0 : 1);
+}
+
+/** Accès des exportations d'un pays (routes, sanctions et guerres par rapport au départ). */
+export function exportAccessOf(state: State, i: number, start: boolean): number {
+  return accessFactor(state, i, 0, start);
+}
+
+/** Restrictions d'exportation actives d'un pays (« produit:intensité »), par produit. */
+export function restrictionsOf(state: State, i: number, base: boolean): Record<string, number> {
+  const v = base
+    ? state.genericBaseValue('res.export_restrictions', i)
+    : state.genericValue('res.export_restrictions', i);
+  const out: Record<string, number> = {};
+  for (const item of listOf(v)) {
+    const [product, raw] = item.split(':');
+    const x = Number(raw);
+    if (product && Number.isFinite(x)) out[product] = Math.min(1, Math.max(0, x));
+  }
+  return out;
+}
+
 function init(ctx: SystemContext): void {
   const S = ctx.state;
+  const n = S.n;
   S.worldInternal.set('markets.oilSpareUsed', 0);
   for (const k of ['wheat', 'fertilizer', ...METALS])
     S.worldInternal.set(`markets.${k}.capacity`, 0);
   for (const k of COMMODITIES) S.worldInternal.set(`markets.${k}.demand`, 1);
   S.writeWorld('world.chip_supply', 100);
+  // Capacités : productions des données (routes libres) ; production de départ selon les routes.
+  for (const fuel of FOSSILS) {
+    const { prod, cons } = FOSSIL_COLUMNS[fuel];
+    const cap = S.internalArray(`markets.cap.${fuel}`, 0);
+    const prod0 = startProduction(S, fuel);
+    const factor = S.internalArray(`markets.factor.${fuel}`, 1);
+    const written = S.internalArray(`markets.written.${fuel}`, Number.NaN);
+    const byZone = new Map<string, [number, number]>();
+    for (let i = 0; i < n; i++) {
+      const p = S.v(prod)[i] as number;
+      if (!(p > 0)) {
+        cap[i] = 0;
+        prod0[i] = Number.isFinite(p) ? p : Number.NaN;
+        continue;
+      }
+      const c = S.v(cons)[i] as number;
+      cap[i] = p;
+      const f = accessFactor(S, i, c > 0 ? c / p : 0, true);
+      factor[i] = f;
+      prod0[i] = p * f;
+      S.force(prod, i, p * f);
+      written[i] = S.v(prod)[i] as number;
+      const zone = fuel === 'gas' ? gasZoneOf(S.entities[i]?.region ?? '') : 'world';
+      const acc = byZone.get(zone) ?? [0, 0];
+      acc[0] += p * f;
+      acc[1] += p;
+      byZone.set(zone, acc);
+    }
+    for (const [zone, [now, open]] of byZone) {
+      S.worldInternal.set(`markets.access0.${fuel}.${zone}`, open > 0 ? now / open : 1);
+    }
+  }
+}
+
+/**
+ * Prix structurel d'un produit fossile (dollars courants) : prix d'ancrage corrigé de la prime de
+ * crise due aux routes au départ, p₀ · A₀^(1/ε). L'investissement vise ce prix.
+ */
+export function structuralPrice(
+  state: State,
+  model: SystemContext['model'],
+  fuel: 'oil' | 'gas' | 'coal',
+  anchor: number,
+  zone: GasZone | null,
+): number {
+  const a0 = state.worldInternal.get(`markets.access0.${fuel}.${zone ?? 'world'}`) ?? 1;
+  const eps = Math.max(0.01, model.get(coef(fuel, 'price_elasticity')));
+  return anchor * Math.pow(Math.min(1, Math.max(1e-3, a0)), 1 / eps);
 }
 
 /**
@@ -219,28 +324,37 @@ function fossilMarket(
   cons: number,
   prod: number,
   k: 'oil' | 'gas' | 'coal',
-  priceRatio: number,
+  price: number,
+  anchor: number,
   zone: GasZone | null,
-): { demand: number; supply: number } {
+): { demand: number; supply: number; open: number } {
   const S = ctx.state;
   const m = ctx.model;
   const eta = m.get(coef(k, 'income_elasticity'));
   const trend = m.get(coef(k, 'demand_trend')) / 100;
-  // Capacité mondiale (par zone pour le gaz) : tendance + réponse de l'investissement au prix.
+  // Capacité mondiale (par zone pour le gaz) : tendance + réponse de l'investissement à l'écart du
+  // prix à son niveau structurel (hors prime de crise des routes).
+  const structural = structuralPrice(S, m, k, anchor, zone);
+  const ratio = structural > 0 && price > 0 ? price / structural : 1;
   const capacity =
     (m.get(coef(k, 'supply_trend')) / 100 +
-      m.get(coef(k, 'investment_response')) * Math.log(priceRatio)) *
+      m.get(coef(k, 'investment_response')) * Math.log(ratio)) *
     ctx.dt;
   const capacityKey = capacityKeyOf(k, zone);
   S.worldInternal.set(capacityKey, (S.worldInternal.get(capacityKey) ?? 0) + capacity);
   const eps = m.get(
     k === 'oil' ? K.demandPriceOil : k === 'gas' ? K.demandPriceGas : K.demandPriceCoal,
   );
-  const priceFactor = Math.pow(priceRatio, -eps);
+  const priceFactor = Math.pow(anchor > 0 ? price / anchor : 1, -eps);
+  const cap = S.internalArray(`markets.cap.${k}`, 0);
+  const prod0 = startProduction(S, k);
+  const factor = S.internalArray(`markets.factor.${k}`, 1);
+  const written = S.internalArray(`markets.written.${k}`, Number.NaN);
   let demand = 0;
   let demand0 = 0;
   let supply = 0;
   let supply0 = 0;
+  let open = 0;
   for (let i = 0; i < S.n; i++) {
     if (zone !== null && gasZoneOf(S.entities[i]?.region ?? '') !== zone) continue;
     // Consommation déplacée par l'activité et la tendance ; la demande se compte hors effet prix.
@@ -250,14 +364,33 @@ function fossilMarket(
     if (c0 > 0) demand0 += c0;
     const now = S.effNow(cons, i);
     if (now > 0) demand += now / priceFactor;
-    const p0 = S.base[prod * S.n + i] as number;
+    // Production : capacité × part qui sort du pays (routes, sanctions, guerres).
     const p = S.v(prod)[i] as number;
-    if (p > 0) S.write(prod, i, p * Math.exp(capacity));
+    const w = written[i] as number;
+    if (p > 0 && Number.isFinite(w) && Math.abs(p - w) > 1e-9 * Math.max(1, w)) {
+      // Production modifiée par l'utilisateur : la capacité suit.
+      cap[i] = p / Math.max(0.01, factor[i] as number);
+    }
+    let capI = cap[i] as number;
+    if (capI > 0) {
+      capI *= Math.exp(capacity);
+      cap[i] = capI;
+      const f = accessFactor(S, i, now > 0 ? now / capI : 0, false);
+      factor[i] = f;
+      S.write(prod, i, capI * f);
+      written[i] = S.v(prod)[i] as number;
+      open += capI;
+    }
+    const p0 = prod0[i] as number;
     if (p0 > 0) supply0 += p0;
     const produced = S.effNow(prod, i);
     if (produced > 0) supply += produced;
   }
-  return { demand: demand0 > 0 ? demand / demand0 : 1, supply: supply0 > 0 ? supply / supply0 : 1 };
+  return {
+    demand: demand0 > 0 ? demand / demand0 : 1,
+    supply: supply0 > 0 ? supply / supply0 : 1,
+    open: supply0 > 0 ? open / supply0 : 1,
+  };
 }
 
 /** Consommations au nouveau prix (effet prix appliqué après la formation du prix). */
@@ -313,14 +446,27 @@ function monthly(ctx: SystemContext): void {
       );
   }
 
-  // Pétrole (marché mondial, capacité inutilisée).
+  // Pétrole (marché mondial, capacité inutilisée, stocks stratégiques).
   {
     const p0 = baseNumber(S, 'world.oil_price');
     const p = S.worldNumber('world.oil_price');
     const ratio = p / p0;
-    const { demand, supply } = fossilMarket(ctx, C.oilCons, C.oilProd, 'oil', ratio, null);
-    const worldProd0 = sumBase(S, C.oilProd);
-    const spareTotal = mbdToTwh(total(S.e(C.spare)), m.get(K.oilMwh));
+    const market = fossilMarket(ctx, C.oilCons, C.oilProd, 'oil', p, p0, null);
+    const supply = market.supply;
+    const worldProd0 = sumStart(S, 'oil');
+    // Prélèvements sur les stocks stratégiques : moins d'achats sur le marché.
+    const release = S.worldInternal.get('energy.stockRelease') ?? 0;
+    const demand = Math.max(
+      0.01,
+      market.demand - (worldProd0 > 0 ? release / sumBase(S, C.oilCons) : 0),
+    );
+    // Capacité inutilisée accessible (un producteur bloqué par un détroit ne peut la vendre).
+    let spareMbd = 0;
+    for (let i = 0; i < S.n; i++) {
+      const x = S.e(C.spare)[i] as number;
+      if (x > 0) spareMbd += x * exportAccessOf(S, i, false);
+    }
+    const spareTotal = mbdToTwh(spareMbd, m.get(K.oilMwh));
     let used = S.worldInternal.get('markets.oilSpareUsed') ?? 0;
     const shortage = Math.max(0, demand / supply - 1) * worldProd0;
     const target = Math.min(spareTotal, shortage);
@@ -347,13 +493,14 @@ function monthly(ctx: SystemContext): void {
     const current = S.worldVector('world.gas_price');
     const logGap = new Map<GasZone, number>();
     for (const z of GAS_ZONES) {
-      const ratio = (current[z] ?? 0) / (base[z] ?? 1);
+      const price = (current[z] ?? 0) > 0 ? (current[z] as number) : (base[z] ?? 1);
       const { demand, supply } = fossilMarket(
         ctx,
         C.gasCons,
         C.gasProd,
         'gas',
-        ratio > 0 ? ratio : 1,
+        price,
+        base[z] ?? 1,
         z,
       );
       logGap.set(z, Math.log(demand / supply) / elasticity('gas'));
@@ -388,7 +535,7 @@ function monthly(ctx: SystemContext): void {
     const p0 = baseNumber(S, 'world.coal_price');
     const p = S.worldNumber('world.coal_price');
     const ratio = p / p0;
-    const { demand, supply } = fossilMarket(ctx, C.coalCons, C.coalProd, 'coal', ratio, null);
+    const { demand, supply } = fossilMarket(ctx, C.coalCons, C.coalProd, 'coal', p, p0, null);
     const eq = p0 * Math.pow(demand / supply, 1 / elasticity('coal'));
     S.writeWorld(
       'world.coal_price',
@@ -461,8 +608,11 @@ function monthly(ctx: SystemContext): void {
     S.worldInternal.set(key, cap);
     return (before > 0 ? now / before : 1) * Math.exp(cap);
   };
+  // Parts des exportateurs × accès de leurs exportations (routes, sanctions, guerres).
   const columnShare = (p: number) => (i: number, base: boolean) =>
-    base ? (S.base[p * S.n + i] as number) : (S.e(p)[i] as number);
+    base
+      ? (S.base[p * S.n + i] as number) * exportAccessOf(S, i, true)
+      : (S.e(p)[i] as number) * exportAccessOf(S, i, false);
 
   // Blé : offre des exportateurs, demande de la population mondiale.
   const wheat0 = baseNumber(S, 'world.wheat_price');
@@ -507,7 +657,11 @@ function monthly(ctx: SystemContext): void {
         const v = fromBase
           ? S.genericBaseValue('res.critical_minerals', i)
           : S.genericValue('res.critical_minerals', i);
-        return v !== null && typeof v === 'object' && !Array.isArray(v) ? (v[metal] ?? 0) : 0;
+        const share =
+          v !== null && typeof v === 'object' && !Array.isArray(v) ? (v[metal] ?? 0) : 0;
+        if (!(share > 0)) return 0;
+        const restriction = restrictionsOf(S, i, fromBase)[metal] ?? 0;
+        return share * exportAccessOf(S, i, fromBase) * (1 - restriction);
       };
       const demand = demandIndex(metal, false);
       const supply = supplyIndex(metal, shares, p / p0);
@@ -516,10 +670,18 @@ function monthly(ctx: SystemContext): void {
     }
     S.writeWorld('world.metals_prices', next);
   }
-  // Puces avancées : indice d'offre (100 = parts de fabrication du départ).
+  // Puces avancées : indice d'offre (100 = départ), parts de fabrication × accès des exportations.
   {
-    const now = total(S.e(C.chipFab));
-    const before = sumBase(S, C.chipFab);
+    let now = 0;
+    let before = 0;
+    for (let i = 0; i < S.n; i++) {
+      const x = S.e(C.chipFab)[i] as number;
+      const x0 = S.base[C.chipFab * S.n + i] as number;
+      if (x > 0)
+        now += x * exportAccessOf(S, i, false) * (1 - (restrictionsOf(S, i, false).chips ?? 0));
+      if (x0 > 0)
+        before += x0 * exportAccessOf(S, i, true) * (1 - (restrictionsOf(S, i, true).chips ?? 0));
+    }
     S.writeWorld('world.chip_supply', before > 0 ? (100 * now) / before : 100);
   }
 }

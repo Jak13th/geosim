@@ -5,6 +5,7 @@ import { col } from '../state.ts';
 import type { Slot } from '../types.ts';
 import { ageFlows, agePyramidSlope } from './demography.ts';
 import { defaultProbability, spreadOf } from './finance.ts';
+import { usdIndex } from './markets.ts';
 import { Model } from '../model.ts';
 import { REQUIRED_COEFFICIENTS } from '../engine.ts';
 
@@ -97,11 +98,13 @@ describe('marchés', () => {
       op: 'mul',
       amount: 0.5,
     });
+    // Prix réels (dollars du départ) : l'inflation du dollar ne doit pas masquer la réponse de l'offre.
+    const real = (): number => e.state.worldNumber('world.oil_price') / usdIndex(e.state);
     months(e, 6);
-    const peak = e.state.worldNumber('world.oil_price');
+    const peak = real();
     expect(peak).toBeGreaterThan(base * 1.2);
     months(e, 180);
-    expect(e.state.worldNumber('world.oil_price')).toBeLessThan(peak);
+    expect(real()).toBeLessThan(peak);
   });
 
   it('sans choc, les prix restent proches de leur ancrage réel', () => {

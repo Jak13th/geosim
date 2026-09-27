@@ -1,6 +1,12 @@
 /**
  * Simulations sans interface :
  *   npm run sim -- --scenario monde --years 20 --runs 1 --seed 1 --out results
+ *   npm run sim -- --scenario ormuz --seed 1 --out results/ormuz
+ *
+ * Scénarios d'expérience (ormuz, ormuz-avant-guerre, sanctions-chine, ble-x2, election-usa) :
+ * chaque run déroule le scénario et sa référence avec la même graine et écrit `report.md` (écarts
+ * des indicateurs, événements propres au scénario et leurs facteurs explicatifs) ; leur durée est
+ * fixée par le scénario (--years ignoré).
  *
  * Chaque run part des données construites (`npm run data`) et de config/model.yaml, avec la
  * graine seed + numéro du run. Sorties dans <out>/ : séries mensuelles par pays et mondiales
@@ -10,11 +16,23 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { ENGINE_VERSION, Engine, checkInvariants, type JournalEntry } from '@geosim/engine';
+import {
+  ENGINE_VERSION,
+  Engine,
+  SCENARIOS as EXPERIMENTS,
+  checkInvariants,
+  runScenario,
+  scenarioById,
+  type JournalEntry,
+} from '@geosim/engine';
 import { loadData, loadModel } from './load.ts';
 import { csvTable, summarizeRun, type RunSummary } from './report.ts';
+import { scenarioReport } from './scenario.ts';
 
-const SCENARIOS = { monde: 'Monde au jour des données (situation actuelle)' } as const;
+const SCENARIOS: Record<string, string> = {
+  monde: 'Monde au jour des données (situation actuelle)',
+  ...Object.fromEntries(EXPERIMENTS.map((s) => [s.id, s.label])),
+};
 
 const { values } = parseArgs({
   options: {
@@ -55,13 +73,56 @@ const outDir = resolve(process.env.INIT_CWD ?? process.cwd(), values.out ?? 'res
 const data = loadData();
 const model = loadModel();
 console.log(`GeoSim CLI — moteur ${ENGINE_VERSION}, données du ${data.countries.buildDate}`);
+const experiment = scenarioById(scenario);
+const period = experiment ? `jusqu’au ${experiment.until}` : `${years} an(s)`;
 console.log(
-  `Scénario « ${scenario} », ${years} an(s), ${runs} run(s), graine ${seed}, sortie ${outDir}/`,
+  `Scénario « ${scenario} », ${period}, ${runs} run(s), graine ${seed}, sortie ${outDir}/`,
 );
 
 mkdirSync(outDir, { recursive: true });
 const summaries: RunSummary[] = [];
 let failed = false;
+if (experiment !== undefined) {
+  for (let r = 0; r < runs; r++) {
+    const runSeed = seed + r;
+    const started = performance.now();
+    const run = runScenario(data, { seed: runSeed, model }, experiment);
+    const elapsed = performance.now() - started;
+    const violations = [...checkInvariants(run.scenario), ...checkInvariants(run.reference)];
+    if (violations.length > 0) failed = true;
+    const dir = join(outDir, runs > 1 ? `run-${String(r + 1).padStart(3, '0')}` : 'run');
+    mkdirSync(join(dir, 'scenario'), { recursive: true });
+    mkdirSync(join(dir, 'reference'), { recursive: true });
+    for (const [name, engine] of [
+      ['scenario', run.scenario],
+      ['reference', run.reference],
+    ] as const) {
+      const tables = csvTable(engine);
+      writeFileSync(join(dir, name, 'countries.csv'), tables.countries);
+      writeFileSync(join(dir, name, 'world.csv'), tables.world);
+      writeFileSync(
+        join(dir, name, 'journal.json'),
+        JSON.stringify(
+          engine.journal.filter((e) => e.author === 'event' || e.author === 'user'),
+          null,
+          1,
+        ),
+      );
+    }
+    const report = scenarioReport(experiment, run, runSeed);
+    writeFileSync(join(dir, 'report.md'), report);
+    if (!values.quiet) {
+      console.log(`\nRun ${r + 1} (graine ${runSeed}) : ${(elapsed / 1000).toFixed(1)} s`);
+      console.log(
+        `  Invariants : ${violations.length === 0 ? 'respectés' : `${violations.length} violation(s)`}`,
+      );
+      for (const v of violations.slice(0, 10)) console.log(`    ${v}`);
+      console.log(`  Rapport : ${join(dir, 'report.md')}`);
+    }
+  }
+  console.log(`\nRésultats écrits dans ${outDir}/`);
+  process.exit(failed ? 2 : 0);
+}
 for (let r = 0; r < runs; r++) {
   const runSeed = seed + r;
   const started = performance.now();

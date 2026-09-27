@@ -189,6 +189,24 @@ async function realTime(page) {
   await oil.locator('.modifier-form button', { hasText: 'Appliquer' }).click();
   await oil.locator('.param-marks').waitFor({ timeout });
   await page.locator('[data-chokepoint="hormuz"] select').selectOption('closed');
+  await page.click('[data-step="month"]');
+  await page.waitForFunction(
+    () =>
+      globalThis.document
+        .querySelector('[data-chokepoint="hormuz"]')
+        ?.textContent?.includes('Capacité 0 %') === true,
+    null,
+    { timeout },
+  );
+  console.log(
+    `Ormuz fermé : ${(await page.textContent('[data-chokepoint="hormuz"] .muted.small'))?.trim()}`,
+  );
+  // ONU : résolution de condamnation (votes du Conseil, veto, Assemblée générale).
+  const un = page.locator('[data-un-form]');
+  await un.locator('select[aria-label="Pays visé"]').selectOption('RUS');
+  await un.locator('button', { hasText: 'Soumettre au vote' }).click();
+  await page.waitForSelector('.un-results li', { timeout });
+  console.log(`ONU : ${(await page.textContent('.un-results li'))?.trim().slice(0, 160)}`);
   await shot(page, '12-monde');
 
   // Modèle : coefficient modifié en direct, puis rechargé depuis le fichier.
@@ -354,7 +372,27 @@ try {
     await page.keyboard.press('Enter');
     await page.waitForSelector('[data-inspector="FRA"]', { timeout });
     await page.waitForTimeout(700);
+    // « Pourquoi ? » (stabilité, approbation, coup d'État, liens avec le monde) calculé par le moteur.
+    await page.waitForSelector('[data-why="FRA"] table.factors', { timeout });
     await shot(page, '04-france-apercu');
+    // Appartenances : adhésion à un bloc puis retrait (commande « bloc »).
+    const blocs = page.locator('[data-memberships="FRA"]');
+    const chips = await blocs.locator('.chip').count();
+    await blocs.locator('select').selectOption({ index: 1 });
+    await blocs.locator('button', { hasText: 'Adhérer' }).click();
+    await page.waitForFunction(
+      (n) =>
+        globalThis.document.querySelectorAll('[data-memberships="FRA"] .chip').length === n + 1,
+      chips,
+      { timeout },
+    );
+    await blocs.locator('.chip button').last().click();
+    await page.waitForFunction(
+      (n) => globalThis.document.querySelectorAll('[data-memberships="FRA"] .chip').length === n,
+      chips,
+      { timeout },
+    );
+    console.log(`Appartenances : ${chips} bloc(s), adhésion puis retrait`);
     const tabs = page.locator('.inspector .tabs button');
     const count = await tabs.count();
     for (let k = 0; k < count; k++) await tabs.nth(k).click();
@@ -373,8 +411,11 @@ try {
     await page.keyboard.type('Allemagne');
     await page.keyboard.press('Shift+Enter');
     await page.waitForSelector('.inspector .segmented.wide', { timeout });
+    await page.waitForSelector('[data-affinity="FRA>DEU"] table.factors', { timeout });
     await page.locator('.inspector .param.pair .param-head').first().click();
-    console.log('Panneau bilatéral : France ↔ Allemagne');
+    console.log(
+      `Panneau bilatéral : France ↔ Allemagne — ${(await page.textContent('[data-affinity="FRA>DEU"] p'))?.trim()}`,
+    );
     await shot(page, '06-bilateral');
 
     // Survol d'un pays (infobulle) puis Maj+clic sur un autre (second pays).

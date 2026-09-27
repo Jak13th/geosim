@@ -97,12 +97,30 @@ export type Command =
   | { type: 'addModifier'; slots: Slot[]; modifier: ModifierSpec }
   | { type: 'removeModifier'; ids: number[] }
   | { type: 'setCoefficient'; path: string; value: number }
+  /** Adhésion à un bloc ou retrait (traités de défense et sanctions communes suivent). */
+  | { type: 'bloc'; action: 'join' | 'leave'; entity: string; bloc: string }
+  /**
+   * Projet de résolution de l'ONU visant un pays : vote du Conseil de sécurité (veto des membres
+   * permanents), puis de l'Assemblée générale s'il échoue ; effets s'il est adopté.
+   */
+  | {
+      type: 'unResolution';
+      kind: UnResolutionKind;
+      target: string;
+      /** Pays qui porte le projet (facultatif). */
+      sponsor?: string;
+      /** Volets des sanctions demandées (résolution de sanctions), 0–1. */
+      tracks?: Partial<Record<string, number>>;
+    }
   /** Remplacement de tous les coefficients (rechargement de config/model.yaml). */
   | { type: 'setModel'; model: CoefficientTree }
   | { type: 'undo' }
   | { type: 'redo' };
 
 export type CommandType = Command['type'];
+
+/** Nature d'une résolution de l'ONU. */
+export type UnResolutionKind = 'condemnation' | 'sanctions' | 'ceasefire' | 'peacekeeping';
 
 /** Facteur explicatif d'une décision ou d'un événement (« Pourquoi ? »). */
 export interface Factor {

@@ -1,16 +1,18 @@
 /**
  * Panneau gauche (SPEC §9.5) : onglets « Monde » (paramètres mondiaux et détroits, en direct et
- * éditables ; conflits en cours), « Modèle » (coefficients de config/model.yaml) et
- * « Simulation » (paramètres de simulation, captures, relecture).
+ * éditables — capacité de passage et flux ; résolutions de l'ONU ; conflits en cours), « Modèle »
+ * (coefficients de config/model.yaml) et « Simulation » (paramètres de simulation, captures,
+ * relecture).
  */
-import type { Slot } from '@geosim/engine';
+import type { Command, JournalEntry, Slot } from '@geosim/engine';
 import { CATALOG, CONFIDENCE_LABELS, enumLabel, paramById } from '@geosim/shared';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { Dataset, ParamLookup } from '../data/dataset.ts';
 import { formatDataDate } from '../format.ts';
 import { toCss } from '../map/colors.ts';
 import { CHOKEPOINT_COLORS } from '../map/style.ts';
 import { command } from '../sim/client.ts';
+import { useSim } from '../sim/store.ts';
 import { useApp, type LeftTab } from '../store.ts';
 import { useLive } from './live.ts';
 import { LiveRow } from './LiveRow.tsx';
@@ -37,6 +39,123 @@ const TABS: [LeftTab, string][] = [
 ];
 
 const CHOKEPOINT_STATUS = paramById('zone.chokepoint_status');
+
+function percent(v: unknown): string {
+  return typeof v === 'number' && Number.isFinite(v) ? `${Math.round(v)} %` : '—';
+}
+
+const UN_KINDS: [UnKind, string][] = [
+  ['condemnation', 'Condamnation'],
+  ['sanctions', 'Sanctions'],
+  ['ceasefire', 'Cessez-le-feu'],
+  ['peacekeeping', 'Maintien de la paix'],
+];
+type UnKind = Extract<Command, { type: 'unResolution' }>['kind'];
+
+/** Volets demandés par une résolution de sanctions (0–1). */
+const UN_TRACKS: Record<string, Record<string, number>> = {
+  limited: { trade: 0.3, elites: 0.5 },
+  broad: { trade: 0.5, finance: 0.5, technology: 0.5, elites: 0.5, transport: 0.3 },
+};
+
+/** Projet de résolution de l'ONU et derniers votes (commande `unResolution`). */
+function UnResolutions({ data }: { data: Dataset }) {
+  useSim((s) => s.journalVersion);
+  const live = useSim((s) => s.live);
+  const [kind, setKind] = useState<UnKind>('condemnation');
+  const [target, setTarget] = useState('');
+  const [sponsor, setSponsor] = useState('');
+  const [scope, setScope] = useState<'limited' | 'broad'>('broad');
+  const states = useMemo(
+    () =>
+      data.list
+        .filter((e) => e.kind === 'state')
+        .sort((x, y) => x.nameFr.localeCompare(y.nameFr, 'fr')),
+    [data],
+  );
+  const recent: JournalEntry[] = [];
+  const journal = live?.journal ?? [];
+  for (let k = journal.length - 1; k >= 0 && recent.length < 4; k--) {
+    const e = journal[k] as JournalEntry;
+    if (e.kind === 'unResolution' && !e.undone) recent.push(e);
+  }
+  const submit = (): void => {
+    if (target === '') return;
+    void command({
+      type: 'unResolution',
+      kind,
+      target,
+      ...(sponsor ? { sponsor } : {}),
+      ...(kind === 'sanctions' ? { tracks: UN_TRACKS[scope] } : {}),
+    });
+  };
+  return (
+    <>
+      <h3>Nations unies</h3>
+      <div className="un-form" data-un-form>
+        <select
+          value={kind}
+          aria-label="Nature de la résolution"
+          onChange={(e) => setKind(e.target.value as UnKind)}
+        >
+          {UN_KINDS.map(([k, label]) => (
+            <option key={k} value={k}>
+              {label}
+            </option>
+          ))}
+        </select>
+        {kind === 'sanctions' && (
+          <select
+            value={scope}
+            aria-label="Étendue des sanctions"
+            onChange={(e) => setScope(e.target.value as 'limited' | 'broad')}
+          >
+            <option value="limited">limitées (commerce, élites)</option>
+            <option value="broad">larges (commerce, finance, technologie…)</option>
+          </select>
+        )}
+        <select value={target} aria-label="Pays visé" onChange={(e) => setTarget(e.target.value)}>
+          <option value="">Pays visé…</option>
+          {states.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.nameFr}
+            </option>
+          ))}
+        </select>
+        <select
+          value={sponsor}
+          aria-label="Pays qui porte le projet"
+          onChange={(e) => setSponsor(e.target.value)}
+        >
+          <option value="">Porté par… (facultatif)</option>
+          {states.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.nameFr}
+            </option>
+          ))}
+        </select>
+        <button type="button" disabled={target === ''} onClick={submit}>
+          Soumettre au vote
+        </button>
+      </div>
+      {recent.length > 0 && (
+        <ul className="conflicts un-results">
+          {recent.map((e) => (
+            <li key={e.seq}>
+              <span className="muted small">{e.date}</span> {e.note}
+              {e.factors && e.factors.length > 0 && (
+                <span className="muted small">
+                  <br />
+                  {e.factors.map((f) => f.label).join(' · ')}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
 
 function WorldTab({ data }: { data: Dataset }) {
   const names = useMemo(() => namesFor(data), [data]);
@@ -118,13 +237,22 @@ function WorldTab({ data }: { data: Dataset }) {
               {changed && <span className="src conf-user"> modifié</span>}
               <br />
               <span className="muted small">
-                Trafic {c.status.traffic_pct} % de la normale au {formatDataDate(c.status.date)}
-                {changed ? ' · effets sur le commerce et l’énergie en phase 4' : ''}
+                {live !== null ? (
+                  <>
+                    Capacité {percent(live.zone['zone.chokepoint_traffic']?.[c.id])} · flux{' '}
+                    {percent(live.zone['zone.chokepoint_flow']?.[c.id])} du trafic normal
+                  </>
+                ) : (
+                  <>
+                    Trafic {c.status.traffic_pct} % de la normale au {formatDataDate(c.status.date)}
+                  </>
+                )}
               </span>
             </li>
           );
         })}
       </ul>
+      {live !== null && <UnResolutions data={data} />}
       <h3>Conflits ({conflicts.length})</h3>
       <ul className="conflicts">
         {conflicts.map((c) => (
