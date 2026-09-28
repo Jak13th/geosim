@@ -484,7 +484,7 @@ Stabilité et approbation suivent les écarts de leurs facteurs au départ (D49)
 
 Le manque d'un importateur se mesure par rapport aux flux établis, qui suivent les flux courants vite quand un fournisseur revient (3 mois) et lentement quand une perte dure (24 mois : le remplacement devient la nouvelle normale). Sans cela, une fermeture d'Ormuz après sa réouverture restait mesurée par rapport au départ (détroit déjà fermé) et ne créait aucune pénurie. Les stocks stratégiques, en jours de pétrole, couvrent « part du pétrole dans l'énergie » jours de consommation d'énergie. Remplacement en 3 mois.
 
-- _Limite_ : pas de prime de précaution (achats de précaution, spéculation) : le prix monte au rythme de l'ajustement du marché et des stocks, pas d'un bond à l'annonce.
+- _Limite_ : pas de prime de précaution (achats de précaution, spéculation) : le prix monte au rythme de l'ajustement du marché et des stocks, pas d'un bond à l'annonce. _Corrigée en D88._
 
 ### D78. Hydrocarbures : effet de niveau sur le PIB
 
@@ -528,4 +528,63 @@ La référence de 5 × 20 ans produisait 2,6 coups réussis par an (base Powell 
 - **Successions non planifiées** : leur probabilité est multipliée par `1 − compétitivité` des élections (la même que pour l'alternance) : là où l'exécutif est choisi par des élections concurrentielles, la constitution règle la succession.
 - **Transition des juntes** : 11 %/an (durée moyenne d'environ 9 ans des régimes militaires de 1946 à 1999, Geddes 1999) ; la junte organise une élection qu'elle remporte le plus souvent (Tchad 2024, Gabon 2025) : régime hybride, même profil, élections rétablies au terme d'un mandat.
 
-Résultat : 2,0 coups par an, juntes stables (7 à 11 États au bout de 20 ans pour 7 au départ). Alternatives écartées pour l'instant : l'historique des coups (piège du coup d'État, données Powell et Thyne) et la loyauté de l'armée curée par pays (V-Dem, dimension militaire), qui demandent des données nouvelles ; proposées pour la validation. Le risque reste trop élevé pour de grandes autocraties électorales pauvres et sans tradition de coup (Inde : 1,2 %/an), faute de ces deux données.
+Résultat : 2,0 coups par an, juntes stables (7 à 11 États au bout de 20 ans pour 7 au départ). Alternatives écartées pour l'instant : l'historique des coups (piège du coup d'État, données Powell et Thyne) et la loyauté de l'armée curée par pays (V-Dem, dimension militaire), qui demandent des données nouvelles ; proposées pour la validation. Le risque reste trop élevé pour de grandes autocraties électorales pauvres et sans tradition de coup (Inde : 1,2 %/an), faute de ces deux données. _Les deux données sont curées en D90 ; le risque de l'Inde retombe à 0,56 %/an._
+
+### D87. Sanctions confrontées à l'épisode russe de 2022 : aucun ajustement nécessaire
+
+Avant la phase 5 (guerre), le choc financier des sanctions (`economy.sanctions.financial_shock` = 3, `economy.sanctions.spread` = 3) était calé sur la plausibilité générale (D49, D66) mais jamais confronté à un épisode réel observé (signalé en priorité phase 8, `docs/CALIBRATION.md`).
+
+Test isolé (`packages/engine/src/systems/world.test.ts`, describe `sanctions`) : sanctions appliquées à l'intensité approximative du paquet occidental de 2022 contre la Russie (finance 0,75, technologie 0,65, élites 0,5, transport 0,35, commerce 0,35, énergie 0,05 — épargnée puisque le pétrole et le gaz russes ont continué de couler). Repères réels : le FMI (avril 2022) prévoyait −8,5 %, la Commission européenne (printemps 2022) −10,4 %, l'EBRD (31/03/2022) −10 % ; l'issue réelle a été bien plus modérée (Rosstat : −2,1 % ; FMI, estimation ultérieure : −1,2 % pour 2022), le régime russe et ses partenaires commerciaux s'étant adaptés plus vite que redouté (contournement, réorientation des flux, maintien des exportations d'énergie hors périmètre des sanctions).
+
+Résultat simulé : écart de production entre −1,1 et −1,7 point sur l'année, contournement (`sanctions.evasion`) croissant en continu — cohérent avec le repère réel sans modification des coefficients. Aucun ajustement n'a donc été nécessaire ; le gap `financial_shock`/`spread` retiré de la liste des priorités de calibration phase 8 (`docs/CALIBRATION.md`).
+
+_Limite explicite_ : le moteur n'a pas de taux de change (`eco.exchange_rate` n'existe pas dans le catalogue) — l'effondrement puis le rebond du rouble en 2022 restent hors du périmètre de cette calibration.
+
+### D88. Prime d'anticipation du pétrole (détroits)
+
+Avant la phase 5 (guerre), le prix du pétrole était purement réactif : « le prix monte au rythme de l'ajustement, pas d'un bond à l'annonce d'une fermeture » (D77). Le scénario `ormuz-avant-guerre` produisait un pic de +14 $ (Brent), jugé trop bas face au repère réel de D68 (Brent pré-guerre 72,5 $ → 104 $ à la fermeture d'Ormuz, réduit à 15 % de capacité).
+
+Le prix affiché (`world.oil_price`) est désormais le prix fondamental (l'ancien mécanisme, inchangé : `markets.oil.baseline`, qui suit l'équilibre offre/demande au rythme lent de l'ajustement) multiplié par une prime d'anticipation qui bondit dès qu'un détroit change de statut (`zone.chokepoint_status`), proportionnellement à la part de trafic cible perdue ou regagnée (`chokepointTarget()`, réutilisée depuis `trade.ts`), puis décroît vers 0 avec une demi-vie pendant que le trafic réel — et le prix fondamental — rejoignent leur propre équilibre. Nouveaux coefficients `markets.oil.anticipation_strength` (0,2) et `markets.oil.anticipation_half_life_months` (2 mois).
+
+Résultat sur `ormuz-avant-guerre` (fermeture totale de trois mois, détroit rouvert au préalable) : pic à +22,45 $ (81,12 → 103,57 $), proche du repère réel de D68 (104 $), sans autre changement au mécanisme d'ajustement structurel.
+
+**Périmètre retenu** : détroits uniquement (pas les déclarations de guerre ni les sanctions énergétiques annoncées à l'avance), pour rester calibrable directement contre Hormuz. À élargir en phase 5 si la guerre y introduit d'autres chocs anticipables sans détroit associé.
+
+### D89. Relations après un changement de gouvernement : le reset du résidu étendu aux coups et successions
+
+Avant la phase 5 (guerre), le couplage « nouveau gouvernement ⇒ relations reconstruites » (`resetResidual()`, diplomacy.ts) n'existait que pour l'alternance électorale (D67, part 0,5) et la révolution (part 1) : un coup d'État changeait de régime, de profil, suspendait des adhésions et déclenchait la condamnation des démocraties (`memoryShock`), mais ne touchait jamais au résidu de calage hérité — la junte gardait telles quelles les rancunes et amitiés du gouvernement renversé. La succession non planifiée n'avait aucun couplage du tout.
+
+Ce gap comptait parmi les deux points prioritaires de la consolidation avant la phase 5 (avec la calibration des sanctions, D87) : la guerre reposera sur des relations justes au sortir d'un changement de régime, et curer l'historique des coups (phase suivante) va mécaniquement augmenter leur fréquence simulée.
+
+- **Coup d'État** (`coup()`, politics.ts) : `resetResidual(S, i, politics.coups.relation_reset)`, valeur retenue **0,7** — une junte rompt plus nettement les alignements précédents qu'une alternance démocratique (hypothèse de départ, non calibrée sur des cas réels ; Mali/CEDEAO 2021, Niger/France 2023 pourraient affiner ce choix plus tard).
+- **Succession non planifiée** (`unplannedSuccession()`, politics.ts) : `resetResidual(S, i, politics.succession.relation_reset)`, valeur retenue **0,1** — régime et profil restent inchangés, seul un effet mineur d'incertitude sur le nouveau dirigeant.
+
+Testé directement sur le résidu (`dip.residual`, pas sur `pair.relation` qui n'y converge qu'au rythme lent de κ, D67) : `packages/engine/src/systems/world.test.ts`, describe `politique intérieure`, deux tests dédiés confirment les parts effacées (70 % et 10 %, à la décroissance naturelle du résidu près).
+
+### D90. Historique des coups d'État et loyauté de l'armée curés pour les pays à risque
+
+D86 écartait deux données faute de les avoir : l'historique des coups (piège du coup d'État, Powell et Thyne) et la loyauté de l'armée curée par pays (V-Dem, dimension militaire) — l'Inde en payait le prix (1,2 %/an, sans tradition de coup depuis 1947).
+
+**`pol.coup_history`** (nouveau paramètre catalogué, compteur scalaire — pas de dataset d'événements datés avec pondération par ancienneté, plus fidèle mais plus coûteux à construire et calibrer) : nombre de coups réussis et de tentatives depuis 1950, curé pour 46 pays à partir de synthèses secondaires de la base Powell et Thyne (VOA News pour 36 pays africains, Wikipedia et presse pour le reste — SOURCES.md). Facteur multiplicatif dans `coupRisk()` : `1 + politics.coups.history_weight (0,03) × min(historique, politics.coups.history_cap (15))`. 0 par défaut ailleurs (`defaults.yaml`) — la grande majorité des pays sans historique connu.
+
+**`pol.military_loyalty`** : la dimension militaire de V-Dem n'a pas pu être consultée directement dans cette session (jeu de données volumineux, hors périmètre d'un accès web ponctuel) — limite explicite, à lever plus tard. En attendant, curation individuelle de 9 cas bien documentés (confiance `assumption`, sauf le Soudan en `medium`) : Soudan (armée fracturée par la guerre civile SAF–RSF depuis 2023, très en-dessous du défaut plat par régime), Birmanie, Égypte, Pakistan, Mali, Burkina Faso, Niger, Venezuela (institutions dominantes ou cohérentes, au-dessus ou proche du défaut), et **Inde** (95 — tradition durable et largement documentée de subordination au pouvoir civil et de neutralité politique de l'armée, aucun coup ni tentative depuis 1947).
+
+**Résultat sur l'Inde** (calcul direct via `coupRisk()` sur les données construites) : risque de coup 0,56 %/an (repère : `pol.stability` 37,8, `pol.military_loyalty` 95 contribue ×0,64, `pol.coup_history` 0 neutre) — contre 1,2 %/an constaté en D86, sans toucher aux autres facteurs (stability, régime, revenu).
+
+Test dédié (`world.test.ts`, describe `politique intérieure`) : le facteur `pol.coup_history` augmente le risque proportionnellement à l'historique, plafonné à `history_cap`.
+
+**Couverture partielle, assumée** : 46 pays sur ~195 pour l'historique des coups, 9 pour la loyauté de l'armée — les listes et les valeurs curées restent à valider (hypothèses sur des gouvernements, pas sur des personnes, conformément à CLAUDE.md), et l'accès direct à V-Dem permettrait d'étendre et de vérifier la loyauté de l'armée bien au-delà de ces 9 cas.
+
+### D91. Dérive du soutien au gouvernement, vérifiée après D89 et D90
+
+Dernier point de la consolidation avant la phase 5 : D89 (reset du résidu des relations étendu aux coups et successions) et D90 (historique des coups curé) sont les deux changements les plus susceptibles de rouvrir la dérive que les garde-fous de D76 avaient corrigée (mesurée sans eux : −1,35 point de stabilité moyenne en 20 ans, ≈ 2,7 coups/an).
+
+`packages/engine/src/engine.built.test.ts` (test 20 ans) étendu avec deux assertions explicites : dérive de la stabilité moyenne mondiale (`pol.stability`, hors factions) inférieure à 3 points sur 20 ans, coups d'État inférieurs à 4/an. Mesures sur les données construites, trois graines :
+
+| Graine | Dérive de la stabilité (20 ans) | Coups (20 ans) | Coups/an |
+| ------ | ------------------------------- | -------------- | -------- |
+| 1      | 1,09 point                      | 41             | 2,05     |
+| 2      | 1,17 point                      | 50             | 2,50     |
+| 3      | 1,23 point                      | 44             | 2,20     |
+
+Résultat : la dérive reste contenue (≈ 1,1-1,2 point, loin des −1,35 point sans garde-fous de D76) et le rythme des coups reste dans la fourchette plausible retenue en D86 (≈ 2 par an, 1,5 à 2,2 dans les décennies récentes selon Powell et Thyne). Les garde-fous de D76 tiennent malgré le couplage étendu aux coups (D89) et la curation de l'historique des coups (D90, qui augmente le risque de certains pays) : aucun ajustement supplémentaire n'a été nécessaire.

@@ -31,6 +31,7 @@
  * niveau = (λ/λ_réf)^(−1/θ), λ part de la demande servie par la production nationale), coût des
  * importations (droits de douane, primes de remplacement : saut de prix) et solde courant.
  */
+import type { ParamValue } from '@geosim/shared';
 import { col, type State } from '../state.ts';
 import type { System, SystemContext } from '../system.ts';
 import { baseTradeBlocGrid, isTradeBloc, memberships, sharedBlocGrid } from './blocs.ts';
@@ -486,6 +487,27 @@ function referenceScale(g: GravityScale, i: number, j: number): number {
   return ((g.exporter[i] as number) * (g.importer[j] as number)) / g.world;
 }
 
+/**
+ * Cible de trafic (% du trafic normal) d'un détroit selon son statut : ouvert 100, fermé 0,
+ * contesté (capacité de départ si le passage l'était déjà, sinon un coefficient). Pure (aucune
+ * écriture) : réutilisée par le marché pétrolier pour anticiper un changement de statut avant que
+ * le trafic n'ait fini d'y converger (`markets.ts`, `oilAnticipationShock`).
+ */
+export function chokepointTarget(
+  S: State,
+  m: SystemContext['model'],
+  id: string,
+  status: ParamValue,
+): number {
+  if (status === 'closed') return 0;
+  if (status === 'contested') {
+    const start = S.zoneBase.get('zone.chokepoint_traffic')?.get(id);
+    const startStatus = S.zoneBase.get('zone.chokepoint_status')?.get(id);
+    return startStatus === 'contested' && typeof start === 'number' ? start : m.get(K.contested);
+  }
+  return 100;
+}
+
 /** Mise à jour des capacités de passage des détroits selon leur statut. */
 function updateChokepoints(ctx: SystemContext): void {
   const S = ctx.state;
@@ -496,14 +518,7 @@ function updateChokepoints(ctx: SystemContext): void {
   for (const [id, st] of status) {
     const now = cap.get(id);
     if (typeof now !== 'number') continue;
-    const start = S.zoneBase.get('zone.chokepoint_traffic')?.get(id);
-    const startStatus = S.zoneBase.get('zone.chokepoint_status')?.get(id);
-    let target: number;
-    if (st === 'closed') target = 0;
-    else if (st === 'contested')
-      target =
-        startStatus === 'contested' && typeof start === 'number' ? start : m.get(K.contested);
-    else target = 100;
+    const target = chokepointTarget(S, m, id, st);
     const months = target < now ? m.get(K.closureMonths) : m.get(K.recoveryMonths);
     S.writeZone('zone.chokepoint_traffic', id, now + (target - now) / Math.max(1, months));
   }

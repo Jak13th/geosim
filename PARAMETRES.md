@@ -240,7 +240,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `pol.repression_capacity` | Capacité répressive | 0–100 | I | DER + HYP |
 | `pol.information_control` | Contrôle de l'information et propagande | 0–100 | I | CUR (classements de liberté de la presse, inversés) |
 | `pol.polarization` | Polarisation | 0–100 | I | OWID (V-Dem) / HYP |
-| `pol.military_loyalty` | Loyauté de l'armée envers le pouvoir | 0–100 | I | HYP |
+| `pol.military_loyalty` | Loyauté de l'armée envers le pouvoir | 0–100 | I | CUR (8 pays, cas documentés) + HYP |
 | `pol.nationalism` | Nationalisme | 0–100 | I | HYP |
 | `pol.casualty_tolerance` | Tolérance aux pertes | 0–100 | I | DER (régime, nationalisme) + HYP |
 | `pol.war_support` | Soutien à chaque guerre en cours | % | S | DER |
@@ -248,6 +248,7 @@ Les codes d'indicateurs sont indicatifs : vérifie-les (certains sont discontinu
 | `pol.leader_tenure` | Ancienneté du pouvoir en place | années | S | CUR |
 | `pol.succession_risk` | Risque de succession non planifiée | %/an | I | HYP |
 | `pol.coup_risk` | Risque de coup d'État | %/an | D | DER |
+| `pol.coup_history` | Historique des coups d'État | 0–30 coups | I | CUR (44 pays, Powell et Thyne via synthèses secondaires) |
 | `pol.insurgency` | Insurrections et conflits internes | intensité 0–100 | S | CUR (UCDP, ACLED) |
 | `pol.interference_vulnerability` | Vulnérabilité à l'ingérence étrangère | 0–100 | I | HYP |
 

@@ -295,8 +295,9 @@ Pour chaque produit (pétrole, gaz par zone, charbon, blé, engrais, cuivre, lit
 - **Engrais** : prix d'équilibre multiplié par (gaz européen / initial)^part du gaz dans le coût.
 - **Puces avancées** : indice d'offre = 100 × parts de fabrication courantes / initiales.
 - Consommation d'énergie primaire : activité (élasticité 0,6) et efficacité (−1 %/an).
+- **Prime d'anticipation du pétrole** (D88) : le prix fondamental (`ln p`, ci-dessus) est distingué de la prime affichée : `p_affiché = p_fondamental × (1 + anticipation)`. À chaque changement du statut d'un détroit (`zone.chokepoint_status`), `anticipation` bondit de `force × Δ(trafic cible perdu ou regagné, en part de 100)` — avant que le trafic réel n'ait fini d'y converger (`trade.chokepoints.closure_months`/`recovery_months`) — puis décroît vers 0 avec une demi-vie (`markets.oil.anticipation_strength`, `anticipation_half_life_months`) pendant que le prix fondamental rejoint son propre équilibre. Périmètre limité aux détroits (pas aux déclarations de guerre ni aux sanctions énergétiques annoncées à l'avance).
 
-**Limites** : pas de spéculation ni de prime de précaution (le prix monte au rythme de l'ajustement, pas d'un bond à l'annonce d'une fermeture) ; demande et offre en indices (les volumes mondiaux des sources ne s'équilibrent pas) ; coûts de production implicites dans l'ancrage.
+**Limites** : demande et offre en indices (les volumes mondiaux des sources ne s'équilibrent pas) ; coûts de production implicites dans l'ancrage ; pas de taux de change (le rouble de 2022, par exemple, n'est pas représentable).
 
 ## 7. Comptes dérivés (`systems/accounts.ts`, `derived.ts`)
 
@@ -373,7 +374,7 @@ Chaque importateur j reçoit de chaque fournisseur i une part de ses importation
 
 Volumes et prix : la production d'un exportateur bloqué baisse (§6), avec un effet de niveau sur son PIB (§5.2, D78) ; les prix alimentent la facture énergétique (§5.2, §5.5).
 
-**Limites** : pas de réseau de gazoducs explicite (les dépendances bilatérales en tiennent lieu) ; électricité non modélisée ; pas de prime de précaution sur les prix (§6).
+**Limites** : pas de réseau de gazoducs explicite (les dépendances bilatérales en tiennent lieu) ; électricité non modélisée ; la prime d'anticipation des prix (§6, D88) ne couvre que le pétrole et les détroits, pas le gaz ni les autres chocs énergétiques annoncés à l'avance.
 
 ## 11. Alimentation et produits critiques (`systems/resources.ts`, phase 4)
 
@@ -410,7 +411,7 @@ Affinité de i envers j (−100 à +100), somme bornée de facteurs, chacun cons
 
 `R_ij(t+1) = R_ij + 0,05 · (A_ij + résidu_ij + mémoire_ij − R_ij)` (D72) :
 
-- **résidu de calage** = relation de départ (`relations_seed.yaml`) − affinité de départ ; demi-vie 10 ans ; une alternance en efface la moitié (§13) ; une relation saisie par l'utilisateur déplace le résidu d'autant ;
+- **résidu de calage** = relation de départ (`relations_seed.yaml`) − affinité de départ ; demi-vie 10 ans ; une relation saisie par l'utilisateur déplace le résidu d'autant ; un changement de gouvernement en efface une part, différente selon la voie (§13, D89) : alternance électorale 50 %, coup d'État 70 %, révolution 100 %, succession non planifiée 10 % (régime et profil inchangés) ;
 - **mémoire des chocs**, demi-vie 24 mois : sanctions imposées (visé −0,3, émetteur −0,15 point par % d'intensité), levées (+0,1), guerre −40, paix +10, traité +5 par niveau, condamnations de coup d'État et de l'ONU.
 
 ### 12.3 Blocs
@@ -450,9 +451,9 @@ Calée sur la situation de départ (WGI, D49) : `S* = S₀ + Σ_k signe_k · a_k
 
 ### 13.4 Régimes non démocratiques
 
-- **Coup d'État** : `risque (%/an) = min(15, base · e^(0,4 · (40 − S) / 10) · e^(0,3 · (80 − loyauté de l'armée) / 10) · (1 + 0,1 · max(0, −croissance)) · (1 + 2 · max(0, élites − élites₀)) · min(1, (5 000 $ / PIB par habitant)^1))`, base : junte 2, autocratie 0,6, hybride 0,8, démocratie imparfaite 0,2, démocratie 0,02, autre 0,5 ; le PIB par habitant est en dollars du départ, et la richesse protège au-delà du seuil (Londregan et Poole, 1990 ; Przeworski et Limongi, 1997 ; D86). Un coup réussi : régime de junte (profil par défaut des juntes), stabilité −15 (demi-vie 180 jours), ancre de légitimité × 0,6, démocratie électorale × 0,3, élections suspendues, suspension de l'UA et de la CEDEAO, condamnation (−10) par les démocraties (indice ≥ 0,5).
+- **Coup d'État** : `risque (%/an) = min(15, base · e^(0,4 · (40 − S) / 10) · e^(0,3 · (80 − loyauté de l'armée) / 10) · (1 + 0,1 · max(0, −croissance)) · (1 + 2 · max(0, élites − élites₀)) · min(1, (5 000 $ / PIB par habitant)^1))`, base : junte 2, autocratie 0,6, hybride 0,8, démocratie imparfaite 0,2, démocratie 0,02, autre 0,5 ; le PIB par habitant est en dollars du départ, et la richesse protège au-delà du seuil (Londregan et Poole, 1990 ; Przeworski et Limongi, 1997 ; D86). Un coup réussi : régime de junte (profil par défaut des juntes), stabilité −15 (demi-vie 180 jours), ancre de légitimité × 0,6, démocratie électorale × 0,3, élections suspendues, suspension de l'UA et de la CEDEAO, condamnation (−10) par les démocraties (indice ≥ 0,5), 70 % du résidu de calage des relations s'efface (D89).
 - **Transition d'une junte** : 11 %/an (durée moyenne d'environ 9 ans des régimes militaires de 1946 à 1999, Geddes 1999) : régime hybride, même profil, élections rétablies au terme d'un mandat (la junte gagne le plus souvent l'élection qu'elle organise).
-- **Succession non planifiée** : probabilité annuelle `pol.succession_risk` (hypothèse par défaut selon le régime) `× (1 − compétitivité)` : là où les élections choisissent l'exécutif, la constitution règle la succession ; stabilité −8, nouveau gouvernement.
+- **Succession non planifiée** : probabilité annuelle `pol.succession_risk` (hypothèse par défaut selon le régime) `× (1 − compétitivité)` : là où les élections choisissent l'exécutif, la constitution règle la succession ; stabilité −8, nouveau gouvernement, 10 % du résidu de calage des relations s'efface (D89) — régime et profil restent inchangés, seule l'incertitude sur le nouveau dirigeant joue.
 - **Révolution** (stabilité < 12) : `taux = 10 %/an · (12 − S) / 12 · (1 − répression · loyauté)` ; stabilité −10, démocratie électorale au moins 0,4, élection un an plus tard.
 
 **Limites** : pas de partis ni de résultats en voix ; la guerre civile ne crée pas encore de faction (phase 5) ; le soutien à la guerre (`pol.war_support`) viendra avec les guerres (phase 5).

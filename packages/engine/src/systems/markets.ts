@@ -30,7 +30,7 @@
 import { col, type State } from '../state.ts';
 import type { System, SystemContext } from '../system.ts';
 import { listOf } from './pairs.ts';
-import { TRADE_OUT } from './trade.ts';
+import { chokepointTarget, TRADE_OUT } from './trade.ts';
 
 const C = {
   pop: col('demo.population'),
@@ -83,6 +83,8 @@ const K = {
   oilMwh: 'markets.energy.oil_mwh_per_barrel',
   gasMwh: 'markets.energy.gas_mwh_per_mmbtu',
   coalMwh: 'markets.energy.coal_mwh_per_tonne',
+  anticipationStrength: 'markets.oil.anticipation_strength',
+  anticipationHalfLife: 'markets.oil.anticipation_half_life_months',
 } as const;
 
 const coef = (k: Commodity, name: (typeof COMMODITY_KEYS)[number]): string =>
@@ -257,10 +259,47 @@ export function restrictionsOf(state: State, i: number, base: boolean): Record<s
   return out;
 }
 
+/** Clé interne du dernier trafic cible (% du trafic normal) connu d'un détroit. */
+const targetKey = (id: string): string => `markets.oil.target.${id}`;
+
+/**
+ * Prime d'anticipation du pétrole : un changement de statut d'un détroit (`zone.chokepoint_status`)
+ * fait bondir le prix dès l'annonce, vers le trafic cible de son nouveau statut — pas seulement au
+ * rythme lent (`trade.chokepoints.closure_months`) auquel le trafic réel y converge (D68, D77 :
+ * +14 $ au pic pour la fermeture d'Ormuz, jugé trop bas faute d'anticipation). La prime décroît
+ * ensuite avec sa demi-vie pendant que le prix structurel rejoint son propre équilibre.
+ */
+function oilAnticipationShock(ctx: SystemContext): number {
+  const S = ctx.state;
+  const m = ctx.model;
+  const status = S.zone.get('zone.chokepoint_status');
+  let shock = 0;
+  if (status) {
+    for (const [id, st] of status) {
+      const target = chokepointTarget(S, m, id, st);
+      const prev = S.worldInternal.get(targetKey(id)) ?? target;
+      shock += (prev - target) / 100;
+      S.worldInternal.set(targetKey(id), target);
+    }
+  }
+  const decay = Math.pow(0.5, (ctx.dt * 12) / Math.max(1, m.get(K.anticipationHalfLife)));
+  const anticipation =
+    (S.worldInternal.get('markets.oil.anticipation') ?? 0) * decay +
+    m.get(K.anticipationStrength) * shock;
+  S.worldInternal.set('markets.oil.anticipation', anticipation);
+  return anticipation;
+}
+
 function init(ctx: SystemContext): void {
   const S = ctx.state;
   const n = S.n;
   S.worldInternal.set('markets.oilSpareUsed', 0);
+  S.worldInternal.set('markets.oil.anticipation', 0);
+  S.worldInternal.set('markets.oil.baseline', baseNumber(S, 'world.oil_price'));
+  const status0 = S.zone.get('zone.chokepoint_status');
+  if (status0)
+    for (const [id, st] of status0)
+      S.worldInternal.set(targetKey(id), chokepointTarget(S, ctx.model, id, st));
   for (const k of ['wheat', 'fertilizer', ...METALS])
     S.worldInternal.set(`markets.${k}.capacity`, 0);
   for (const k of COMMODITIES) S.worldInternal.set(`markets.${k}.demand`, 1);
@@ -451,6 +490,7 @@ function monthly(ctx: SystemContext): void {
     const p0 = baseNumber(S, 'world.oil_price');
     const p = S.worldNumber('world.oil_price');
     const ratio = p / p0;
+    const anticipation = oilAnticipationShock(ctx);
     const market = fossilMarket(ctx, C.oilCons, C.oilProd, 'oil', p, p0, null);
     const supply = market.supply;
     const worldProd0 = sumStart(S, 'oil');
@@ -475,7 +515,15 @@ function monthly(ctx: SystemContext): void {
     const effSupply = supply + (worldProd0 > 0 ? used / worldProd0 : 0);
     S.worldInternal.set('markets.oil.demand', demand);
     const eq = p0 * Math.pow(demand / effSupply, 1 / elasticity('oil'));
-    const next = nextPrice(p, eq, months('oil'), vol('oil') * (shocks.get('oil') ?? 0));
+    const baseline = S.worldInternal.get('markets.oil.baseline') ?? p;
+    const nextBaseline = nextPrice(
+      baseline,
+      eq,
+      months('oil'),
+      vol('oil') * (shocks.get('oil') ?? 0),
+    );
+    S.worldInternal.set('markets.oil.baseline', nextBaseline);
+    const next = nextBaseline * Math.max(0.05, 1 + anticipation);
     S.writeWorld('world.oil_price', next);
     applyPriceToConsumption(
       ctx,

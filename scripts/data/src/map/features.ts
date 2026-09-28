@@ -332,6 +332,16 @@ export interface Port {
   scalerank: number;
 }
 
+export interface Airport {
+  name: string;
+  lon: number;
+  lat: number;
+  /** Pixel terrestre le plus proche de l'aéroport. */
+  pixel: number;
+  entity: number;
+  scalerank: number;
+}
+
 /** Rattache chaque port Natural Earth au pixel côtier le plus proche (dans un rayon). */
 export function buildPorts(
   grid: Grid,
@@ -369,24 +379,32 @@ export function buildPorts(
   return { ports: out, dropped };
 }
 
-/** Aéroports : drapeau sur le pixel terrestre le plus proche (2 pixels au plus). */
+/** Aéroports : drapeau sur le pixel terrestre le plus proche (2 pixels au plus), et enregistrement. */
 export function markAirports(
   grid: Grid,
   t: Topology,
   terrain: Uint8Array,
+  owner: Uint16Array,
   flags: Uint16Array,
   airports: readonly ShapeFeature[],
-): number {
-  let count = 0;
+): Airport[] {
+  const out: Airport[] = [];
   for (const airport of airports) {
     if (airport.geometry?.type !== 'Point') continue;
     const [lon, lat] = airport.geometry.coordinates;
     const pixel = nearestPixel(t, pixelOf(grid, lon, lat), 2, (p) => isLand(terrain[p] as number));
     if (pixel < 0) continue;
     flags[pixel] = (flags[pixel] as number) | MapFlag.Airport;
-    count++;
+    out.push({
+      name: str(airport, 'name') ?? '?',
+      lon,
+      lat,
+      pixel,
+      entity: owner[pixel] as number,
+      scalerank: num(airport, 'scalerank') ?? 10,
+    });
   }
-  return count;
+  return out;
 }
 
 /**

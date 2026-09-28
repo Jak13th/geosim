@@ -111,6 +111,15 @@ export interface MapPort {
   scalerank: number;
 }
 
+export interface MapAirport {
+  name: string;
+  lon: number;
+  lat: number;
+  pixel: number;
+  entity: number;
+  scalerank: number;
+}
+
 export interface MapMeta {
   version: 1;
   buildId: string;
@@ -127,6 +136,7 @@ export interface MapMeta {
   chokepoints: MapChokepoint[];
   cities: MapCity[];
   ports: MapPort[];
+  airports: MapAirport[];
   /** Zones de contrôle appliquées (control_zones.geojson), dans l'ordre. */
   controlZones: MapControlZone[];
 }
